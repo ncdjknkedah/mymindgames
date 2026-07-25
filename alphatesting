@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Tangki Tenaga & Gim Otak AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AI Libraries for Camera Gesture Tracking (MediaPipe) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* Base & Background Styles */
+        body { font-family: 'Fredoka', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); background-attachment: fixed; min-height: 100vh; overflow-x: hidden; }
+        .bg-animated { background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #a1c4fd, #c2e9fb); background-size: 400% 400%; animation: gradientBG 15s ease infinite; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -2; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* Floating particles */
+        .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
+        .particle { position: absolute; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: floatUp linear infinite; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(-20vh) scale(1.5) rotate(360deg); opacity: 0; } }
+
+        /* General UI Elements */
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-radius: 30px; box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.15); border: 2px solid rgba(255, 255, 255, 0.6); }
+        .btn-bounce { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-bounce:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 25px rgba(0,0,0,0.15); }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        .hidden-section { display: none !important; }
+
+        /* Mini Games CSS */
+        .camera-box { position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: 20px; overflow: hidden; border: 4px solid #3b82f6; background: #000; aspect-ratio: 4/3;}
+        .camera-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .camera-box canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+        .gesture-target-card { background: white; padding: 15px 30px; border-radius: 20px; font-weight: bold; font-size: 3rem; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #3b82f6; text-align: center;}
+        
+        /* Game 4: Kucing Penangkap Buah */
+        #kucingGameContainer { position: relative; width: 100%; max-width: 400px; height: 500px; margin: 0 auto; background: linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius: 20px; border: 4px solid #10b981; overflow: hidden; touch-action: none;}
+        #kucingCanvas { display: block; width: 100%; height: 100%; cursor: pointer;}
+        .mini-cam-preview { position: absolute; top: 10px; right: 10px; width: 80px; height: 60px; border-radius: 10px; border: 2px solid white; background: #000; overflow: hidden; z-index: 10; opacity: 0.8;}
+        .mini-cam-preview video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-gray-700">
+
+    <div class="bg-animated"></div>
+    <div class="particles-container" id="particles"></div>
+
+    <div class="max-w-5xl mx-auto glass-card p-6 md:p-10 relative mt-4">
+
+        <!-- INTRO (Simplified for brevity) -->
+        <div id="step-intro" class="text-center fade-in py-8">
+            <div class="text-7xl mb-6 animate-bounce">🧠</div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-4">Gim Otak AI</h1>
+            <button onclick="showBrainGamesHub()" class="btn-bounce bg-gradient-to-r from-purple-500 to-blue-500 text-white text-2xl font-bold py-4 px-12 rounded-full shadow-xl border-4 border-white/50">
+                Mula Bermain <i class="fas fa-gamepad ml-2"></i>
+            </button>
+        </div>
+
+        <!-- 6. BRAIN GAMES HUB -->
+        <div id="step-brain-games-hub" class="hidden-section fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-4">Senarai Gim Otak 🧠</h2>
+                <p class="text-xl text-gray-600">Pilih permainan kegemaran anda.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Clap Game Card -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-pink-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer" onclick="alert('Permainan Tepuk Tangan sedia untuk dimainkan (kod dikekalkan seperti asal)')">
+                    <div class="text-5xl mb-4">👏</div>
+                    <h3 class="text-lg font-bold text-pink-600 mb-2">Irama Tepuk Tangan</h3>
+                    <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold">Mic</span>
+                </div>
+
+                <!-- Gesture AI Game Card -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-blue-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer" onclick="alert('Permainan Ketua Gerak Isyarat sedia (kod dikekalkan seperti asal)')" style="animation-delay: 0.1s">
+                    <div class="text-5xl mb-4">🖐️</div>
+                    <h3 class="text-lg font-bold text-blue-600 mb-2">Ketua Gerak Isyarat</h3>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold">AI Kamera</span>
+                </div>
+
+                <!-- Scream Therapy Game Card -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer" onclick="alert('Permainan Gema Kebebasan sedia (kod dikekalkan seperti asal)')" style="animation-delay: 0.2s">
+                    <div class="text-5xl mb-4">🗣️</div>
+                    <h3 class="text-lg font-bold text-teal-600 mb-2">Gema Kebebasan</h3>
+                    <span class="bg-teal-100 text-teal-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold">Mic</span>
+                </div>
+
+                <!-- NEW: Kucing Penangkap Buah -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-green-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer relative" onclick="openKucingGame()" style="animation-delay: 0.3s">
+                    <div class="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">BARU!</div>
+                    <div class="text-5xl mb-4">🐱🍎</div>
+                    <h3 class="text-lg font-bold text-green-600 mb-2">Kucing Penangkap Buah</h3>
+                    <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block">Sentuh / AI Kamera</span>
+                    <p class="text-xs text-gray-500 mt-2">Terbaik untuk: Refleks & Koordinasi</p>
+                </div>
+                
+                <!-- PLACEHOLDERS FOR OTHER GAMES IN THE IMAGE -->
+                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70">
+                    <div class="text-4xl mb-4 grayscale">🥤</div><h3 class="text-sm font-bold text-gray-500 mb-2">Susun Cawan</h3><span class="text-xs">Akan Datang</span>
+                </div>
+                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70">
+                    <div class="text-4xl mb-4 grayscale">⏰</div><h3 class="text-sm font-bold text-gray-500 mb-2">Latihan Jam</h3><span class="text-xs">Akan Datang</span>
+                </div>
+                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70">
+                    <div class="text-4xl mb-4 grayscale">🎯</div><h3 class="text-sm font-bold text-gray-500 mb-2">Rebut Corak</h3><span class="text-xs">Akan Datang</span>
+                </div>
+                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70">
+                    <div class="text-4xl mb-4 grayscale">🧩</div><h3 class="text-sm font-bold text-gray-500 mb-2">Permainan Teka-teki</h3><span class="text-xs">Akan Datang</span>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-home"></i> Kembali ke Mula</button>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             NEW GAME: KUCING PENANGKAP BUAH
+        =========================================== -->
+        <div id="step-game-kucing" class="hidden-section fade-in text-center">
+            <h2 class="text-4xl font-extrabold text-green-600 mb-2">Kucing Penangkap Buah 🐱🍎</h2>
+            <p class="text-gray-600 mb-6">Tangkap buah-buahan yang jatuh. Elakkan bom!</p>
+            
+            <!-- Mode Selection Phase -->
+            <div id="kucingModeSelection" class="mb-8">
+                <p class="text-xl font-bold text-gray-700 mb-4">Pilih Cara Kawalan:</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <!-- Touch Mode -->
+                    <button onclick="initKucingGame('touch')" class="btn-bounce bg-white border-4 border-blue-400 text-blue-600 p-6 rounded-2xl shadow-lg hover:bg-blue-50 flex-1 max-w-xs mx-auto">
+                        <div class="text-4xl mb-2">👆</div>
+                        <h3 class="font-bold text-lg mb-1">Skrin Sentuh / Tetikus</h3>
+                        <p class="text-xs text-gray-500">Leret atau gerakkan tetikus ke kiri dan kanan.</p>
+                    </button>
+                    <!-- AI Mode -->
+                    <button onclick="initKucingGame('ai')" class="btn-bounce bg-white border-4 border-green-400 text-green-600 p-6 rounded-2xl shadow-lg hover:bg-green-50 flex-1 max-w-xs mx-auto">
+                        <div class="text-4xl mb-2">🖐️</div>
+                        <h3 class="font-bold text-lg mb-1">Kamera AI (Gerak Isyarat)</h3>
+                        <p class="text-xs text-gray-500">Gerakkan tangan anda di hadapan kamera.</p>
+                    </button>
+                </div>
+                <p id="kucingLoadingText" class="text-green-600 mt-4 font-bold hidden"><i class="fas fa-spinner fa-spin mr-2"></i> Memuatkan AI... Sila tunggu.</p>
+            </div>
+
+            <!-- Active Game Phase -->
+            <div id="kucingActiveGame" class="hidden">
+                <div class="flex justify-center items-center gap-6 mb-4">
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="kucingScore" class="text-green-600 text-3xl font-extrabold">0</span></div>
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="kucingLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
+                </div>
+
+                <div id="kucingGameContainer" class="shadow-2xl">
+                    <!-- Mini cam feed for AI mode -->
+                    <div id="kucingMiniCam" class="mini-cam-preview hidden">
+                        <video id="kucingVideo" autoplay playsinline></video>
+                    </div>
+                    <!-- Game Canvas -->
+                    <canvas id="kucingCanvas" width="400" height="500"></canvas>
+                </div>
+            </div>
+
+            <!-- Result Phase -->
+            <div id="kucingResult" class="hidden mt-6 bg-white p-8 rounded-3xl shadow-xl border-4 border-green-200 max-w-md mx-auto">
+                <h3 class="text-3xl font-bold text-red-500 mb-2">Permainan Tamat!</h3>
+                <p class="text-gray-600 mb-4">Anda berjaya mengumpul:</p>
+                <div class="text-6xl font-extrabold text-green-500 mb-6" id="kucingFinalScore">0</div>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="resetKucingGame()" class="bg-green-500 text-white font-bold py-3 px-6 rounded-full hover:bg-green-600 btn-bounce">Main Semula</button>
+                    <button onclick="stopKucingGame(); showBrainGamesHub();" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-full hover:bg-gray-300 btn-bounce">Tutup</button>
+                </div>
+            </div>
+
+            <button id="btnKucingExit" onclick="stopKucingGame(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800 hidden"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
+        </div>
+
+    </div>
+
+    <script>
+        function hideAll() {
+            ['step-intro', 'step-brain-games-hub', 'step-game-kucing'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden-section');
+            });
+        }
+
+        function showBrainGamesHub() {
+            hideAll(); 
+            document.getElementById('step-brain-games-hub').classList.remove('hidden-section');
+        }
+
+        // ==========================================
+        // GAME 4: KUCING PENANGKAP BUAH LOGIC
+        // ==========================================
+        let kucingMode = 'touch'; // 'touch' or 'ai'
+        const kCanvas = document.getElementById('kucingCanvas');
+        const kCtx = kCanvas.getContext('2d');
+        
+        let kGameLoopReq;
+        let kScore = 0;
+        let kLives = 3;
+        let isKucingPlaying = false;
+        
+        // Game Objects
+        const cat = { x: 170, y: 420, width: 60, height: 60, targetX: 170 };
+        let items = []; // Fruits and bombs
+        let frameCount = 0;
+
+        // AI variables
+        const kVideo = document.getElementById('kucingVideo');
+        let kHands = null;
+        let kCamera = null;
+        let aiHandX = 0.5; // Normalized 0 to 1
+
+        function openKucingGame() {
+            hideAll();
+            document.getElementById('step-game-kucing').classList.remove('hidden-section');
+            document.getElementById('kucingModeSelection').classList.remove('hidden');
+            document.getElementById('kucingActiveGame').classList.add('hidden');
+            document.getElementById('kucingResult').classList.add('hidden');
+            document.getElementById('btnKucingExit').classList.add('hidden');
+        }
+
+        async function initKucingGame(mode) {
+            kucingMode = mode;
+            document.getElementById('kucingModeSelection').classList.add('hidden');
+            
+            if (mode === 'ai') {
+                document.getElementById('kucingModeSelection').classList.remove('hidden');
+                document.getElementById('kucingLoadingText').classList.remove('hidden');
+                
+                try {
+                    if(!kHands) {
+                        kHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+                        kHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+                        kHands.onResults(onKucingAIResults);
+
+                        kCamera = new Camera(kVideo, {
+                            onFrame: async () => { await kHands.send({image: kVideo}); },
+                            width: 160, height: 120
+                        });
+                        await kCamera.start();
+                    }
+                    document.getElementById('kucingMiniCam').classList.remove('hidden');
+                } catch (e) {
+                    alert("Kamera gagal diakses. Tukar ke mod Skrin Sentuh. " + e);
+                    kucingMode = 'touch';
+                    document.getElementById('kucingMiniCam').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('kucingMiniCam').classList.add('hidden');
+                setupKucingTouchControls();
+            }
+
+            document.getElementById('kucingModeSelection').classList.add('hidden');
+            document.getElementById('kucingLoadingText').classList.add('hidden');
+            document.getElementById('kucingActiveGame').classList.remove('hidden');
+            document.getElementById('btnKucingExit').classList.remove('hidden');
+            
+            resetKucingGame();
+        }
+
+        function setupKucingTouchControls() {
+            // Touch & Mouse events to control the cat directly
+            kCanvas.addEventListener('mousemove', (e) => {
+                if(!isKucingPlaying || kucingMode !== 'touch') return;
+                const rect = kCanvas.getBoundingClientRect();
+                const scaleX = kCanvas.width / rect.width;
+                cat.targetX = (e.clientX - rect.left) * scaleX - cat.width/2;
+            });
+            
+            kCanvas.addEventListener('touchmove', (e) => {
+                if(!isKucingPlaying || kucingMode !== 'touch') return;
+                e.preventDefault(); // Prevent scrolling
+                const rect = kCanvas.getBoundingClientRect();
+                const scaleX = kCanvas.width / rect.width;
+                cat.targetX = (e.touches[0].clientX - rect.left) * scaleX - cat.width/2;
+            }, {passive: false});
+        }
+
+        function onKucingAIResults(results) {
+            if (!isKucingPlaying || kucingMode !== 'ai') return;
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                // Get index finger tip (landmark 8)
+                const indexFinger = results.multiHandLandmarks[0][8];
+                // Mirror the X coordinate so moving hand left moves cat left
+                aiHandX = 1 - indexFinger.x; 
+                cat.targetX = (aiHandX * kCanvas.width) - (cat.width / 2);
+            }
+        }
+
+        function resetKucingGame() {
+            kScore = 0;
+            kLives = 3;
+            items = [];
+            cat.x = kCanvas.width/2 - cat.width/2;
+            cat.targetX = cat.x;
+            isKucingPlaying = true;
+            frameCount = 0;
+            
+            document.getElementById('kucingScore').innerText = kScore;
+            updateKucingLivesUI();
+            
+            document.getElementById('kucingActiveGame').classList.remove('hidden');
+            document.getElementById('kucingResult').classList.add('hidden');
+            
+            if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq);
+            kucingGameLoop();
+        }
+
+        function updateKucingLivesUI() {
+            let hearts = "";
+            for(let i=0; i<kLives; i++) hearts += "❤️";
+            document.getElementById('kucingLives').innerText = hearts || "💀";
+        }
+
+        function spawnItem() {
+            const types = ['🍎', '🍌', '🍇', '💣'];
+            // As score increases, bombs become slightly more frequent and speed increases
+            let isBomb = Math.random() < 0.2 + (kScore * 0.005); 
+            let emoji = isBomb ? '💣' : types[Math.floor(Math.random() * 3)];
+            
+            let speed = 3 + Math.random() * 2 + (kScore * 0.1);
+            let size = 30;
+            let x = Math.random() * (kCanvas.width - size);
+            
+            items.push({ x: x, y: -size, speed: speed, emoji: emoji, size: size, isBomb: isBomb });
+        }
+
+        function kucingGameLoop() {
+            if(!isKucingPlaying) return;
+
+            kCtx.clearRect(0, 0, kCanvas.width, kCanvas.height);
+
+            // Smooth Cat Movement
+            // Boundary checks
+            if(cat.targetX < 0) cat.targetX = 0;
+            if(cat.targetX > kCanvas.width - cat.width) cat.targetX = kCanvas.width - cat.width;
+            // Interpolate position for smoothness
+            cat.x += (cat.targetX - cat.x) * (kucingMode === 'ai' ? 0.2 : 0.4);
+
+            // Draw Cat (Emoji as graphics)
+            kCtx.font = "50px Arial";
+            kCtx.textAlign = "left";
+            kCtx.textBaseline = "top";
+            kCtx.fillText("🧺", cat.x, cat.y); // Basket
+            kCtx.font = "30px Arial";
+            kCtx.fillText("🐱", cat.x + 10, cat.y - 15); // Cat looking over
+
+            // Handle Items
+            frameCount++;
+            // Spawn rate gets slightly faster as score goes up
+            let spawnRate = Math.max(20, 60 - Math.floor(kScore/5));
+            if(frameCount % spawnRate === 0) spawnItem();
+
+            for(let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+                
+                // Draw item
+                kCtx.font = "30px Arial";
+                kCtx.fillText(item.emoji, item.x, item.y);
+
+                // Collision Detection (AABB)
+                if (item.x < cat.x + cat.width &&
+                    item.x + item.size > cat.x &&
+                    item.y < cat.y + cat.height &&
+                    item.y + item.size > cat.y) {
+                    
+                    if (item.isBomb) {
+                        kLives--;
+                        updateKucingLivesUI();
+                        // Red flash effect
+                        kCtx.fillStyle = "rgba(255, 0, 0, 0.4)";
+                        kCtx.fillRect(0, 0, kCanvas.width, kCanvas.height);
+                    } else {
+                        kScore += 5;
+                        document.getElementById('kucingScore').innerText = kScore;
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                // Remove if off screen
+                if(item.y > kCanvas.height) {
+                    // Dropped fruit = loose life? (Let's be forgiving, just remove it)
+                    items.splice(i, 1);
+                }
+            }
+
+            // Check Game Over
+            if(kLives <= 0) {
+                endKucingGame();
+            } else {
+                kGameLoopReq = requestAnimationFrame(kucingGameLoop);
+            }
+        }
+
+        function endKucingGame() {
+            isKucingPlaying = false;
+            document.getElementById('kucingActiveGame').classList.add('hidden');
+            document.getElementById('kucingResult').classList.remove('hidden');
+            document.getElementById('kucingFinalScore').innerText = kScore;
+        }
+
+        function stopKucingGame() {
+            isKucingPlaying = false;
+            if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq);
+            if(kCamera) {
+                kCamera.stop();
+                if(kVideo.srcObject) kVideo.srcObject.getTracks().forEach(t => t.stop());
+            }
+            kucingMode = 'touch';
+        }
+
+    </script>
+</body>
+</html>

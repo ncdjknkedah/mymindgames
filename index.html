@@ -339,13 +339,14 @@
                     <button class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 text-sm w-full">Main Sekarang</button>
                 </div>
 
-                <!-- 2. Gesture AI Game Card -->
+                <!-- 2. Gesture AI Game Card (UPDATED) -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-blue-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openGestureGame()" style="animation-delay: 0.1s">
+                    <div class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">HARD!</div>
                     <div>
-                        <div class="text-5xl mb-4">🖐️</div>
+                        <div class="text-5xl mb-4">🙌</div>
                         <h3 class="text-lg font-bold text-blue-600 mb-2">Ketua Gerak Isyarat</h3>
                         <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">AI Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Ikut gaya isyarat tangan menggunakan kamera anda.</p>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji koordinasi menggunakan <strong>kedua-dua</strong> belah tangan!</p>
                     </div>
                     <button class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-600 text-sm w-full">Main Sekarang</button>
                 </div>
@@ -363,7 +364,6 @@
 
                 <!-- 4. Kucing Penangkap Buah -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-green-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between relative" onclick="openKucingGame()" style="animation-delay: 0.3s">
-                    <div class="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">BARU!</div>
                     <div>
                         <div class="text-5xl mb-4">🐱🍎</div>
                         <h3 class="text-lg font-bold text-green-600 mb-2">Kucing Penangkap Buah</h3>
@@ -458,11 +458,11 @@
         </div>
 
         <!-- ==========================================
-             GAME 2: KETUA GERAK ISYARAT
+             GAME 2: KETUA GERAK ISYARAT (UPDATED 2 HANDS)
         =========================================== -->
         <div id="step-game-gesture" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat (AI Kamera) 🖐️</h2>
-            <p class="text-gray-600 mb-6">Skrin akan mengeluarkan gaya tangan. Anda perlu <strong>ikut gaya tersebut melalui kamera</strong> sebelum masa tamat!</p>
+            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat (Dual) 🙌</h2>
+            <p class="text-gray-600 mb-6">Skrin akan mengeluarkan isyarat. Anda perlu ikut isyarat tersebut menggunakan <strong>kedua-dua belah tangan</strong> di hadapan kamera!</p>
             
             <div id="gesturePreGame" class="mb-8">
                 <button onclick="initMediaPipe()" id="btnStartCam" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 text-xl btn-bounce">
@@ -472,23 +472,32 @@
                 <p class="text-sm text-red-500 mt-3 font-bold">*Mesti benarkan akses Kamera di browser anda.</p>
             </div>
 
-            <div id="gestureActiveGame" class="hidden max-w-xl mx-auto bg-white/90 p-6 rounded-3xl border-4 border-blue-200 shadow-xl relative">
+            <div id="gestureActiveGame" class="hidden max-w-2xl mx-auto bg-white/90 p-6 rounded-3xl border-4 border-blue-200 shadow-xl relative">
+                
                 <div class="flex justify-between items-center mb-6">
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="gestureScore" class="text-blue-600 text-3xl font-extrabold">0</span></div>
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="gestureLivesUI" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
                 </div>
+
                 <div class="mb-6">
-                    <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">Tiru Gaya Ini Sekarang:</p>
-                    <div class="gesture-target-card" id="gestureTargetDisplay">🖐️ Sedia...</div>
+                    <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2" id="gestureRoundText">Pusingan 1: Isyarat Sama</p>
+                    <div class="bg-white p-4 rounded-2xl shadow-inner border-2 border-gray-100" id="gestureTargetDisplay">
+                        <div class="text-2xl text-gray-400 font-bold">Sedia...</div>
+                    </div>
                 </div>
+
                 <div class="timer-bar-container">
                     <div id="gestureTimerBar" class="timer-bar"></div>
                 </div>
+
                 <div class="camera-box shadow-lg">
                     <video id="gestureVideo" autoplay playsinline></video>
                     <canvas id="gestureCanvas"></canvas>
                 </div>
-                <p class="text-sm text-gray-500 mt-4 font-bold bg-yellow-50 inline-block px-4 py-2 rounded-full border border-yellow-200"><i class="fas fa-info-circle text-yellow-500"></i> Pastikan tangan anda jelas kelihatan di dalam kotak hitam.</p>
+                
+                <p class="text-sm text-gray-500 mt-4 font-bold bg-yellow-50 inline-block px-4 py-2 rounded-full border border-yellow-200"><i class="fas fa-info-circle text-yellow-500"></i> Pastikan <strong>kedua-dua</strong> tangan anda jelas kelihatan.</p>
             </div>
+
             <button onclick="stopGestureDetection(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
         </div>
 
@@ -1000,8 +1009,9 @@
             }).catch(e=>{});
         }
 
+
         // ==========================================
-        // GAME 2: CAMERA GESTURE AI (MediaPipe Hands)
+        // GAME 2: CAMERA GESTURE AI (DUAL HANDS)
         // ==========================================
         const videoElement = document.getElementById('gestureVideo');
         const canvasElement = document.getElementById('gestureCanvas');
@@ -1009,15 +1019,20 @@
         let camera = null; let hands = null;
         
         let gestureTargets = [
-            { icon: '🖐️', name: 'Tapak Tangan Buka' },
-            { icon: '✊', name: 'Genggam Tangan' },
-            { icon: '✌️', name: 'Simbol Peace (Aman)' }
+            { icon: '🖐️', name: 'Buka' },
+            { icon: '✊', name: 'Genggam' },
+            { icon: '✌️', name: 'Peace' }
         ];
-        let currentTargetIndex = 0;
+        
+        let currentTargetLeft = '';
+        let currentTargetRight = '';
+        
         let isGestureGameActive = false;
         let gestureTimerInt;
         let gestureTimeLeft = 100;
         let totalGestureScore = 0;
+        let gestureLives = 3;
+        let gestureRound = 0;
 
         function openGestureGame() {
             hideAll(); document.getElementById('step-game-gesture').classList.remove('hidden-section');
@@ -1033,7 +1048,8 @@
 
             try {
                 hands = new Hands({locateFile: (file) => { return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`; }});
-                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+                // SET MAX HANDS TO 2
+                hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
                 hands.onResults(onResultsHands);
 
                 camera = new Camera(videoElement, {
@@ -1048,11 +1064,7 @@
                 canvasElement.width = videoElement.videoWidth || 400;
                 canvasElement.height = videoElement.videoHeight || 300;
                 
-                totalGestureScore = 0;
-                document.getElementById('gestureScore').innerText = totalGestureScore;
-                
-                document.getElementById('gestureTargetDisplay').innerHTML = `Sedia...`;
-                setTimeout(startNextGestureRound, 2000);
+                resetGestureGameState();
 
             } catch (err) {
                 alert("Gagal mengakses Kamera. Sila benarkan (Allow) akses kamera pada pelayar anda. " + err);
@@ -1060,23 +1072,72 @@
                 document.getElementById('camLoadingText').classList.add('hidden');
             }
         }
+        
+        function resetGestureGameState() {
+            totalGestureScore = 0;
+            gestureLives = 3;
+            gestureRound = 0;
+            document.getElementById('gestureScore').innerText = totalGestureScore;
+            updateGestureLivesUI();
+            
+            document.getElementById('gestureRoundText').innerText = "Bersedia...";
+            document.getElementById('gestureTargetDisplay').innerHTML = `<div class="text-2xl text-gray-400 font-bold">Sedia...</div>`;
+            setTimeout(startNextGestureRound, 2000);
+        }
+        
+        function updateGestureLivesUI() {
+            let hearts = "";
+            for(let i=0; i<gestureLives; i++) hearts += "❤️";
+            document.getElementById('gestureLivesUI').innerText = hearts || "💀";
+        }
 
         function startNextGestureRound() {
             isGestureGameActive = true;
-            currentTargetIndex = Math.floor(Math.random() * gestureTargets.length);
-            let target = gestureTargets[currentTargetIndex];
+            gestureRound++;
+            
+            let t1, t2;
+            let roundLabel = "";
+            
+            // Progression Logic
+            if (gestureRound <= 3) {
+                // Same gesture
+                t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)];
+                t2 = t1;
+                roundLabel = `Pusingan ${gestureRound}: Isyarat SAMA`;
+            } else if (gestureRound <= 6) {
+                // Different gesture
+                t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)];
+                do {
+                    t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)];
+                } while (t1.icon === t2.icon);
+                roundLabel = `Pusingan ${gestureRound}: Isyarat BERBEZA`;
+            } else {
+                // Random (could be same or different)
+                t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)];
+                t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)];
+                roundLabel = `Pusingan ${gestureRound}: Rawak Laju!`;
+            }
+            
+            currentTargetLeft = t1.icon;
+            currentTargetRight = t2.icon;
+            
+            document.getElementById('gestureRoundText').innerText = roundLabel;
             
             const display = document.getElementById('gestureTargetDisplay');
-            display.innerHTML = `${target.icon} <div class="text-xl text-blue-600 mt-2 font-bold">${target.name}</div>`;
-            display.classList.add('pop-in');
-            setTimeout(()=> display.classList.remove('pop-in'), 500);
-            display.style.borderColor = '#3b82f6'; 
+            display.innerHTML = `
+                <div class="flex gap-4 items-center justify-center pop-in">
+                    <div class="border-4 border-blue-400 rounded-xl p-4 bg-blue-50 text-5xl">${t1.icon}</div>
+                    <div class="text-3xl text-gray-400 font-bold">+</div>
+                    <div class="border-4 border-purple-400 rounded-xl p-4 bg-purple-50 text-5xl">${t2.icon}</div>
+                </div>
+            `;
 
             gestureTimeLeft = 100;
             clearInterval(gestureTimerInt);
             
-            let speed = 60 - (totalGestureScore * 2); 
-            if(speed < 20) speed = 20;
+            // Speed scales up with round
+            let speed = 60 - (gestureRound * 3); 
+            if(speed < 15) speed = 15;
 
             gestureTimerInt = setInterval(() => {
                 gestureTimeLeft -= 1;
@@ -1084,7 +1145,20 @@
                 bar.style.width = gestureTimeLeft + "%";
                 bar.style.background = gestureTimeLeft > 50 ? "#4ade80" : gestureTimeLeft > 20 ? "#facc15" : "#ef4444";
                 
-                if (gestureTimeLeft <= 0) endGestureGame("Masa Tamat! ⏰");
+                if (gestureTimeLeft <= 0) {
+                    clearInterval(gestureTimerInt);
+                    isGestureGameActive = false;
+                    
+                    gestureLives--;
+                    updateGestureLivesUI();
+                    
+                    if(gestureLives <= 0) {
+                        endGestureGame("Nyawa Habis! 💔");
+                    } else {
+                        display.innerHTML = `<span class="text-red-500 text-2xl font-bold"><i class="fas fa-times-circle"></i> Terlalu Lambat! Hilang 1 Nyawa</span>`;
+                        setTimeout(startNextGestureRound, 1500);
+                    }
+                }
             }, speed);
         }
 
@@ -1093,43 +1167,55 @@
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const landmarks = results.multiHandLandmarks[0];
-                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 3});
-                drawLandmarks(canvasCtx, landmarks, {color: '#3b82f6', lineWidth: 1, radius: 4});
+                // Draw all hands detected
+                for (const landmarks of results.multiHandLandmarks) {
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 3});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#3b82f6', lineWidth: 1, radius: 4});
+                }
 
-                if(isGestureGameActive) detectPose(landmarks);
+                // Check logic only if 2 hands are detected
+                if(isGestureGameActive) {
+                    if (results.multiHandLandmarks.length === 2) {
+                        detectDualPose(results.multiHandLandmarks);
+                    }
+                }
             }
             canvasCtx.restore();
         }
-
-        function detectPose(landmarks) {
-            const isThumbUp = landmarks[4].y < landmarks[3].y; 
+        
+        function getSinglePose(landmarks) {
             const isIndexUp = landmarks[8].y < landmarks[6].y;
             const isMiddleUp = landmarks[12].y < landmarks[10].y;
             const isRingUp = landmarks[16].y < landmarks[14].y;
             const isPinkyUp = landmarks[20].y < landmarks[18].y;
 
-            let detectedGesture = '';
-            if (isIndexUp && isMiddleUp && isRingUp && isPinkyUp) {
-                detectedGesture = '🖐️'; 
-            } else if (!isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp) {
-                detectedGesture = '✊'; 
-            } else if (isIndexUp && isMiddleUp && !isRingUp && !isPinkyUp) {
-                detectedGesture = '✌️'; 
-            }
+            if (isIndexUp && isMiddleUp && isRingUp && isPinkyUp) return '🖐️'; 
+            if (!isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp) return '✊'; 
+            if (isIndexUp && isMiddleUp && !isRingUp && !isPinkyUp) return '✌️'; 
+            return null;
+        }
 
-            if (detectedGesture === gestureTargets[currentTargetIndex].icon) {
-                isGestureGameActive = false; 
-                clearInterval(gestureTimerInt);
-                
-                totalGestureScore += 10;
-                document.getElementById('gestureScore').innerText = totalGestureScore;
-                
-                const display = document.getElementById('gestureTargetDisplay');
-                display.innerHTML = `<span class="text-green-500"><i class="fas fa-check-circle"></i> Tepat!</span>`;
-                display.style.borderColor = '#4ade80';
-                
-                setTimeout(startNextGestureRound, 800);
+        function detectDualPose(multiLandmarks) {
+            let pose1 = getSinglePose(multiLandmarks[0]);
+            let pose2 = getSinglePose(multiLandmarks[1]);
+            
+            if(pose1 && pose2) {
+                // Accept if both targets are present (regardless of left/right hand to make UX smoother)
+                let isMatch = (pose1 === currentTargetLeft && pose2 === currentTargetRight) ||
+                              (pose1 === currentTargetRight && pose2 === currentTargetLeft);
+                              
+                if (isMatch) {
+                    isGestureGameActive = false; 
+                    clearInterval(gestureTimerInt);
+                    
+                    totalGestureScore += 10;
+                    document.getElementById('gestureScore').innerText = totalGestureScore;
+                    
+                    const display = document.getElementById('gestureTargetDisplay');
+                    display.innerHTML = `<span class="text-green-500 text-3xl font-bold"><i class="fas fa-check-circle"></i> Tepat!</span>`;
+                    
+                    setTimeout(startNextGestureRound, 800);
+                }
             }
         }
 
@@ -1137,14 +1223,11 @@
             isGestureGameActive = false;
             clearInterval(gestureTimerInt);
             const display = document.getElementById('gestureTargetDisplay');
-            display.innerHTML = `<span class="text-red-500 text-3xl"><i class="fas fa-times-circle"></i> ${reason}</span>`;
-            display.style.borderColor = '#ef4444';
+            display.innerHTML = `<span class="text-red-500 text-3xl font-bold"><i class="fas fa-times-circle"></i> ${reason}</span>`;
             
             setTimeout(() => {
-                if(confirm(`Skor Akhir Anda: ${totalGestureScore}. Hebat! Mahu main semula?`)) {
-                    totalGestureScore = 0; document.getElementById('gestureScore').innerText = 0;
-                    document.getElementById('gestureTargetDisplay').innerHTML = `Sedia...`;
-                    setTimeout(startNextGestureRound, 1000);
+                if(confirm(`Permainan Tamat! Skor Akhir Anda: ${totalGestureScore}.\nMahu main semula?`)) {
+                    resetGestureGameState();
                 } else {
                     stopGestureDetection(); showBrainGamesHub();
                 }

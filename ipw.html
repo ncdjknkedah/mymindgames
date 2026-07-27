@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventori Personaliti Warna (IPW)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;600;700&display=swap');
 
@@ -22,21 +22,22 @@
 
         .card {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
             transition: transform 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.8);
         }
 
         .btn-option {
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         .btn-option:active {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.98);
         }
 
         /* Color Themes */
@@ -56,186 +57,245 @@
         .bg-theme-orange { background-color: #fb923c; }
         .text-theme-orange { color: #9a3412; }
 
-        .slide-in {
-            animation: slideIn 0.4s ease-out forwards;
-        }
+        .slide-in { animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .bar-container {
-            height: 20px;
+            height: 24px;
             background-color: #e5e7eb;
             border-radius: 9999px;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         .bar-fill {
             height: 100%;
-            transition: width 1s ease-out;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 9999px;
+        }
+
+        /* Breathing Animation */
+        .breathing-circle {
+            width: 140px; height: 140px; margin: 0 auto;
+            background: radial-gradient(circle, #34d399, #059669);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(5, 150, 105, 0.4);
+            animation: breathe 19s infinite ease-in-out;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; font-size: 1.1rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        @keyframes breathe {
+            0% { transform: scale(0.6); opacity: 0.7; }
+            21% { transform: scale(1.4); opacity: 1; } /* Inhale 4s */
+            58% { transform: scale(1.4); opacity: 1; } /* Hold 7s */
+            100% { transform: scale(0.6); opacity: 0.7; } /* Exhale 8s */
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- Landing Page -->
-    <div id="landing-page" class="card max-w-2xl w-full p-8 text-center slide-in">
-        <div class="mb-6 flex justify-center space-x-4">
-            <div class="w-12 h-12 rounded-full bg-yellow-400 animate-bounce" style="animation-delay: 0s;"></div>
-            <div class="w-12 h-12 rounded-full bg-green-400 animate-bounce" style="animation-delay: 0.1s;"></div>
-            <div class="w-12 h-12 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.2s;"></div>
-            <div class="w-12 h-12 rounded-full bg-orange-400 animate-bounce" style="animation-delay: 0.3s;"></div>
+    <!-- ==========================================
+         LANDING PAGE
+    =========================================== -->
+    <div id="landing-page" class="card max-w-3xl w-full p-10 text-center slide-in border-t-8 border-indigo-500">
+        <div class="mb-8 flex justify-center items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-yellow-400 animate-bounce shadow-lg flex items-center justify-center text-white text-2xl"><i class="fas fa-crown"></i></div>
+            <div class="w-16 h-16 rounded-2xl bg-green-400 animate-bounce shadow-lg flex items-center justify-center text-white text-2xl" style="animation-delay: 0.1s;"><i class="fas fa-leaf"></i></div>
+            <div class="w-16 h-16 rounded-2xl bg-blue-400 animate-bounce shadow-lg flex items-center justify-center text-white text-2xl" style="animation-delay: 0.2s;"><i class="fas fa-heart"></i></div>
+            <div class="w-16 h-16 rounded-2xl bg-orange-400 animate-bounce shadow-lg flex items-center justify-center text-white text-2xl" style="animation-delay: 0.3s;"><i class="fas fa-fire"></i></div>
         </div>
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">Inventori Personaliti Warna</h1>
-        <p class="text-xl text-gray-600 mb-8">Kenali diri anda melalui warna! Ujian ini mengandungi 100 soalan mudah untuk mendedahkan personaliti dominan anda: Emas, Hijau, Biru, atau Jingga.</p>
         
-        <div class="bg-blue-50 p-6 rounded-xl mb-8 text-left">
-            <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Arahan:</h3>
-            <ul class="list-disc list-inside text-gray-700 space-y-2">
-                <li>Baca setiap pernyataan dengan teliti.</li>
-                <li>Jawab <strong>"Ya"</strong> jika pernyataan itu menggambarkan diri anda.</li>
-                <li>Jawab <strong>"Tidak"</strong> jika sebaliknya.</li>
-                <li>Tiada jawapan betul atau salah. Jujurlah dengan diri sendiri.</li>
-                <li>Masa cadangan: 15 - 20 minit.</li>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-6 drop-shadow-sm">Inventori Personaliti Warna</h1>
+        <p class="text-xl text-gray-600 mb-10 font-medium">Kenali keperibadian dominan dan gaya hidup anda melalui warna! Ujian saintifik ini mengandungi 100 soalan interaktif.</p>
+        
+        <div class="bg-blue-50 p-8 rounded-2xl mb-10 text-left border border-blue-100 shadow-inner">
+            <h3 class="font-bold text-blue-800 mb-4 text-xl"><i class="fas fa-list-check mr-2"></i> Panduan Ujian:</h3>
+            <ul class="text-gray-700 space-y-4 font-medium">
+                <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i> Baca setiap pernyataan dengan teliti.</li>
+                <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i> Jawab <strong>"YA"</strong> jika ia tepat menggambarkan diri anda.</li>
+                <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i> Jawab <strong>"TIDAK"</strong> jika sebaliknya.</li>
+                <li class="flex items-start"><i class="fas fa-clock text-blue-500 mt-1 mr-3"></i> Masa rehat minda akan diberikan setiap 20 soalan untuk kekal fokus.</li>
             </ul>
         </div>
 
-        <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-full text-xl shadow-lg transform transition hover:scale-105 btn-option">
-            Mula Ujian Sekarang <i class="fas fa-arrow-right ml-2"></i>
+        <button onclick="startQuiz()" class="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white font-bold py-5 px-12 rounded-full text-xl shadow-xl btn-option">
+            Mula Ujian Sekarang <i class="fas fa-play ml-2"></i>
         </button>
     </div>
 
-    <!-- Quiz Interface -->
-    <div id="quiz-page" class="hidden w-full max-w-2xl">
-        <div class="mb-6 flex justify-between items-center text-gray-700 font-bold">
-            <span id="progress-text">Soalan 1 / 100</span>
-            <div class="w-2/3 bg-gray-200 rounded-full h-4 ml-4">
-                <div id="progress-bar" class="bg-indigo-500 h-4 rounded-full transition-all duration-300" style="width: 1%"></div>
+    <!-- ==========================================
+         QUIZ INTERFACE
+    =========================================== -->
+    <div id="quiz-page" class="hidden w-full max-w-3xl">
+        <!-- Progress Bar -->
+        <div class="mb-8 flex justify-between items-center bg-white/70 p-4 rounded-2xl shadow-sm border border-white">
+            <span id="progress-text" class="text-gray-700 font-extrabold text-lg flex items-center"><i class="fas fa-flag-checkered text-indigo-500 mr-2"></i> Soalan 1 / 100</span>
+            <div class="w-1/2 bg-gray-200 rounded-full h-5 ml-4 shadow-inner overflow-hidden border border-gray-300">
+                <div id="progress-bar" class="bg-gradient-to-r from-indigo-400 to-blue-500 h-5 rounded-full transition-all duration-500 relative" style="width: 1%">
+                    <div class="absolute inset-0 bg-white/20 w-full h-full" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
+                </div>
             </div>
         </div>
 
-        <div id="question-card" class="card p-8 md:p-12 min-h-[300px] flex flex-col justify-center items-center text-center relative overflow-hidden">
-            <!-- Decorative Icon Behind -->
-            <i class="fas fa-question-circle absolute text-gray-100 text-9xl -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+        <!-- Question Card -->
+        <div id="question-card" class="card p-10 md:p-14 min-h-[350px] flex flex-col justify-center items-center text-center relative overflow-hidden">
+            <div class="text-indigo-200 text-6xl mb-6 absolute top-6 left-8 opacity-40"><i class="fas fa-quote-left"></i></div>
             
-            <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-gray-800 mb-10 leading-relaxed">
+            <h2 id="question-text" class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-12 leading-tight z-10">
                 Soalan akan muncul di sini...
             </h2>
 
-            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-                <button onclick="answer(true)" class="btn-option flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl text-lg flex items-center justify-center">
-                    <i class="fas fa-check mr-2"></i> YA
+            <div class="flex flex-col sm:flex-row gap-6 w-full max-w-lg justify-center z-10">
+                <button onclick="answer(true)" class="btn-option flex-1 bg-gradient-to-b from-green-400 to-green-600 text-white font-extrabold py-5 px-8 rounded-2xl text-2xl shadow-lg border-b-4 border-green-700 flex items-center justify-center">
+                    <i class="fas fa-check-circle mr-3"></i> YA
                 </button>
-                <button onclick="answer(false)" class="btn-option flex-1 bg-red-400 hover:bg-red-500 text-white font-bold py-4 px-8 rounded-xl text-lg flex items-center justify-center">
-                    <i class="fas fa-times mr-2"></i> TIDAK
+                <button onclick="answer(false)" class="btn-option flex-1 bg-gradient-to-b from-red-400 to-red-500 text-white font-extrabold py-5 px-8 rounded-2xl text-2xl shadow-lg border-b-4 border-red-700 flex items-center justify-center">
+                    <i class="fas fa-times-circle mr-3"></i> TIDAK
                 </button>
             </div>
         </div>
         
-        <div class="mt-4 text-center">
-            <button onclick="prevQuestion()" id="btn-back" class="text-gray-500 hover:text-indigo-600 font-semibold text-sm hidden">
-                <i class="fas fa-undo mr-1"></i> Kembali ke soalan sebelum
+        <div class="mt-8 text-left">
+            <button onclick="prevQuestion()" id="btn-back" class="bg-white border-2 border-gray-200 text-gray-600 hover:text-indigo-600 hover:border-indigo-300 font-bold py-3 px-6 rounded-full text-sm shadow-sm btn-option hidden">
+                <i class="fas fa-undo mr-2"></i> Kembali ke soalan sebelum
             </button>
         </div>
     </div>
 
-    <!-- Results Page -->
-    <div id="results-page" class="hidden w-full max-w-4xl slide-in pb-12">
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2 brand-font">Keputusan Profil Personaliti Anda</h1>
-            <p class="text-gray-600">Berikut adalah analisis berdasarkan respons anda.</p>
+    <!-- ==========================================
+         MINDFULNESS BREAK PAGE (Setiap 20 Soalan)
+    =========================================== -->
+    <div id="break-page" class="hidden w-full max-w-4xl slide-in">
+        <div class="card p-8 md:p-12 text-center border-t-8 border-teal-500">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-teal-600 mb-4 drop-shadow-sm"><i class="fas fa-spa"></i> Jeda Minda Sebentar</h2>
+            <p class="text-lg text-gray-600 mb-8 font-medium">Tahniah, anda telah menjawab <span id="break-q-count" class="font-bold text-teal-700">20</span> soalan! Ambil masa sebentar untuk merehatkan minda anda sebelum menyambung ujian.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 text-left items-stretch">
+                <!-- Breathing Technique -->
+                <div class="bg-teal-50 p-8 rounded-3xl border-2 border-teal-100 flex flex-col items-center justify-center text-center shadow-sm">
+                    <h3 class="text-xl font-bold text-teal-800 mb-6"><i class="fas fa-wind mr-2"></i> Teknik Pernafasan 4-7-8</h3>
+                    <div class="breathing-circle mb-6">Tarik...</div>
+                    <p class="text-sm text-teal-700 font-bold bg-white px-4 py-2 rounded-full shadow-sm">Tarik (4s) ➡ Tahan (7s) ➡ Hembus (8s)</p>
+                </div>
+                
+                <!-- Grounding Technique -->
+                <div class="bg-purple-50 p-8 rounded-3xl border-2 border-purple-100 shadow-sm flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-purple-800 mb-4"><i class="fas fa-anchor mr-2"></i> Teknik Grounding 5-4-3-2-1</h3>
+                    <p class="text-sm text-purple-700 mb-5 font-medium">Fokuskan deria anda kepada persekitaran semasa:</p>
+                    <ul class="space-y-3 text-sm text-purple-900 font-bold bg-white p-5 rounded-2xl shadow-inner">
+                        <li class="flex items-center"><i class="fas fa-eye w-8 text-purple-500 text-lg"></i> 5 benda anda nampak</li>
+                        <li class="flex items-center"><i class="fas fa-hand-paper w-8 text-purple-500 text-lg"></i> 4 benda boleh disentuh</li>
+                        <li class="flex items-center"><i class="fas fa-ear-listen w-8 text-purple-500 text-lg"></i> 3 bunyi anda dengar</li>
+                        <li class="flex items-center"><i class="fas fa-smog w-8 text-purple-500 text-lg"></i> 2 bau di udara</li>
+                        <li class="flex items-center"><i class="fas fa-tint w-8 text-purple-500 text-lg"></i> 1 benda boleh dirasa</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button onclick="continueFromBreak()" class="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-bold py-5 px-12 rounded-full text-xl shadow-xl transform transition hover:scale-105 btn-option w-full md:w-auto">
+                Minda Saya Sudah Sedia, Teruskan! <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         RESULTS PAGE
+    =========================================== -->
+    <div id="results-page" class="hidden w-full max-w-5xl slide-in pb-12">
+        <div class="text-center mb-12">
+            <div class="inline-block bg-indigo-100 text-indigo-700 px-6 py-2 rounded-full font-bold text-sm mb-4 tracking-widest uppercase shadow-sm">
+                <i class="fas fa-flag-checkered mr-2"></i> Analisis Selesai
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 mb-4 brand-font">Profil Personaliti Anda</h1>
         </div>
 
         <!-- Main Result Card -->
-        <div class="card p-8 mb-8 border-t-8 border-indigo-500">
-            <h2 class="text-2xl font-bold mb-6 text-center">Dominan: <span id="dominant-trait" class="uppercase text-indigo-600"></span></h2>
+        <div class="card p-10 mb-10 border-t-8 border-indigo-500 relative overflow-hidden">
+            <i class="fas fa-certificate absolute text-gray-50 text-[20rem] -z-10 -right-10 -top-10"></i>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <h2 class="text-2xl font-bold mb-8 text-center text-gray-500 uppercase tracking-widest">Warna Dominan Utama</h2>
+            <h2 class="text-5xl md:text-6xl font-extrabold mb-12 text-center" id="dominant-trait"></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <!-- Chart -->
-                <div class="space-y-4">
+                <div class="space-y-6 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                     <!-- Gold -->
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-bold text-yellow-700"><i class="fas fa-crown mr-1"></i> EMAS (Berstruktur)</span>
-                            <span id="score-gold" class="text-sm font-bold text-gray-700">0</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-extrabold text-yellow-700 uppercase tracking-wide"><i class="fas fa-crown mr-2"></i> Emas (Berstruktur)</span>
+                            <span id="score-gold" class="text-sm font-bold text-gray-700 bg-yellow-100 px-3 py-1 rounded-lg">0 / 25</span>
                         </div>
-                        <div class="bar-container">
-                            <div id="bar-gold" class="bar-fill bg-yellow-400" style="width: 0%"></div>
-                        </div>
+                        <div class="bar-container"><div id="bar-gold" class="bar-fill bg-theme-gold" style="width: 0%"></div></div>
                     </div>
                     <!-- Green -->
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-bold text-green-700"><i class="fas fa-leaf mr-1"></i> HIJAU (Pemikir)</span>
-                            <span id="score-green" class="text-sm font-bold text-gray-700">0</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-extrabold text-green-700 uppercase tracking-wide"><i class="fas fa-leaf mr-2"></i> Hijau (Pemikir)</span>
+                            <span id="score-green" class="text-sm font-bold text-gray-700 bg-green-100 px-3 py-1 rounded-lg">0 / 25</span>
                         </div>
-                        <div class="bar-container">
-                            <div id="bar-green" class="bar-fill bg-green-400" style="width: 0%"></div>
-                        </div>
+                        <div class="bar-container"><div id="bar-green" class="bar-fill bg-theme-green" style="width: 0%"></div></div>
                     </div>
                     <!-- Blue -->
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-bold text-blue-700"><i class="fas fa-heart mr-1"></i> BIRU (Perasaan)</span>
-                            <span id="score-blue" class="text-sm font-bold text-gray-700">0</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-extrabold text-blue-700 uppercase tracking-wide"><i class="fas fa-heart mr-2"></i> Biru (Perasaan)</span>
+                            <span id="score-blue" class="text-sm font-bold text-gray-700 bg-blue-100 px-3 py-1 rounded-lg">0 / 25</span>
                         </div>
-                        <div class="bar-container">
-                            <div id="bar-blue" class="bar-fill bg-blue-400" style="width: 0%"></div>
-                        </div>
+                        <div class="bar-container"><div id="bar-blue" class="bar-fill bg-theme-blue" style="width: 0%"></div></div>
                     </div>
                     <!-- Orange -->
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-bold text-orange-700"><i class="fas fa-bolt mr-1"></i> JINGGA (Adventurous)</span>
-                            <span id="score-orange" class="text-sm font-bold text-gray-700">0</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-extrabold text-orange-700 uppercase tracking-wide"><i class="fas fa-bolt mr-2"></i> Jingga (Adventurous)</span>
+                            <span id="score-orange" class="text-sm font-bold text-gray-700 bg-orange-100 px-3 py-1 rounded-lg">0 / 25</span>
                         </div>
-                        <div class="bar-container">
-                            <div id="bar-orange" class="bar-fill bg-orange-400" style="width: 0%"></div>
-                        </div>
+                        <div class="bar-container"><div id="bar-orange" class="bar-fill bg-theme-orange" style="width: 0%"></div></div>
                     </div>
                 </div>
 
                 <!-- Summary Icon -->
-                <div class="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl">
-                    <div id="result-icon" class="text-8xl mb-4 text-gray-300">
-                        <i class="fas fa-user-circle"></i>
+                <div class="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl border-2 border-gray-200 shadow-inner h-full">
+                    <div id="result-icon" class="text-9xl mb-6 drop-shadow-md">
+                        <i class="fas fa-user-circle text-gray-300"></i>
                     </div>
-                    <p class="text-center italic text-gray-500" id="short-desc">Menganalisis keputusan...</p>
+                    <p class="text-center font-bold text-xl text-gray-700" id="short-desc">Menganalisis keputusan...</p>
                 </div>
             </div>
         </div>
 
         <!-- Detailed Interpretation -->
-        <div id="interpretation-container" class="space-y-6">
+        <div id="interpretation-container" class="space-y-8">
             <!-- Dynamic Content Injected Here -->
         </div>
 
-        <div class="text-center mt-12">
-            <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white font-bold py-3 px-8 rounded-full shadow-lg transition">
+        <div class="text-center mt-16 flex flex-col md:flex-row justify-center gap-4">
+            <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white font-bold py-4 px-10 rounded-full shadow-xl transition btn-option text-lg">
                 <i class="fas fa-redo mr-2"></i> Ambil Ujian Semula
             </button>
-            <button onclick="window.print()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-3 px-8 rounded-full shadow-lg transition ml-2">
+            <button onclick="window.print()" class="bg-white border-2 border-indigo-600 text-indigo-700 hover:bg-indigo-50 font-bold py-4 px-10 rounded-full shadow-lg transition btn-option text-lg">
                 <i class="fas fa-print mr-2"></i> Cetak Keputusan
             </button>
         </div>
     </div>
 
-    <!-- Data & Script -->
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+    =========================================== -->
     <script>
-        // Data Soalan (Questions mapped from IPW Doc)
+        // Data Soalan (100 Questions)
         const questions = [
             "Saya cepat menyesuaikan diri dengan situasi baru.", // 1 Gold
             "Saya lebih tua dari umur sebenar saya daripada segi pemikiran.", // 2 Green
             "Saya mudah mesra bila berhubung dengan orang lain.", // 3 Blue
-            "Saya adalah dalam golongan orang yang pandai.", // 4 Orange (Check original doc mapping, but keeping cycle consistency for now based on stencil logic: Emas=1, Hijau=2, Biru=3, Jingga=4)
-            // Wait, looking at the doc stencil:
-            // Emas: 1, 5, 9...
-            // Hijau: 2, 6, 10...
-            // Biru: 3, 7, 11...
-            // Jingga: 4, 8, 12...
-            // Let's paste the questions in order 1-100.
+            "Saya adalah dalam golongan orang yang pandai.", // 4 Orange
             "Saya amat selesa dengan pengekalan cara hidup tradisi.", // 5
             "Saya bersemangat mengikuti subjek yang merangsang minda.", // 6
             "Saya suka kelihatan berbeza daripada orang lain.", // 7
@@ -243,10 +303,7 @@
             "Saya sangat menghargai kehidupan berkeluarga.", // 9
             "Saya sentiasa membaca untuk menambah ilmu pengetahuan.", // 10
             "Saya suka menunjukkan keperibadian saya sebenar dalam semua keadaan.", // 11
-            "Saya suka bergaul dengan semua orang.", // 12 (Note: Doc says 'Orang yang pandai' for #4? Let me re-verify text)
-            // Correction based on doc text provided:
-            // 4. Saya adalah dalam golongan orang yang pandai. (Usually Jingga in sequence 4, 8, 12... wait. Jingga is 'Adventurous'. 'Pandai' usually Green. Let's trust the Stencil Logic: 1=E, 2=H, 3=B, 4=J.)
-            
+            "Saya suka bergaul dengan semua orang.", // 12 
             "Saya akan melakukan segala kerja secara bersistematik.", // 13
             "Saya sering bertanya guru mengenai persoalan yang mengganggu minda saya.", // 14
             "Saya selalu memberi dorongan kepada orang lain untuk melakukan sesuatu pekerjaan.", // 15
@@ -455,6 +512,7 @@
         // DOM Elements
         const landingPage = document.getElementById('landing-page');
         const quizPage = document.getElementById('quiz-page');
+        const breakPage = document.getElementById('break-page');
         const resultsPage = document.getElementById('results-page');
         const questionText = document.getElementById('question-text');
         const progressText = document.getElementById('progress-text');
@@ -470,18 +528,17 @@
 
         function renderQuestion() {
             questionText.innerText = `${currentQuestion + 1}. ${questions[currentQuestion]}`;
-            progressText.innerText = `Soalan ${currentQuestion + 1} / 100`;
+            progressText.innerHTML = `<i class="fas fa-flag-checkered text-indigo-500 mr-2"></i> Soalan ${currentQuestion + 1} / 100`;
             const percent = ((currentQuestion + 1) / 100) * 100;
             progressBar.style.width = `${percent}%`;
 
-            // Change progress bar color based on question type (Visual cue)
+            // Dynamic color indicator based on question sequence (Gold, Green, Blue, Orange)
             const type = (currentQuestion + 1) % 4;
-            if(type === 1) progressBar.className = "h-4 rounded-full transition-all duration-300 bg-yellow-500";
-            if(type === 2) progressBar.className = "h-4 rounded-full transition-all duration-300 bg-green-500";
-            if(type === 3) progressBar.className = "h-4 rounded-full transition-all duration-300 bg-blue-500";
-            if(type === 0) progressBar.className = "h-4 rounded-full transition-all duration-300 bg-orange-500";
+            if(type === 1) progressBar.className = "bg-gradient-to-r from-yellow-400 to-yellow-500 h-5 rounded-full transition-all duration-500 relative";
+            if(type === 2) progressBar.className = "bg-gradient-to-r from-green-400 to-green-500 h-5 rounded-full transition-all duration-500 relative";
+            if(type === 3) progressBar.className = "bg-gradient-to-r from-blue-400 to-blue-500 h-5 rounded-full transition-all duration-500 relative";
+            if(type === 0) progressBar.className = "bg-gradient-to-r from-orange-400 to-orange-500 h-5 rounded-full transition-all duration-500 relative";
             
-            // Show/Hide back button
             const btnBack = document.getElementById('btn-back');
             if(currentQuestion > 0) btnBack.classList.remove('hidden');
             else btnBack.classList.add('hidden');
@@ -489,13 +546,8 @@
 
         function prevQuestion() {
             if(currentQuestion > 0) {
-                // Revert score
                 const prevAnswer = answers[currentQuestion - 1];
                 if (prevAnswer === true) {
-                    // Determine category
-                    const qNum = currentQuestion; // This is the index + 1 of the prev question (since currentQuestion is index of current)
-                    // Wait, currentQuestion is index. prev question index is currentQuestion - 1.
-                    // qNum for calculation: (currentQuestion - 1) + 1 = currentQuestion
                     updateScore(currentQuestion, -1); 
                 }
                 currentQuestion--;
@@ -510,30 +562,42 @@
                 updateScore(currentQuestion + 1, 1);
             }
 
-            if (currentQuestion < 99) {
-                currentQuestion++;
-                // Add a small animation effect
-                const card = document.getElementById('question-card');
-                card.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => {
-                    renderQuestion();
-                    card.classList.remove('opacity-0', 'translate-x-10');
-                    card.classList.add('slide-in');
-                }, 200);
-            } else {
+            currentQuestion++;
+
+            if (currentQuestion === 100) {
                 showResults();
+            } else if (currentQuestion % 20 === 0) {
+                showBreakPage();
+            } else {
+                transitionToNextQuestion();
             }
         }
 
+        function transitionToNextQuestion() {
+            const card = document.getElementById('question-card');
+            card.classList.add('opacity-0', 'translate-x-10', 'scale-95');
+            setTimeout(() => {
+                renderQuestion();
+                card.classList.remove('opacity-0', 'translate-x-10', 'scale-95');
+                card.classList.add('fade-in');
+            }, 250);
+        }
+
+        function showBreakPage() {
+            quizPage.classList.add('hidden');
+            document.getElementById('break-q-count').innerText = currentQuestion;
+            breakPage.classList.remove('hidden');
+            breakPage.classList.add('slide-in');
+        }
+
+        function continueFromBreak() {
+            breakPage.classList.add('hidden');
+            quizPage.classList.remove('hidden');
+            transitionToNextQuestion();
+        }
+
         function updateScore(qNumber, value) {
-            // Scoring Logic based on Modulo 4
-            // Gold: 1, 5, 9... (Remainder 1)
-            // Green: 2, 6, 10... (Remainder 2)
-            // Blue: 3, 7, 11... (Remainder 3)
-            // Orange: 4, 8, 12... (Remainder 0)
-            
             const remainder = qNumber % 4;
-            
             if (remainder === 1) scores.gold += value;
             else if (remainder === 2) scores.green += value;
             else if (remainder === 3) scores.blue += value;
@@ -544,7 +608,6 @@
             quizPage.classList.add('hidden');
             resultsPage.classList.remove('hidden');
 
-            // Find max score
             const maxScore = Math.max(scores.gold, scores.green, scores.blue, scores.orange);
             let dominant = [];
             if (scores.gold === maxScore) dominant.push('gold');
@@ -552,20 +615,17 @@
             if (scores.blue === maxScore) dominant.push('blue');
             if (scores.orange === maxScore) dominant.push('orange');
 
-            // Pick the first dominant one for main display (or handle ties)
             const mainTraitKey = dominant[0];
             const traitData = interpretations[mainTraitKey];
 
-            // Update UI
             document.getElementById('dominant-trait').innerText = traitData.title;
-            document.getElementById('dominant-trait').className = `uppercase text-2xl font-bold ${traitData.textColor}`;
+            document.getElementById('dominant-trait').className = `text-4xl md:text-5xl font-extrabold mb-12 text-center ${traitData.textColor}`;
             
             document.getElementById('score-gold').innerText = `${scores.gold} / 25`;
             document.getElementById('score-green').innerText = `${scores.green} / 25`;
             document.getElementById('score-blue').innerText = `${scores.blue} / 25`;
             document.getElementById('score-orange').innerText = `${scores.orange} / 25`;
 
-            // Animate Bars
             setTimeout(() => {
                 document.getElementById('bar-gold').style.width = `${(scores.gold / 25) * 100}%`;
                 document.getElementById('bar-green').style.width = `${(scores.green / 25) * 100}%`;
@@ -573,45 +633,41 @@
                 document.getElementById('bar-orange').style.width = `${(scores.orange / 25) * 100}%`;
             }, 500);
 
-            // Icon & Short Desc
             const iconContainer = document.getElementById('result-icon');
-            iconContainer.innerHTML = `<i class="fas ${traitData.icon} ${traitData.textColor}"></i>`;
+            iconContainer.innerHTML = `<i class="fas ${traitData.icon} ${traitData.textColor} drop-shadow-lg"></i>`;
             document.getElementById('short-desc').innerText = traitData.keywords;
 
-            // Generate Detailed Interpretation HTML
             let detailsHTML = '';
-            
-            // Loop through all dominant traits (in case of tie)
             dominant.forEach(key => {
                 const data = interpretations[key];
                 detailsHTML += `
-                    <div class="card p-8 border-l-8 ${data.colorClass.replace('bg-', 'border-')} slide-in mb-6">
-                        <h3 class="text-2xl font-bold mb-4 ${data.textColor}"><i class="fas ${data.icon} mr-2"></i> ${data.title}</h3>
+                    <div class="card p-10 border-l-8 ${data.colorClass.replace('bg-', 'border-')} slide-in mb-8">
+                        <h3 class="text-3xl font-extrabold mb-6 ${data.textColor}"><i class="fas ${data.icon} mr-3"></i> ${data.title}</h3>
                         
-                        <div class="mb-6">
-                            <h4 class="font-bold text-gray-800 text-lg mb-2">Ciri-Ciri Umum:</h4>
-                            <p class="text-gray-700 leading-relaxed bg-white p-4 rounded-lg shadow-sm">${data.general}</p>
+                        <div class="mb-8">
+                            <h4 class="font-bold text-gray-800 text-xl mb-3 border-b-2 pb-2 inline-block">Ciri-Ciri Umum:</h4>
+                            <p class="text-gray-700 leading-relaxed bg-gray-50 p-5 rounded-2xl shadow-inner border border-gray-100 font-medium">${data.general}</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <h4 class="font-bold text-gray-800 mb-2 border-b-2 pb-1 inline-block">Tentang Diri Saya:</h4>
-                                <ul class="list-none space-y-2 mt-2">
-                                    ${data.self.map(item => `<li class="flex items-start"><i class="fas fa-check-circle text-gray-400 mt-1 mr-2 text-xs"></i><span class="text-gray-600 text-sm">${item}</span></li>`).join('')}
+                                <h4 class="font-bold text-gray-800 text-lg mb-4 border-b-2 pb-2 inline-block"><i class="fas fa-user mr-2 text-gray-500"></i> Tentang Diri Saya:</h4>
+                                <ul class="list-none space-y-3 mt-2">
+                                    ${data.self.map(item => `<li class="flex items-start bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-sm"></i><span class="text-gray-700 text-sm font-medium leading-relaxed">${item}</span></li>`).join('')}
                                 </ul>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-800 mb-2 border-b-2 pb-1 inline-block">Di Tempat Kerja:</h4>
-                                <ul class="list-none space-y-2 mt-2">
-                                    ${data.work.map(item => `<li class="flex items-start"><i class="fas fa-briefcase text-gray-400 mt-1 mr-2 text-xs"></i><span class="text-gray-600 text-sm">${item}</span></li>`).join('')}
+                                <h4 class="font-bold text-gray-800 text-lg mb-4 border-b-2 pb-2 inline-block"><i class="fas fa-briefcase mr-2 text-gray-500"></i> Di Tempat Kerja:</h4>
+                                <ul class="list-none space-y-3 mt-2">
+                                    ${data.work.map(item => `<li class="flex items-start bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition"><i class="fas fa-check-circle text-blue-500 mt-1 mr-3 text-sm"></i><span class="text-gray-700 text-sm font-medium leading-relaxed">${item}</span></li>`).join('')}
                                 </ul>
                             </div>
                         </div>
                         
-                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">Semasa Kanak-Kanak:</h4>
-                             <ul class="list-none space-y-1">
-                                ${data.child.map(item => `<li class="text-gray-600 text-sm italic"><i class="fas fa-child mr-2"></i>${item}</li>`).join('')}
+                        <div class="mt-8 bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                            <h4 class="font-bold text-indigo-900 mb-4 text-sm uppercase tracking-widest"><i class="fas fa-child mr-2"></i>Semasa Kanak-Kanak:</h4>
+                             <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 list-none">
+                                ${data.child.map(item => `<li class="text-indigo-800 text-sm font-medium flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-3"></span>${item}</li>`).join('')}
                             </ul>
                         </div>
                     </div>

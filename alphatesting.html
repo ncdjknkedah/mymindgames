@@ -3,1042 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusat Kesejahteraan Minda & Gim Otak AI</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Pusat Kesejahteraan Minda & Gim Otak</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- AI Libraries for Camera Gesture Tracking (MediaPipe) -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-
     <style>
-        /* Base & Background Styles */
-        body { font-family: 'Fredoka', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); background-attachment: fixed; min-height: 100vh; overflow-x: hidden; }
-        .bg-animated { background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #a1c4fd, #c2e9fb); background-size: 400% 400%; animation: gradientBG 15s ease infinite; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -2; }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* Floating particles */
-        .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
-        .particle { position: absolute; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: floatUp linear infinite; }
-        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(-20vh) scale(1.5) rotate(360deg); opacity: 0; } }
-
-        /* General UI Elements */
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-radius: 30px; box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.15); border: 2px solid rgba(255, 255, 255, 0.6); }
-        .btn-bounce { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .btn-bounce:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 25px rgba(0,0,0,0.15); }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        body { font-family: 'Fredoka', sans-serif; background: linear-gradient(135deg, #fdfbfb, #ebedee); background-attachment: fixed; min-height: 100vh; overflow-x: hidden; }
+        .bg-animated { background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #a1c4fd, #c2e9fb); background-size: 400% 400%; animation: gradBG 15s ease infinite; position: fixed; top:0; left:0; right:0; bottom:0; z-index: -2; }
+        @keyframes gradBG { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .particles-container { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+        .particle { position: absolute; background: rgba(255,255,255,0.4); border-radius: 50%; animation: floatUp linear infinite; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity:0.8; } 100% { transform: translateY(-20vh) scale(1.5) rotate(360deg); opacity:0; } }
+        .glass-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px solid rgba(255,255,255,0.6); }
+        .btn-bounce { transition: all 0.3s; } .btn-bounce:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; } @keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; } @keyframes popIn { 0%{opacity:0; transform:scale(0.8);} 100%{opacity:1; transform:scale(1);} }
         .hidden-section { display: none !important; }
-        
-        .confetti { position: fixed; width: 10px; height: 10px; background-color: #f2d74e; opacity: 0; z-index: 50; animation: fall linear forwards; }
-        @keyframes fall { 0% { opacity: 1; transform: translateY(-10vh) rotate(0deg); } 100% { opacity: 0; transform: translateY(100vh) rotate(360deg); } }
-
-        /* Emoji Radio Setup (Tangki Tenaga) */
+        /* Forms & Radios */
         .emoji-radio input[type="radio"] { display: none; }
-        .emoji-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 55px; height: 55px; border-radius: 50%; margin: 0 auto 5px auto; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); opacity: 0.6; background: transparent; border: 2px solid transparent; }
+        .emoji-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 5px; transition: 0.3s; filter: grayscale(100%); opacity: 0.6; }
         .emoji-radio label { cursor: pointer; display: block; }
         .emoji-radio label:hover .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.8); }
-        .emoji-radio input[type="radio"][value="1"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.25); background: #ffe5e5; border-color: #ff4d4d; box-shadow: 0 0 20px rgba(255, 77, 77, 0.5); }
-        .emoji-radio input[type="radio"][value="1"]:checked + label .emoji-text { color: #ff4d4d; font-weight: bold; }
-        .emoji-radio input[type="radio"][value="2"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.25); background: #fff0e6; border-color: #ff9933; box-shadow: 0 0 20px rgba(255, 153, 51, 0.5); }
-        .emoji-radio input[type="radio"][value="2"]:checked + label .emoji-text { color: #ff9933; font-weight: bold; }
-        .emoji-radio input[type="radio"][value="3"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.25); background: #fffbe6; border-color: #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.5); }
-        .emoji-radio input[type="radio"][value="3"]:checked + label .emoji-text { color: #d4aa00; font-weight: bold; }
-        .emoji-radio input[type="radio"][value="4"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.25); background: #e6f2ff; border-color: #3399ff; box-shadow: 0 0 20px rgba(51, 153, 255, 0.5); }
-        .emoji-radio input[type="radio"][value="4"]:checked + label .emoji-text { color: #3399ff; font-weight: bold; }
-        .emoji-radio input[type="radio"][value="5"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.25); background: #e6ffe6; border-color: #33cc33; box-shadow: 0 0 20px rgba(51, 204, 51, 0.5); }
-        .emoji-radio input[type="radio"][value="5"]:checked + label .emoji-text { color: #33cc33; font-weight: bold; }
-
-        /* Tank Visualizer */
-        .tank-container { width: 70px; height: 200px; background: rgba(255,255,255,0.8); border: 4px solid #fff; border-radius: 40px; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); margin: 0 auto; }
-        .tank-liquid { position: absolute; bottom: 0; left: 0; width: 100%; border-radius: 0 0 35px 35px; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 1s; }
-        .tank-liquid::before { content: ''; position: absolute; top: -10px; left: -50%; width: 200%; height: 20px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: wave 2s infinite linear; }
-
-        /* IPW Colors & Bars */
-        .bg-theme-gold { background-color: #fbbf24; }
-        .text-theme-gold { color: #d97706; }
-        .border-theme-gold { border-color: #fbbf24; }
-        .bg-theme-green { background-color: #34d399; }
-        .text-theme-green { color: #059669; }
-        .border-theme-green { border-color: #34d399; }
-        .bg-theme-blue { background-color: #60a5fa; }
-        .text-theme-blue { color: #2563eb; }
-        .border-theme-blue { border-color: #60a5fa; }
-        .bg-theme-orange { background-color: #fb923c; }
-        .text-theme-orange { color: #ea580c; }
-        .border-theme-orange { border-color: #fb923c; }
-        .ipw-bar-container { height: 24px; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);}
-        .ipw-bar-fill { height: 100%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 9999px; }
-
-        /* Breathing Animation for Break */
-        .breathing-circle {
-            width: 120px; height: 120px; margin: 0 auto;
-            background: radial-gradient(circle, #4fd1c5, #0d9488);
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(20, 184, 166, 0.5);
-            animation: breathe 19s infinite ease-in-out;
-        }
-        @keyframes breathe {
-            0% { transform: scale(0.6); opacity: 0.5; }
-            21% { transform: scale(1.3); opacity: 1; } /* Inhale ~4s */
-            58% { transform: scale(1.3); opacity: 1; } /* Hold ~7s */
-            100% { transform: scale(0.6); opacity: 0.5; } /* Exhale ~8s */
-        }
-
-        /* Mini Games CSS */
+        .emoji-radio input[type="radio"]:checked + label .emoji-wrapper { filter: grayscale(0%); opacity: 1; transform: scale(1.2); box-shadow: 0 0 15px rgba(0,0,0,0.1); background: #fff; border: 2px solid; }
+        .emoji-radio input[value="1"]:checked + label .emoji-wrapper { border-color: #ff4d4d; } .emoji-radio input[value="1"]:checked + label { color: #ff4d4d; font-weight: bold; }
+        .emoji-radio input[value="2"]:checked + label .emoji-wrapper { border-color: #ff9933; } .emoji-radio input[value="2"]:checked + label { color: #ff9933; font-weight: bold; }
+        .emoji-radio input[value="3"]:checked + label .emoji-wrapper { border-color: #ffcc00; } .emoji-radio input[value="3"]:checked + label { color: #d4aa00; font-weight: bold; }
+        .emoji-radio input[value="4"]:checked + label .emoji-wrapper { border-color: #3399ff; } .emoji-radio input[value="4"]:checked + label { color: #3399ff; font-weight: bold; }
+        .emoji-radio input[value="5"]:checked + label .emoji-wrapper { border-color: #33cc33; } .emoji-radio input[value="5"]:checked + label { color: #33cc33; font-weight: bold; }
+        .tank-container { width: 70px; height: 200px; background: rgba(255,255,255,0.8); border: 4px solid #fff; border-radius: 40px; position: relative; overflow: hidden; margin: 0 auto; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+        .tank-liquid { position: absolute; bottom: 0; left: 0; width: 100%; transition: height 1.5s, background 1s; border-radius: 0 0 35px 35px; }
+        .confetti { position: fixed; width: 10px; height: 10px; opacity: 0; z-index: 50; animation: fall linear forwards; } @keyframes fall { 0%{opacity:1; transform:translateY(-10vh) rotate(0deg);} 100%{opacity:0; transform:translateY(100vh) rotate(360deg);} }
+        /* IPW Colors */
+        .ipw-bar { height: 20px; border-radius: 10px; transition: width 1s; } .bg-emas{background:#fbbf24;} .bg-hijau{background:#34d399;} .bg-biru{background:#60a5fa;} .bg-jingga{background:#fb923c;}
+        .breathing-circle { width: 120px; height: 120px; margin: 0 auto; background: radial-gradient(circle, #4fd1c5, #0d9488); border-radius: 50%; box-shadow: 0 0 30px rgba(20,184,166,0.5); animation: breathe 19s infinite ease-in-out; }
+        @keyframes breathe { 0%{transform:scale(0.6);opacity:0.5;} 21%{transform:scale(1.3);opacity:1;} 58%{transform:scale(1.3);opacity:1;} 100%{transform:scale(0.6);opacity:0.5;} }
+        /* Games */
         .camera-box { position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: 20px; overflow: hidden; border: 4px solid #3b82f6; background: #000; aspect-ratio: 4/3;}
-        .camera-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .camera-box canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
-        .timer-bar-container { width: 100%; height: 15px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-        .timer-bar { height: 100%; background: #ef4444; width: 100%; transition: width 0.1s linear, background-color 0.3s; }
-        .mini-cam-preview { position: absolute; top: 10px; right: 10px; width: 80px; height: 60px; border-radius: 10px; border: 2px solid white; background: #000; overflow: hidden; z-index: 10; opacity: 0.8;}
-        .mini-cam-preview video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .clap-indicator { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: all 0.1s; background: #fdf2f8; border: 8px solid #fbcfe8; }
-        .clap-detected { transform: scale(1.3); border-color: #ec4899; background: #fbcfe8; box-shadow: 0 0 30px rgba(236, 72, 153, 0.6); }
-        .wave-animation span { display: inline-block; animation: waveText 1s infinite alternate; }
-        
-        /* Scream & Custom Games */
-        .scream-page { display: none; width: 100%; animation: fadeIn 0.4s; }
-        .scream-page.active { display: block; }
-        .scream-meter-container { position: relative; width: 100px; height: 320px; background: #1a1a1a; margin: 30px auto; border-radius: 20px; border: 4px solid #333; overflow: visible; }
-        #screamVolumeBar { position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(to top, #00ff00, #ffff00, #ff416c); transition: height 0.1s ease-out; border-radius: 0 0 15px 15px; }
-        #screamPeakIndicator { position: absolute; bottom: 0; width: 100%; height: 4px; background: white; box-shadow: 0 0 12px white; z-index: 10; }
-        #screamPeakValue { position: absolute; right: -70px; background: white; color: black; padding: 2px 6px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; transform: translateY(-50%); pointer-events: none; border: 1px solid #ddd; }
-        .custom-game-container { position: relative; width: 100%; max-width: 400px; height: 450px; margin: 0 auto; border-radius: 20px; overflow: hidden; touch-action: none;}
-        .kucing-bg { background: linear-gradient(to bottom, #87CEEB, #E0F6FF); border: 4px solid #10b981;}
-        .cawan-bg { background: linear-gradient(to bottom, #4f46e5, #818cf8); border: 4px solid #fcd34d;}
-        .game-canvas { display: block; width: 100%; height: 100%; cursor: pointer;}
+        .camera-box video, .camera-box canvas { position: absolute; top:0; left:0; width:100%; height:100%; transform: scaleX(-1); }
+        .timer-bar { height: 15px; background: #ef4444; width: 100%; transition: width 0.1s linear; border-radius: 10px; }
+        .scream-meter { width: 80px; height: 300px; background: #1a1a1a; margin: 20px auto; border-radius: 20px; position: relative; border: 4px solid #333; overflow: hidden; }
+        #screamVolumeBar { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #0f0, #ff0, #f00); transition: height 0.1s; }
+        .game-area { width: 100%; max-width: 400px; height: 450px; margin: 0 auto; position: relative; overflow: hidden; border-radius: 20px; touch-action: none; }
     </style>
 </head>
-<body class="p-4 md:p-8 text-gray-700">
+<body class="p-4 md:p-8 text-gray-800">
+    <div class="bg-animated"></div><div class="particles-container" id="particles"></div>
 
-    <div class="bg-animated"></div>
-    <div class="particles-container" id="particles"></div>
-
-    <div class="max-w-6xl mx-auto glass-card p-6 md:p-10 relative mt-4">
+    <div class="max-w-6xl mx-auto glass-card p-6 md:p-10 relative">
         
-        <!-- ==========================================
-             MENU UTAMA (PILIHAN LALUAN)
-        =========================================== -->
-        <div id="step-main-menu" class="text-center fade-in py-8">
-            <div class="text-7xl mb-6 animate-bounce" style="animation-duration: 2s;">🔋🎨🧠</div>
-            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600 mb-4 drop-shadow-sm">
-                Pusat Kesejahteraan Minda
-            </h1>
-            <p class="text-lg text-gray-600 mb-10 font-medium">Pilih laluan penerokaan anda hari ini.</p>
-            
+        <!-- 1. MENU UTAMA -->
+        <div id="ui-main" class="text-center fade-in py-8">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600 mb-2">Pusat Kesejahteraan Minda</h1>
+            <p class="text-lg text-gray-600 mb-10 font-medium">Pilih modul penerokaan anda hari ini.</p>
             <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-purple-200 flex flex-col justify-between" onclick="showAuditIntro()">
-                    <div>
-                        <div class="text-6xl mb-4">📝</div>
-                        <h2 class="text-2xl font-extrabold text-purple-700 mb-2">Audit Tangki Tenaga</h2>
-                        <p class="text-gray-600 mb-6 text-sm font-medium">Ukur tahap tenaga Fizikal, Mental, Emosi & Tingkah Laku secara saintifik.</p>
-                    </div>
-                    <button class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-3 px-6 rounded-full w-full shadow-md">Mula Penilaian</button>
+                <div class="bg-white/90 p-8 rounded-3xl shadow-lg border-2 border-purple-200 cursor-pointer btn-bounce flex flex-col justify-between" onclick="show('ui-audit-intro')">
+                    <div><div class="text-6xl mb-4">📝</div><h2 class="text-2xl font-bold text-purple-700 mb-2">Audit Tangki Tenaga</h2><p class="text-gray-600 text-sm mb-4">Ukur tahap kelesuan fizikal, mental, emosi & tingkah laku.</p></div>
+                    <button class="bg-purple-500 text-white font-bold py-3 rounded-full w-full">Mula Audit</button>
                 </div>
-
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-orange-200 flex flex-col justify-between" onclick="openIPW()">
-                    <div>
-                        <div class="text-6xl mb-4 flex justify-center gap-1">
-                            <span class="text-yellow-400">●</span><span class="text-green-500">●</span><span class="text-blue-500">●</span><span class="text-orange-500">●</span>
-                        </div>
-                        <h2 class="text-2xl font-extrabold text-orange-600 mb-2">Personaliti Warna</h2>
-                        <p class="text-gray-600 mb-6 text-sm font-medium">Kenali keperibadian dominan dan gaya bekerja anda melalui 100 soalan unik.</p>
-                    </div>
-                    <button class="btn-bounce bg-gradient-to-r from-orange-400 to-red-500 text-white font-bold py-3 px-6 rounded-full w-full shadow-md">Mula Inventori</button>
+                <div class="bg-white/90 p-8 rounded-3xl shadow-lg border-2 border-orange-200 cursor-pointer btn-bounce flex flex-col justify-between" onclick="show('ui-ipw-intro')">
+                    <div><div class="text-6xl mb-4 text-orange-500">🎨</div><h2 class="text-2xl font-bold text-orange-600 mb-2">Personaliti Warna</h2><p class="text-gray-600 text-sm mb-4">Kenali keperibadian dominan anda melalui 100 soalan (IPW).</p></div>
+                    <button class="bg-orange-500 text-white font-bold py-3 rounded-full w-full">Mula IPW</button>
                 </div>
-
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-blue-200 flex flex-col justify-between" onclick="showBrainGamesHub()">
-                    <div>
-                        <div class="text-6xl mb-4">🎮</div>
-                        <h2 class="text-2xl font-extrabold text-blue-700 mb-2">Gim Otak AI</h2>
-                        <p class="text-gray-600 mb-6 text-sm font-medium">Rehatkan minda, asah refleks & lepaskan tekanan melalui siri permainan interaktif.</p>
-                    </div>
-                    <button class="btn-bounce bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-6 rounded-full w-full shadow-md">Teroka Gim</button>
+                <div class="bg-white/90 p-8 rounded-3xl shadow-lg border-2 border-blue-200 cursor-pointer btn-bounce flex flex-col justify-between" onclick="show('ui-games-hub')">
+                    <div><div class="text-6xl mb-4">🎮</div><h2 class="text-2xl font-bold text-blue-700 mb-2">Gim Otak AI</h2><p class="text-gray-600 text-sm mb-4">Aktiviti interaktif untuk asah memori, refleks & kurangkan stres.</p></div>
+                    <button class="bg-blue-500 text-white font-bold py-3 rounded-full w-full">Mula Main</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==========================================
-             MODUL 1: AUDIT TANGKI TENAGA
-        =========================================== -->
-        <div id="step-audit-intro" class="hidden-section fade-in text-center py-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-purple-700 mb-6 drop-shadow-sm">Audit Tangki Tenaga 🔋</h1>
-            
-            <div class="bg-indigo-50 border-l-8 border-indigo-500 p-6 md:p-8 text-left rounded-r-3xl mb-10 max-w-3xl mx-auto shadow-sm">
-                <h3 class="text-2xl font-bold text-indigo-800 mb-3 flex items-center gap-2">
-                    <i class="fas fa-info-circle text-indigo-500"></i> Apa itu Audit Tangki Tenaga?
-                </h3>
-                <p class="text-gray-700 mb-4 text-base leading-relaxed font-medium">
-                    Sama seperti kenderaan yang perlukan minyak, manusia juga mempunyai 'tangki tenaga' yang perlu diisi agar tidak mudah rosak. Audit ini mengukur 4 dimensi penting dalam diri anda:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-indigo-100 flex items-center gap-3">
-                        <span class="text-2xl">🏃‍♂️</span> <div><span class="font-bold text-orange-600 block">Fizikal</span> <span class="text-xs text-gray-500">Rehat & Kesihatan Tubuh</span></div>
-                    </div>
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-indigo-100 flex items-center gap-3">
-                        <span class="text-2xl">🧠</span> <div><span class="font-bold text-blue-600 block">Mental</span> <span class="text-xs text-gray-500">Fokus & Kejelasan Fikiran</span></div>
-                    </div>
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-indigo-100 flex items-center gap-3">
-                        <span class="text-2xl">❤️</span> <div><span class="font-bold text-pink-600 block">Emosi</span> <span class="text-xs text-gray-500">Kestabilan Perasaan</span></div>
-                    </div>
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-indigo-100 flex items-center gap-3">
-                        <span class="text-2xl">🤝</span> <div><span class="font-bold text-green-600 block">Tingkah Laku</span> <span class="text-xs text-gray-500">Tindakan & Rutin Positif</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="max-w-md mx-auto text-left bg-white/80 p-8 rounded-3xl mb-8 shadow-lg border-2 border-purple-100">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-purple-700">
-                    <div class="bg-purple-100 p-3 rounded-full"><i class="fas fa-user-astronaut"></i></div> Profil Pengguna
-                </h2>
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-bold mb-2 text-gray-700">Nama / Nickname (Wajib)</label>
-                        <input type="text" id="playerName" class="w-full px-5 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 outline-none" placeholder="Cth: Adibah">
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="startGame()" class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xl font-bold py-4 px-12 rounded-full shadow-xl mb-4">Mulakan Audit <i class="fas fa-arrow-right ml-2"></i></button>
-            <br>
-            <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-gray-800 text-sm"><i class="fas fa-home"></i> Kembali ke Menu Utama</button>
+        <!-- 2. AUDIT TANGKI TENAGA -->
+        <div id="ui-audit-intro" class="hidden-section fade-in text-center py-8">
+            <h1 class="text-4xl font-extrabold text-purple-700 mb-4">Audit Tangki Tenaga 🔋</h1>
+            <p class="mb-6 max-w-2xl mx-auto text-gray-600">Jawab soalan untuk mengukur 4 dimensi tenaga (Fizikal, Mental, Emosi, Tingkah Laku).</p>
+            <input type="text" id="auditName" class="w-full max-w-sm px-5 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 outline-none mb-6 text-center" placeholder="Masukkan Nama Anda">
+            <br><button onclick="startAudit()" class="btn-bounce bg-purple-500 text-white font-bold py-3 px-10 rounded-full text-lg mb-4">Mula Ujian</button>
+            <br><button onclick="show('ui-main')" class="text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-home"></i> Kembali</button>
         </div>
 
-        <div id="progressBarContainer" class="hidden-section mb-6 bg-white/60 p-4 rounded-2xl shadow-sm border border-white">
-            <div class="flex justify-between text-sm font-bold text-gray-600 mb-2 items-center">
-                <span class="flex items-center gap-2"><i class="fas fa-route text-purple-500"></i> Perjalanan</span>
-                <span id="progressText" class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full animate-pulse">0%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
-                <div id="progressBar" class="bg-gradient-to-r from-purple-400 via-blue-500 h-4 rounded-full transition-all duration-700" style="width: 0%"></div>
+        <div id="ui-audit-quiz" class="hidden-section pb-8">
+            <div class="mb-4 bg-gray-200 rounded-full h-4 w-full"><div id="auditProgress" class="bg-purple-500 h-4 rounded-full transition-all" style="width:0%"></div></div>
+            <h2 id="auditTitle" class="text-3xl font-bold mb-6 text-center"></h2>
+            <div id="auditQuestions" class="space-y-4 mb-8"></div>
+            <div class="flex justify-between">
+                <button onclick="auditPrev()" id="auditBtnBack" class="bg-gray-300 px-6 py-2 rounded-full font-bold">Kembali</button>
+                <button onclick="auditNext()" class="bg-purple-500 text-white px-8 py-2 rounded-full font-bold">Seterusnya</button>
             </div>
         </div>
 
-        <div id="quiz-container" class="hidden-section pb-8">
-            <div class="flex items-center justify-between mb-8 bg-white/50 p-4 rounded-2xl border border-white">
-                <h2 id="sectionTitle" class="text-3xl font-extrabold"></h2>
-                <div id="sectionIcon" class="text-4xl w-16 h-16 flex items-center justify-center rounded-2xl shadow-md"></div>
+        <div id="ui-audit-result" class="hidden-section fade-in text-center">
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-8">Laporan Prestasi Tangki <span id="auditResName" class="text-purple-600"></span></h2>
+            <div class="grid md:grid-cols-4 gap-6 mb-8" id="auditResultGrid"></div>
+            <button onclick="show('ui-main')" class="bg-gray-800 text-white px-8 py-3 rounded-full font-bold">Tamat & Kembali</button>
+        </div>
+
+        <!-- 3. INVENTORI PERSONALITI WARNA (IPW) -->
+        <div id="ui-ipw-intro" class="hidden-section fade-in text-center py-8">
+            <h1 class="text-4xl font-extrabold text-orange-600 mb-4">Inventori Personaliti Warna 🎨</h1>
+            <p class="mb-8 max-w-2xl mx-auto text-gray-600">Kenali potensi diri melalui 100 pernyataan. Selepas setiap 20 soalan, anda akan diberikan waktu rehat minda ringkas.</p>
+            <button onclick="startIPW()" class="btn-bounce bg-orange-500 text-white font-bold py-3 px-10 rounded-full text-lg mb-4">Mula IPW</button>
+            <br><button onclick="show('ui-main')" class="text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-home"></i> Kembali</button>
+        </div>
+
+        <div id="ui-ipw-quiz" class="hidden-section w-full max-w-3xl mx-auto">
+            <div class="mb-6 flex justify-between items-center bg-white/60 p-4 rounded-2xl">
+                <span id="ipwProgressText" class="font-bold">Soalan 1/100</span>
+                <div class="w-1/2 bg-gray-200 rounded-full h-4"><div id="ipwProgress" class="bg-orange-500 h-4 rounded-full transition-all" style="width:1%"></div></div>
             </div>
-            <div id="questionsDiv" class="space-y-6 mb-10"></div>
-            <div class="flex justify-between mt-10 border-t-2 pt-8">
-                <button id="btnBack" onclick="prevSection()" class="btn-bounce bg-white text-gray-700 font-bold py-3 px-8 rounded-full border-2 shadow-sm"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-                <button id="btnNext" onclick="nextSection()" class="btn-bounce bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 px-10 rounded-full shadow-lg">Seterusnya <i class="fas fa-arrow-right ml-2"></i></button>
+            <div class="bg-white/90 p-8 rounded-3xl min-h-[250px] flex flex-col justify-center text-center shadow-lg border-2 border-gray-100">
+                <h2 id="ipwQuestionText" class="text-2xl font-bold text-gray-800 mb-8">Soalan...</h2>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="ipwAnswer(1)" class="btn-bounce bg-green-500 text-white font-bold py-3 px-8 rounded-xl w-32">YA</button>
+                    <button onclick="ipwAnswer(0)" class="btn-bounce bg-red-400 text-white font-bold py-3 px-8 rounded-xl w-32">TIDAK</button>
+                </div>
             </div>
         </div>
 
-        <div id="step-results" class="hidden-section fade-in">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Laporan Prestasi Tangki</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12" id="resultsGrid"></div>
-            <div class="text-center">
-                <button onclick="showActionPlan()" class="btn-bounce bg-gradient-to-r from-green-400 to-green-600 text-white font-bold py-4 px-10 rounded-full shadow-xl text-xl">Jom Bina Pelan Tindakan <i class="fas fa-clipboard-list ml-2"></i></button>
-            </div>
+        <!-- IPW Break -->
+        <div id="ui-ipw-break" class="hidden-section fade-in text-center py-8">
+            <h2 class="text-4xl font-extrabold text-teal-600 mb-4">Rehat Minda 🌿</h2>
+            <p class="mb-8">Tarik nafas 4s, Tahan 7s, Hembus 8s bersama bulatan di bawah.</p>
+            <div class="breathing-circle mb-8"></div>
+            <button onclick="continueIPW()" class="bg-teal-500 text-white font-bold py-3 px-10 rounded-full text-lg btn-bounce">Sambung Ujian</button>
         </div>
 
-        <div id="step-action-plan" class="hidden-section fade-in">
-            <div class="text-center mb-10"><h2 class="text-4xl font-extrabold text-gray-800">Kedai Power-Up</h2></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="actionPlanContainer"></div>
-            <div class="text-center mt-12">
-                <button onclick="showSelfCompassion()" class="btn-bounce bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-4 px-10 rounded-full shadow-lg text-xl">Aktifkan Self-Compassion <i class="fas fa-magic ml-2"></i></button>
+        <!-- IPW Result -->
+        <div id="ui-ipw-result" class="hidden-section fade-in max-w-4xl mx-auto pb-8">
+            <h1 class="text-4xl font-extrabold text-center mb-8">Profil Warna Anda: <span id="ipwDomName" class="uppercase"></span></h1>
+            <div class="bg-white/90 p-8 rounded-3xl shadow-lg mb-8">
+                <div class="space-y-4 mb-6">
+                    <div><div class="flex justify-between font-bold text-yellow-600"><span>Emas</span><span id="ipwScoreEmas">0</span></div><div class="bg-gray-200 h-4 rounded-full"><div id="ipwBarEmas" class="bg-emas h-4 rounded-full" style="width:0%"></div></div></div>
+                    <div><div class="flex justify-between font-bold text-green-600"><span>Hijau</span><span id="ipwScoreHijau">0</span></div><div class="bg-gray-200 h-4 rounded-full"><div id="ipwBarHijau" class="bg-hijau h-4 rounded-full" style="width:0%"></div></div></div>
+                    <div><div class="flex justify-between font-bold text-blue-600"><span>Biru</span><span id="ipwScoreBiru">0</span></div><div class="bg-gray-200 h-4 rounded-full"><div id="ipwBarBiru" class="bg-biru h-4 rounded-full" style="width:0%"></div></div></div>
+                    <div><div class="flex justify-between font-bold text-orange-600"><span>Jingga</span><span id="ipwScoreJingga">0</span></div><div class="bg-gray-200 h-4 rounded-full"><div id="ipwBarJingga" class="bg-jingga h-4 rounded-full" style="width:0%"></div></div></div>
+                </div>
+                <div id="ipwDesc" class="p-6 bg-gray-50 rounded-xl text-gray-700 font-medium leading-relaxed border border-gray-200"></div>
             </div>
+            <div class="text-center"><button onclick="show('ui-main')" class="bg-gray-800 text-white px-8 py-3 rounded-full font-bold btn-bounce">Kembali ke Menu</button></div>
         </div>
 
-        <div id="step-compassion" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">💖 Kuasa Self-Compassion</h2>
-            <div id="compassionCards" class="grid gap-6 mb-12 text-left"></div>
-            <div class="flex justify-center gap-4">
-                <button onclick="location.reload()" class="btn-bounce bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-8 rounded-full shadow-sm text-lg">Tamat & Kembali</button>
+
+        <!-- 4. GIM OTAK HUB -->
+        <div id="ui-games-hub" class="hidden-section fade-in text-center">
+            <h2 class="text-4xl font-extrabold text-blue-700 mb-8">Gim Otak AI 🧠</h2>
+            <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                <div class="bg-white/90 p-4 rounded-2xl shadow border-2 border-pink-200 cursor-pointer btn-bounce" onclick="openGame('clap')">
+                    <div class="text-4xl mb-2">👏</div><h3 class="font-bold text-sm">Irama Tepuk</h3><span class="text-[10px] bg-pink-100 text-pink-600 px-2 rounded">Mic</span>
+                </div>
+                <div class="bg-white/90 p-4 rounded-2xl shadow border-2 border-blue-200 cursor-pointer btn-bounce" onclick="openGame('gesture')">
+                    <div class="text-4xl mb-2">✌️</div><h3 class="font-bold text-sm">Ketua Isyarat</h3><span class="text-[10px] bg-blue-100 text-blue-600 px-2 rounded">Kamera (2 Tangan)</span>
+                </div>
+                <div class="bg-white/90 p-4 rounded-2xl shadow border-2 border-teal-200 cursor-pointer btn-bounce" onclick="openGame('scream')">
+                    <div class="text-4xl mb-2">🗣️</div><h3 class="font-bold text-sm">Gema Bebas</h3><span class="text-[10px] bg-teal-100 text-teal-600 px-2 rounded">Mic</span>
+                </div>
+                <div class="bg-white/90 p-4 rounded-2xl shadow border-2 border-green-200 cursor-pointer btn-bounce" onclick="openGame('kucing')">
+                    <div class="text-4xl mb-2">🐱</div><h3 class="font-bold text-sm">Kucing Buah</h3><span class="text-[10px] bg-green-100 text-green-600 px-2 rounded">Kamera / Sentuh</span>
+                </div>
+                <div class="bg-white/90 p-4 rounded-2xl shadow border-2 border-yellow-200 cursor-pointer btn-bounce" onclick="openGame('cawan')">
+                    <div class="text-4xl mb-2">🥤</div><h3 class="font-bold text-sm">Susun Cawan</h3><span class="text-[10px] bg-yellow-100 text-yellow-600 px-2 rounded">Kamera / Sentuh</span>
+                </div>
             </div>
+            <button onclick="show('ui-main')" class="text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-home"></i> Kembali</button>
         </div>
 
-        <!-- ==========================================
-             MODUL 2: INVENTORI PERSONALITI WARNA (IPW)
-        =========================================== -->
-        <div id="step-ipw-intro" class="hidden-section fade-in text-center py-8">
-            <div class="mb-6 flex justify-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-yellow-400 animate-bounce shadow-md"></div>
-                <div class="w-12 h-12 rounded-full bg-green-400 animate-bounce shadow-md" style="animation-delay: 0.1s;"></div>
-                <div class="w-12 h-12 rounded-full bg-blue-400 animate-bounce shadow-md" style="animation-delay: 0.2s;"></div>
-                <div class="w-12 h-12 rounded-full bg-orange-400 animate-bounce shadow-md" style="animation-delay: 0.3s;"></div>
+        <!-- Game 1: Clap -->
+        <div id="game-clap" class="hidden-section text-center">
+            <h2 class="text-3xl font-bold text-pink-600 mb-4">Irama Tepuk 👏</h2>
+            <div id="c-setup"><button onclick="initClap()" class="bg-pink-500 text-white px-6 py-2 rounded-full font-bold">Aktifkan Mic</button></div>
+            <div id="c-lvl" class="hidden my-4"><button onclick="startClap(3)" class="bg-green-100 px-4 py-1 rounded-full mr-2">Mudah</button><button onclick="startClap(5)" class="bg-yellow-100 px-4 py-1 rounded-full mr-2">Sederhana</button><button onclick="startClap(8)" class="bg-red-100 px-4 py-1 rounded-full">Sukar</button></div>
+            <div id="c-play" class="hidden p-6 bg-white rounded-3xl border-4 border-pink-200 max-w-sm mx-auto">
+                <h3 id="c-status" class="text-xl font-bold mb-4">...</h3>
+                <div class="text-6xl mb-4" id="c-icon">🖥️</div>
+                <div class="text-2xl font-bold text-pink-500">Tepukan: <span id="c-count">0</span></div>
+                <button id="c-btn" onclick="checkClap()" class="hidden bg-green-500 text-white px-6 py-2 rounded-full font-bold mt-4 w-full">Semak</button>
             </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 drop-shadow-sm">Inventori Personaliti Warna</h1>
-            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Kenali diri anda melalui warna! Ujian ini mendedahkan personaliti dominan dan kecenderungan kerjaya anda (Emas, Hijau, Biru, atau Jingga).</p>
-            
-            <div class="bg-white/80 p-8 rounded-3xl mb-8 text-left max-w-3xl mx-auto shadow-lg border-2 border-orange-100">
-                <h3 class="font-bold text-orange-600 mb-4 text-xl"><i class="fas fa-info-circle mr-2"></i> Arahan Ujian:</h3>
-                <ul class="list-disc list-inside text-gray-700 space-y-3 font-medium">
-                    <li>Mengandungi <strong>100 soalan</strong> respons pantas (Ya / Tidak).</li>
-                    <li>Sistem akan mencadangkan waktu rehat ringkas (*Mindfulness Break*) setiap 20 soalan.</li>
-                    <li>Tiada jawapan yang salah. Jawab dengan jujur berdasarkan diri anda yang sebenar.</li>
-                    <li>Masa dianggarkan: 10 - 15 Minit.</li>
-                </ul>
-            </div>
-
-            <button onclick="startIPW()" class="bg-gradient-to-r from-orange-400 to-red-500 text-white font-bold py-4 px-12 rounded-full text-xl shadow-xl transform transition hover:scale-105 btn-bounce mb-4">
-                Mulakan Ujian Warna <i class="fas fa-arrow-right ml-2"></i>
-            </button><br>
-            <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-gray-800 text-sm"><i class="fas fa-home"></i> Kembali ke Menu Utama</button>
+            <button onclick="stopGame('clap')" class="mt-8 text-gray-500 font-bold">Tutup</button>
         </div>
 
-        <div id="step-ipw-quiz" class="hidden-section fade-in w-full max-w-3xl mx-auto">
-            <div class="mb-6 flex justify-between items-center text-gray-700 font-bold bg-white/60 p-4 rounded-2xl shadow-sm">
-                <span id="ipw-progress-text" class="text-lg">Soalan 1 / 100</span>
-                <div class="w-1/2 bg-gray-200 rounded-full h-4 ml-4 shadow-inner">
-                    <div id="ipw-progress-bar" class="bg-orange-500 h-4 rounded-full transition-all duration-300" style="width: 1%"></div>
-                </div>
+        <!-- Game 2: Gesture Dual -->
+        <div id="game-gesture" class="hidden-section text-center">
+            <h2 class="text-3xl font-bold text-blue-600 mb-4">Ketua Isyarat 🙌</h2>
+            <div id="g-setup"><button onclick="initGesture()" id="g-startBtn" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold">Aktifkan Kamera AI</button><p id="g-load" class="hidden mt-2">Memuatkan...</p></div>
+            <div id="g-play" class="hidden p-4 bg-white rounded-3xl border-4 border-blue-200 max-w-lg mx-auto">
+                <div class="flex justify-between font-bold mb-2"><span class="text-blue-600">Skor: <span id="g-score">0</span></span><span class="text-red-500" id="g-lives">❤️❤️❤️</span></div>
+                <p id="g-round" class="text-sm font-bold text-gray-500 mb-2">Sedia...</p>
+                <div id="g-target" class="text-5xl bg-gray-100 p-4 rounded-xl mb-4 font-bold flex justify-center gap-4 items-center">Sedia</div>
+                <div class="w-full bg-gray-200 h-2 mb-4 rounded"><div id="g-bar" class="bg-red-500 h-2 rounded" style="width:100%"></div></div>
+                <div class="camera-box"><video id="g-vid" autoplay playsinline></video><canvas id="g-can"></canvas></div>
             </div>
-
-            <div id="ipw-question-card" class="bg-white/90 p-8 md:p-12 rounded-3xl min-h-[300px] flex flex-col justify-center items-center text-center shadow-lg border-2 border-gray-100 transition-all">
-                <h2 id="ipw-question-text" class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-10 leading-relaxed">
-                    Soalan akan muncul di sini...
-                </h2>
-
-                <div class="flex flex-col sm:flex-row gap-6 w-full max-w-md justify-center">
-                    <button onclick="ipwAnswer(true)" class="btn-bounce flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl text-xl shadow-md border-b-4 border-green-700">
-                        <i class="fas fa-check mr-2"></i> YA
-                    </button>
-                    <button onclick="ipwAnswer(false)" class="btn-bounce flex-1 bg-red-400 hover:bg-red-500 text-white font-bold py-4 px-8 rounded-2xl text-xl shadow-md border-b-4 border-red-600">
-                        <i class="fas fa-times mr-2"></i> TIDAK
-                    </button>
-                </div>
-            </div>
-            
-            <div class="mt-8 text-left">
-                <button onclick="ipwPrevQuestion()" id="ipw-btn-back" class="text-gray-500 hover:text-gray-800 font-bold text-base hidden btn-bounce bg-white px-6 py-2 rounded-full shadow-sm">
-                    <i class="fas fa-undo mr-1"></i> Ubat Jawapan Lepas
-                </button>
-            </div>
+            <button onclick="stopGame('gesture')" class="mt-8 text-gray-500 font-bold">Tutup</button>
         </div>
 
-        <!-- IPW Break / Mindfulness Screen -->
-        <div id="step-ipw-break" class="hidden-section fade-in text-center py-8">
-            <h2 class="text-4xl md:text-5xl font-extrabold text-teal-600 mb-4 drop-shadow-sm">Rehat Sebentar 🌿</h2>
-            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto font-medium">Anda telah melengkapkan 20 soalan. Jom tenangkan minda sebentar sebelum meneruskan ujian agar jawapan kekal objektif.</p>
-            
-            <div class="flex flex-col md:flex-row justify-center items-stretch gap-6 mb-10 max-w-4xl mx-auto">
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg flex-1 border-2 border-teal-100 flex flex-col justify-center items-center">
-                    <h3 class="font-bold text-xl mb-6 text-teal-700">Teknik Pernafasan 4-7-8</h3>
-                    <div class="breathing-circle mb-6"></div>
-                    <p class="text-sm text-gray-600 font-medium">Ikut rentak bulatan: <br><strong class="text-teal-600">Tarik nafas (4s), Tahan (7s), Hembus (8s).</strong></p>
-                </div>
-                
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg flex-1 border-2 border-purple-100 text-left">
-                    <h3 class="font-bold text-xl mb-4 text-purple-700">Teknik Grounding 5-4-3-2-1</h3>
-                    <p class="text-sm text-gray-500 mb-4">Gunakan deria anda untuk kembali ke masa sekarang:</p>
-                    <ul class="text-sm text-gray-700 space-y-3 font-medium bg-purple-50 p-4 rounded-xl border border-purple-100">
-                        <li><i class="fas fa-eye text-purple-400 w-5"></i> Cari <strong>5</strong> benda anda boleh lihat.</li>
-                        <li><i class="fas fa-hand-paper text-purple-400 w-5"></i> Sentuh <strong>4</strong> objek berbeza.</li>
-                        <li><i class="fas fa-ear-listen text-purple-400 w-5"></i> Dengar <strong>3</strong> bunyi di sekeliling.</li>
-                        <li><i class="fas fa-wind text-purple-400 w-5"></i> Hidu <strong>2</strong> bau di udara.</li>
-                        <li><i class="fas fa-tint text-purple-400 w-5"></i> Rasa <strong>1</strong> benda (cth: minum air).</li>
-                    </ul>
-                </div>
+        <!-- Game 3: Scream -->
+        <div id="game-scream" class="hidden-section text-center">
+            <h2 class="text-3xl font-bold text-teal-600 mb-4">Gema Kebebasan 🗣️</h2>
+            <div id="s-setup" class="max-w-sm mx-auto"><textarea id="s-txt" class="w-full p-3 border rounded mb-2" placeholder="Luahkan di sini..."></textarea><button onclick="initScream()" class="bg-teal-500 text-white px-6 py-2 rounded-full w-full font-bold">Mula Jerit (10s)</button></div>
+            <div id="s-play" class="hidden p-6 bg-white border-4 border-teal-200 rounded-3xl max-w-sm mx-auto">
+                <div id="s-time" class="text-4xl font-bold text-teal-500 mb-4">10.0</div>
+                <div class="scream-meter"><div id="s-bar"></div></div>
+                <p class="font-bold">Puncak: <span id="s-peak">0</span>%</p>
             </div>
-            
-            <button onclick="continueFromIPWBreak()" class="btn-bounce bg-gradient-to-r from-teal-400 to-green-500 text-white font-bold py-4 px-12 rounded-full shadow-xl text-xl border-4 border-white/50">
-                Saya Dah Sedia, Teruskan! <i class="fas fa-play ml-2"></i>
-            </button>
+            <button onclick="stopGame('scream')" class="mt-8 text-gray-500 font-bold">Tutup</button>
         </div>
 
-        <!-- IPW Results -->
-        <div id="step-ipw-results" class="hidden-section fade-in pb-12 w-full max-w-4xl mx-auto">
-            <div class="text-center mb-10">
-                <div class="inline-block bg-orange-100 text-orange-600 px-6 py-2 rounded-full font-bold text-sm mb-4 tracking-widest uppercase shadow-sm">
-                    <i class="fas fa-palette mr-1"></i> Analisis Selesai
-                </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">Profil Personaliti Anda</h1>
+        <!-- Game 4: Kucing -->
+        <div id="game-kucing" class="hidden-section text-center">
+            <h2 class="text-3xl font-bold text-green-600 mb-4">Kucing Buah 🐱🍎</h2>
+            <div id="k-setup"><button onclick="initCat('touch')" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Sentuh</button><button onclick="initCat('ai')" class="bg-green-500 text-white px-4 py-2 rounded">Kamera AI</button></div>
+            <div id="k-play" class="hidden">
+                <div class="flex justify-center gap-6 font-bold mb-2"><span>Skor: <span id="k-score">0</span></span><span class="text-red-500" id="k-lives">❤️❤️❤️</span></div>
+                <div class="game-area bg-blue-100 border-4 border-green-500"><div id="k-cam" class="mini-cam-preview hidden"><video id="k-vid" autoplay playsinline></video></div><canvas id="k-can" class="w-full h-full cursor-pointer"></canvas></div>
             </div>
-
-            <div class="bg-white/90 p-8 rounded-3xl mb-8 shadow-xl border-4 border-gray-100">
-                <h2 class="text-xl text-gray-500 font-bold mb-2 text-center uppercase tracking-widest">Warna Dominan Anda:</h2>
-                <h2 class="text-4xl font-extrabold mb-8 text-center" id="ipw-dominant-trait"></h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-bold text-yellow-700"><i class="fas fa-crown mr-1"></i> EMAS (Berstruktur)</span><span id="ipw-score-gold" class="text-sm font-bold text-gray-700 bg-yellow-100 px-2 rounded">0</span></div>
-                            <div class="ipw-bar-container"><div id="ipw-bar-gold" class="ipw-bar-fill bg-theme-gold" style="width: 0%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-bold text-green-700"><i class="fas fa-leaf mr-1"></i> HIJAU (Pemikir)</span><span id="ipw-score-green" class="text-sm font-bold text-gray-700 bg-green-100 px-2 rounded">0</span></div>
-                            <div class="ipw-bar-container"><div id="ipw-bar-green" class="ipw-bar-fill bg-theme-green" style="width: 0%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-bold text-blue-700"><i class="fas fa-heart mr-1"></i> BIRU (Perasaan)</span><span id="ipw-score-blue" class="text-sm font-bold text-gray-700 bg-blue-100 px-2 rounded">0</span></div>
-                            <div class="ipw-bar-container"><div id="ipw-bar-blue" class="ipw-bar-fill bg-theme-blue" style="width: 0%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-bold text-orange-700"><i class="fas fa-bolt mr-1"></i> JINGGA (Adventurous)</span><span id="ipw-score-orange" class="text-sm font-bold text-gray-700 bg-orange-100 px-2 rounded">0</span></div>
-                            <div class="ipw-bar-container"><div id="ipw-bar-orange" class="ipw-bar-fill bg-theme-orange" style="width: 0%"></div></div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-3xl border-2 border-gray-100">
-                        <div id="ipw-result-icon" class="text-9xl mb-4 text-gray-300 drop-shadow-md"></div>
-                        <p class="text-center font-bold text-lg text-gray-700" id="ipw-short-desc"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="ipw-interpretation-container" class="space-y-8"></div>
-
-            <div class="text-center mt-12 flex flex-col md:flex-row justify-center gap-4">
-                <button onclick="location.reload()" class="btn-bounce bg-white border-2 border-gray-300 text-gray-700 font-bold py-4 px-8 rounded-full shadow-sm text-lg">
-                    <i class="fas fa-home mr-2"></i> Menu Utama
-                </button>
-                <button onclick="window.print()" class="btn-bounce bg-gray-800 text-white font-bold py-4 px-8 rounded-full shadow-lg text-lg">
-                    <i class="fas fa-print mr-2"></i> Cetak Keputusan
-                </button>
-            </div>
+            <button onclick="stopGame('kucing')" class="mt-8 text-gray-500 font-bold">Tutup</button>
         </div>
 
-        <!-- ==========================================
-             MODUL 3: GIM OTAK HUB
-        =========================================== -->
-        <div id="step-brain-games-hub" class="hidden-section fade-in">
-            <div class="text-center mb-10">
-                <h2 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-4">Gim Otak AI 🧠</h2>
-                <p class="text-xl text-gray-600">Rehatkan minda, asah fokus dan koordinasi anda dengan permainan interaktif.</p>
+        <!-- Game 5: Cawan -->
+        <div id="game-cawan" class="hidden-section text-center">
+            <h2 class="text-3xl font-bold text-yellow-600 mb-4">Susun Cawan 🥤</h2>
+            <div id="cw-setup"><button onclick="initCawan('touch')" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Sentuh</button><button onclick="initCawan('ai')" class="bg-yellow-500 text-white px-4 py-2 rounded text-shadow">Kamera AI</button></div>
+            <div id="cw-play" class="hidden">
+                <div class="flex justify-center gap-6 font-bold mb-2"><span>Skor: <span id="cw-score">0</span></span><span class="text-red-500" id="cw-lives">❤️❤️❤️</span></div>
+                <div id="cw-status" class="font-bold text-lg mb-2 h-6 text-indigo-600">Sedia</div>
+                <div class="game-area bg-indigo-200 border-4 border-yellow-400"><div id="cw-cam" class="mini-cam-preview hidden"><video id="cw-vid" autoplay playsinline></video></div><canvas id="cw-can" class="w-full h-full cursor-pointer"></canvas></div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <!-- 1. Clap Game -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-pink-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openClapGame()">
-                    <div>
-                        <div class="text-5xl mb-4">👏</div>
-                        <h3 class="text-lg font-bold text-pink-600 mb-2">Irama Tepuk Tangan</h3>
-                        <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Mic</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Tiru rentak bunyi komputer dengan tepukan anda.</p>
-                    </div>
-                    <button class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 text-sm w-full">Main</button>
-                </div>
-
-                <!-- 2. Gesture AI Game -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-blue-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openGestureGame()" style="animation-delay: 0.1s">
-                    <div class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">HARD!</div>
-                    <div>
-                        <div class="text-5xl mb-4">✌️🤟</div>
-                        <h3 class="text-lg font-bold text-blue-600 mb-2">Ketua Gerak Isyarat</h3>
-                        <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">AI Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji koordinasi menggunakan <strong>kedua-dua</strong> belah tangan!</p>
-                    </div>
-                    <button class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-600 text-sm w-full">Main</button>
-                </div>
-
-                <!-- 3. Scream Therapy -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openScreamGame()" style="animation-delay: 0.2s">
-                    <div>
-                        <div class="text-5xl mb-4">🗣️</div>
-                        <h3 class="text-lg font-bold text-teal-600 mb-2">Gema Kebebasan</h3>
-                        <span class="bg-teal-100 text-teal-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Mic</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Lepaskan tekanan emosi anda melalui jeritan.</p>
-                    </div>
-                    <button class="bg-teal-500 text-white font-bold py-2 px-6 rounded-full hover:bg-teal-600 text-sm w-full">Main</button>
-                </div>
-
-                <!-- 4. Kucing Penangkap Buah -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-green-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openKucingGame()" style="animation-delay: 0.3s">
-                    <div>
-                        <div class="text-5xl mb-4">🐱🍎</div>
-                        <h3 class="text-lg font-bold text-green-600 mb-2">Kucing Penangkap Buah</h3>
-                        <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Sentuh / Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Gerakkan kucing menangkap buah, elak bom!</p>
-                    </div>
-                    <button class="bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 text-sm w-full">Main</button>
-                </div>
-
-                <!-- 5. Susun Cawan -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-yellow-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between relative" onclick="openCawanGame()" style="animation-delay: 0.4s">
-                    <div>
-                        <div class="text-5xl mb-4">🥤</div>
-                        <h3 class="text-lg font-bold text-yellow-600 mb-2">Susun Cawan</h3>
-                        <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Sentuh / Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji penjejakan visual. Cari di mana bola bersembunyi!</p>
-                    </div>
-                    <button class="bg-yellow-500 text-white font-bold py-2 px-6 rounded-full hover:bg-yellow-600 text-sm w-full">Main</button>
-                </div>
-                
-                <!-- PLACEHOLDERS FOR 3 UPCOMING GAMES -->
-                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70 flex flex-col justify-center">
-                    <div class="text-4xl mb-4 grayscale">⏰</div><h3 class="text-sm font-bold text-gray-500 mb-2">Latihan Jam</h3><span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold w-max mx-auto">Akan Datang</span>
-                </div>
-                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70 flex flex-col justify-center">
-                    <div class="text-4xl mb-4 grayscale">🎯</div><h3 class="text-sm font-bold text-gray-500 mb-2">Rebut Corak</h3><span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold w-max mx-auto">Akan Datang</span>
-                </div>
-                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70 flex flex-col justify-center">
-                    <div class="text-4xl mb-4 grayscale">🧩</div><h3 class="text-sm font-bold text-gray-500 mb-2">Permainan Teka-teki</h3><span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold w-max mx-auto">Akan Datang</span>
-                </div>
-            </div>
-
-            <!-- Talian HEAL Section -->
-            <div class="bg-gradient-to-r from-teal-500 to-cyan-600 p-8 rounded-3xl shadow-2xl border-4 border-white/50 text-white pop-in">
-                <div class="flex flex-col md:flex-row items-center gap-8 justify-between">
-                    <div class="text-center md:text-left">
-                        <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-3 tracking-widest uppercase">Ruang Selamat</div>
-                        <h3 class="text-3xl font-extrabold mb-2">Talian Bantuan Krisis Mental (HEAL)</h3>
-                        <p class="text-teal-50 text-lg">Jika anda rasa terbeban, sunyi atau perlukan seseorang untuk mendengar. Pakar kaunseling KKM sedia membantu.</p>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <a href="tel:15555" class="btn-bounce flex items-center gap-4 bg-white text-teal-600 font-extrabold text-3xl py-4 px-10 rounded-full shadow-lg hover:text-teal-700">
-                            <i class="fas fa-phone-alt animate-pulse"></i> 15555
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-8">
-                <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-home"></i> Kembali ke Menu Utama</button>
-            </div>
-        </div>
-
-        <!-- INCLUDE GAME HTML DIVS HERE -->
-        <!-- 1. CLAP -->
-        <div id="step-game-clap" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-pink-600 mb-2">Irama Tepuk Tangan 👏</h2>
-            <div id="clapInitPhase" class="mb-8"><button onclick="initClapSystem()" class="bg-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-pink-600 text-xl btn-bounce"><i class="fas fa-microphone mr-2"></i> Aktifkan Mic</button></div>
-            <div id="clapLevelSelection" class="hidden mb-8">
-                <p class="text-xl font-bold text-gray-700 mb-4">Pilih Tahap:</p>
-                <div class="flex justify-center gap-4">
-                    <button onclick="playClapSequence('easy')" class="btn-bounce bg-green-100 text-green-700 border-2 border-green-400 font-bold py-2 px-6 rounded-full">Mudah</button>
-                    <button onclick="playClapSequence('medium')" class="btn-bounce bg-yellow-100 text-yellow-700 border-2 border-yellow-400 font-bold py-2 px-6 rounded-full">Sederhana</button>
-                    <button onclick="playClapSequence('hard')" class="btn-bounce bg-red-100 text-red-700 border-2 border-red-400 font-bold py-2 px-6 rounded-full">Sukar</button>
-                </div>
-            </div>
-            <div id="clapActivePhase" class="hidden max-w-lg mx-auto bg-white/90 p-8 rounded-3xl border-4 border-pink-200 shadow-xl">
-                <div id="clapStatusTitle" class="text-3xl font-extrabold text-pink-600 mb-6 h-10 wave-animation"></div>
-                <div class="flex justify-around items-center mb-8">
-                    <div class="text-center opacity-50" id="pcClapArea"><div class="text-sm font-bold text-blue-500 uppercase mb-2">Komputer</div><div class="text-6xl"><i class="fas fa-desktop text-blue-400"></i></div></div>
-                    <div class="text-center opacity-50" id="playerClapArea"><div class="text-sm font-bold text-green-500 uppercase mb-2">Tepukan Anda</div><div id="clapVisualizer" class="clap-indicator text-pink-400 border-pink-200 relative"><i class="fas fa-hands-wash z-10"></i><div class="absolute top-0 right-0 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg border-2 border-white transform translate-x-2 -translate-y-2 shadow-md" id="clapCountDisplay">0</div></div></div>
-                </div>
-                <div id="clapActionButtons" class="hidden flex gap-4 justify-center mt-6">
-                    <button onclick="resetClapCount()" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-full">Tepuk Semula</button>
-                    <button onclick="submitClapAnswer()" class="bg-green-500 text-white font-bold py-3 px-8 rounded-full">Semak!</button>
-                </div>
-            </div>
-            <div id="clapResult" class="hidden mt-6 text-2xl font-bold bg-white p-6 rounded-2xl shadow-md border-2 max-w-md mx-auto"></div>
-            <button onclick="stopClapSystem(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
-        </div>
-
-        <!-- 2. GESTURE -->
-        <div id="step-game-gesture" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat 🙌</h2>
-            <div id="gesturePreGame" class="mb-8"><button onclick="initMediaPipe()" id="btnStartCam" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 text-xl btn-bounce"><i class="fas fa-video mr-2"></i> Aktifkan Kamera</button><p id="camLoadingText" class="text-blue-600 mt-3 font-bold hidden">Memuat turun AI...</p></div>
-            <div id="gestureActiveGame" class="hidden max-w-2xl mx-auto bg-white/90 p-6 rounded-3xl border-4 border-blue-200 shadow-xl relative">
-                <div class="flex justify-between items-center mb-6"><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="gestureScore" class="text-blue-600 text-3xl font-extrabold">0</span></div><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="gestureLivesUI" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div></div>
-                <div class="mb-6"><p class="text-sm font-bold text-gray-500 uppercase mb-2" id="gestureRoundText">Sedia...</p><div class="bg-white p-4 rounded-2xl shadow-inner border-2 border-gray-100" id="gestureTargetDisplay"><div class="text-2xl text-gray-400 font-bold">Sedia...</div></div></div>
-                <div class="timer-bar-container"><div id="gestureTimerBar" class="timer-bar"></div></div>
-                <div class="camera-box shadow-lg"><video id="gestureVideo" autoplay playsinline></video><canvas id="gestureCanvas"></canvas></div>
-            </div>
-            <button onclick="stopGestureDetection(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
-        </div>
-
-        <!-- 3. SCREAM -->
-        <div id="step-game-scream" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-teal-600 mb-2">Gema Kebebasan 🗣️</h2>
-            <div class="max-w-md mx-auto">
-                <div id="screamPagePrivacy" class="scream-page active"><div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200"><button class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full w-full btn-bounce" onclick="screamPlayTreet(); showScreamPage('screamPageIntro')">Setuju Polisi Privasi & Mula</button></div></div>
-                <div id="screamPageIntro" class="scream-page"><div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200"><button class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full w-full btn-bounce" onclick="screamPlayTreet(); showScreamPage('screamPageInput')">Faham & Teruskan</button></div></div>
-                <div id="screamPageInput" class="scream-page"><div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200"><textarea id="screamStressInput" class="w-full h-28 border-2 border-gray-300 rounded-xl p-4 mb-4" placeholder="Tulis luahan..."></textarea><button class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full w-full btn-bounce" onclick="screamPrepareTherapy()">Sahkan Luahan</button></div></div>
-                <div id="screamPageReady" class="scream-page"><div class="bg-white/90 p-8 rounded-3xl shadow-lg border-2 border-teal-200"><button class="bg-teal-500 text-white font-bold py-4 px-8 rounded-full w-full btn-bounce text-lg" onclick="screamPlayTreet(); screamStartCountdown()">MULAKAN SEKARANG</button></div></div>
-                <div id="screamPageCountdown" class="scream-page"><div class="bg-white/90 p-10 rounded-3xl shadow-lg border-2 border-teal-200"><h1 id="screamCountdownDisplay" class="text-8xl font-extrabold text-teal-500 animate-pulse">3</h1></div></div>
-                <div id="screamPageScream" class="scream-page"><div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-500 relative"><div id="screamTimerCircle" class="text-5xl font-extrabold text-teal-500 mb-4">10.0</div><div class="scream-meter-container shadow-inner"><div id="screamPeakIndicator"><span id="screamPeakValue">0%</span></div><div id="screamVolumeBar"></div></div><p class="text-2xl font-bold text-red-500 mt-4 animate-bounce">JERIT SEKARANG!</p></div></div>
-                <div id="screamPageFeedback" class="scream-page"><div class="bg-white/90 p-8 rounded-3xl shadow-lg border-2 border-teal-200"><p id="screamAttemptInfo"></p><button class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full w-full mb-4" onclick="screamPlayTreet(); screamShowFinalResult()">Lega 😊</button><button class="bg-gray-400 text-white font-bold py-3 px-8 rounded-full w-full" onclick="screamPlayTreet(); screamRetry()">Ulang</button></div></div>
-                <div id="screamPageFinal" class="scream-page"><div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200"><h2 class="text-3xl font-extrabold text-teal-600 mb-2">TAHNIAH!</h2><p class="text-lg text-gray-700 font-bold mb-4">Puncak Tertinggi: <span id="screamFinalPeak" class="text-teal-600 text-2xl">0</span>%</p><button class="bg-gray-300 text-gray-700 font-bold py-3 px-8 rounded-full w-full" onclick="screamPlayTreet(); stopScreamSystem(); showBrainGamesHub()">Selesai</button></div></div>
-            </div>
-            <button onclick="stopScreamSystem(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-arrow-left"></i> Berhenti</button>
-        </div>
-
-        <!-- 4. KUCING -->
-        <div id="step-game-kucing" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-green-600 mb-2">Kucing Penangkap Buah 🐱</h2>
-            <div id="kucingModeSelection" class="mb-8"><div class="flex justify-center gap-4"><button onclick="initKucingGame('touch')" class="btn-bounce bg-white border-4 border-blue-400 text-blue-600 p-6 rounded-2xl shadow-lg">Skrin Sentuh</button><button onclick="initKucingGame('ai')" class="btn-bounce bg-white border-4 border-green-400 text-green-600 p-6 rounded-2xl shadow-lg">Kamera AI</button></div><p id="kucingLoadingText" class="text-green-600 mt-4 font-bold hidden">Memuatkan AI...</p></div>
-            <div id="kucingActiveGame" class="hidden"><div class="flex justify-center items-center gap-6 mb-4"><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="kucingScore" class="text-green-600 text-3xl font-extrabold">0</span></div><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="kucingLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div></div><div id="kucingGameContainer" class="custom-game-container kucing-bg shadow-2xl"><div id="kucingMiniCam" class="mini-cam-preview hidden"><video id="kucingVideo" autoplay playsinline></video></div><canvas id="kucingCanvas" class="game-canvas" width="400" height="450"></canvas></div></div>
-            <div id="kucingResult" class="hidden mt-6 bg-white p-8 rounded-3xl shadow-xl border-4 border-green-200 max-w-md mx-auto"><h3 class="text-3xl font-bold text-red-500 mb-2">Tamat!</h3><div class="text-6xl font-extrabold text-green-500 mb-6" id="kucingFinalScore">0</div><button onclick="resetKucingGame()" class="bg-green-500 text-white font-bold py-3 px-6 rounded-full mb-2 w-full">Main Semula</button></div>
-            <button id="btnKucingExit" onclick="stopKucingGame(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800 hidden"><i class="fas fa-arrow-left"></i> Berhenti</button>
-        </div>
-
-        <!-- 5. CAWAN -->
-        <div id="step-game-cawan" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-yellow-500 mb-2">Susun Cawan 🥤</h2>
-            <div id="cawanModeSelection" class="mb-8"><div class="flex justify-center gap-4"><button onclick="initCawanGame('touch')" class="btn-bounce bg-white border-4 border-blue-400 text-blue-600 p-6 rounded-2xl shadow-lg">Skrin Sentuh</button><button onclick="initCawanGame('ai')" class="btn-bounce bg-white border-4 border-green-400 text-green-600 p-6 rounded-2xl shadow-lg">Kamera AI</button></div><p id="cawanLoadingText" class="text-yellow-600 mt-4 font-bold hidden">Memuatkan AI...</p></div>
-            <div id="cawanActiveGame" class="hidden"><div class="flex justify-center items-center gap-6 mb-4"><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="cawanScore" class="text-yellow-600 text-3xl font-extrabold">0</span></div><div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="cawanLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div></div><div class="mb-2 text-lg font-bold text-indigo-700 h-8" id="cawanStatusText">Sedia...</div><div id="cawanGameContainer" class="custom-game-container cawan-bg shadow-2xl relative"><div id="cawanMiniCam" class="mini-cam-preview hidden"><video id="cawanVideo" autoplay playsinline></video></div><canvas id="cawanCanvas" class="game-canvas" width="400" height="450"></canvas></div></div>
-            <div id="cawanResult" class="hidden mt-6 bg-white p-8 rounded-3xl shadow-xl border-4 border-yellow-300 max-w-md mx-auto"><h3 class="text-3xl font-bold text-red-500 mb-2">Tamat!</h3><div class="text-6xl font-extrabold text-yellow-500 mb-6" id="cawanFinalScore">0</div><button onclick="resetCawanGame()" class="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full mb-2 w-full">Main Semula</button></div>
-            <button id="btnCawanExit" onclick="stopCawanGame(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800 hidden"><i class="fas fa-arrow-left"></i> Berhenti</button>
+            <button onclick="stopGame('cawan')" class="mt-8 text-gray-500 font-bold">Tutup</button>
         </div>
 
     </div>
 
+    <!-- MAIN SCRIPT -->
     <script>
-        // ==========================================
-        // SHARED UTILS
-        // ==========================================
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 15; i++) {
-                let div = document.createElement('div'); div.className = 'particle';
-                let size = Math.random() * 40 + 10; div.style.width = size + 'px'; div.style.height = size + 'px';
-                div.style.left = Math.random() * 100 + 'vw'; div.style.animationDuration = (Math.random() * 10 + 5) + 's';
-                if(container) container.appendChild(div);
-            }
-        }
-        createParticles();
+        const $ = id => document.getElementById(id);
+        const hideAll = () => { ['ui-main','ui-audit-intro','progressBarContainer','ui-audit-quiz','ui-audit-result','ui-ipw-intro','ui-ipw-quiz','ui-ipw-break','ui-ipw-result','ui-games-hub','game-clap','game-gesture','game-scream','game-kucing','game-cawan'].forEach(id => { if($(id)) $(id).classList.add('hidden-section'); }); };
+        const show = id => { hideAll(); $(id).classList.remove('hidden-section'); window.scrollTo(0,0); };
+        
+        // Particles
+        const pCont = $('particles');
+        for(let i=0; i<15; i++){ let d=document.createElement('div'); d.className='particle'; let s=Math.random()*40+10; d.style.width=s+'px'; d.style.height=s+'px'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=(Math.random()*10+5)+'s'; pCont.appendChild(d); }
 
-        function hideAll() {
-            [
-                'step-main-menu',
-                'step-audit-intro', 'progressBarContainer', 'quiz-container', 'step-results', 'step-action-plan', 'step-compassion',
-                'step-ipw-intro', 'step-ipw-quiz', 'step-ipw-break', 'step-ipw-results',
-                'step-brain-games-hub',
-                'step-game-clap', 'step-game-gesture', 'step-game-scream', 'step-game-kucing', 'step-game-cawan'
-            ].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.add('hidden-section');
-            });
-        }
-
-        function showAuditIntro() { hideAll(); document.getElementById('step-audit-intro').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function openIPW() { hideAll(); document.getElementById('step-ipw-intro').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function showBrainGamesHub() { hideAll(); document.getElementById('step-brain-games-hub').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-        // ==========================================
-        // AUDIT TANGKI TENAGA LOGIC
-        // ==========================================
-        const quizData = [
-            { id: 'fizikal', title: "Tangki Fizikal", icon: "fa-running", color: "text-orange-500", bg: "bg-orange-500 text-white", accent: "orange", questions: ["Saya mendapat tidur yang mencukupi hampir setiap hari.", "Saya bangun pagi dengan rasa segar dan bertenaga.", "Saya menjaga pemakanan dengan baik dan teratur.", "Saya melakukan aktiviti fizikal sekurang-kurangnya 2–3 kali seminggu.", "Badan saya jarang terasa lesu tanpa sebab yang jelas.", "Saya mengambil masa rehat yang mencukupi ketika bekerja.", "Pernafasan saya terasa tenang dan tidak laju sepanjang hari.", "Saya menjaga hidrasi dengan minum air secukupnya.", "Saya mampu melakukan aktiviti harian tanpa keletihan melampau.", "Kesihatan fizikal saya berada dalam keadaan baik."] },
-            { id: 'mental', title: "Tangki Mental", icon: "fa-brain", color: "text-blue-500", bg: "bg-blue-500 text-white", accent: "blue", questions: ["Saya dapat fokus dengan baik pada tugasan yang sedang dilakukan.", "Fikiran saya jarang dipenuhi ruminasi atau overthinking.", "Saya mempunyai perancangan harian yang jelas.", "Saya mampu membuat keputusan tanpa rasa terlalu terbeban.", "Saya dapat mengawal pemikiran negatif dengan baik.", "Saya tahu keutamaan utama dalam hidup saya ketika ini.", "Saya berasa jelas tentang matlamat jangka pendek saya.", "Saya jarang merasa keletihan mental yang melampau.", "Saya memberi ruang untuk refleksi diri secara berkala.", "Saya mampu menenangkan fikiran apabila berasa tertekan."] },
-            { id: 'emosi', title: "Tangki Emosi", icon: "fa-heart", color: "text-pink-500", bg: "bg-pink-500 text-white", accent: "pink", questions: ["Saya berasa disayangi dan disokong oleh orang sekeliling.", "Saya mampu meluahkan emosi dengan cara yang sihat.", "Saya mengamalkan kesyukuran dalam kehidupan harian.", "Saya jarang menyimpan dendam atau kemarahan berpanjangan.", "Saya berasa hidup saya mempunyai makna.", "Saya dapat mengawal emosi apabila berhadapan konflik.", "Saya berasa gembira sekurang-kurangnya beberapa kali dalam seminggu.", "Saya mengamalkan self-compassion ketika melakukan kesilapan.", "Saya jarang merasa kesunyian yang mendalam.", "Emosi saya secara keseluruhan stabil."] },
-            { id: 'tingkahlaku', title: "Tangki Tingkah Laku", icon: "fa-users", color: "text-green-500", bg: "bg-green-500 text-white", accent: "green", questions: ["Saya mempunyai rutin harian yang konsisten.", "Saya aktif melakukan aktiviti yang bermakna.", "Saya tidak menangguhkan kerja penting secara berlebihan.", "Saya terlibat dalam interaksi sosial secara berkala.", "Saya mencuba perkara baru untuk perkembangan diri.", "Saya memberi ganjaran sihat kepada diri selepas mencapai sesuatu.", "Saya mampu bangun dan bertindak walaupun tidak bermotivasi.", "Saya tidak terlalu bergantung kepada gajet untuk mengisi masa.", "Saya mengambil tindakan apabila berdepan masalah.", "Tingkah laku harian saya membantu meningkatkan kesejahteraan diri."] }
+        // --- AUDIT LOGIC ---
+        let aIdx = 0;
+        const aData = [
+            { id:'fizikal', title:"Tangki Fizikal", color:"text-orange-500", bg:"bg-orange-500 text-white", icon:"fa-running", q:["Saya dapat tidur cukup.", "Bangun pagi rasa segar.", "Jaga makan teratur.", "Bersenam 2-3 kali seminggu.", "Jarang rasa lesu tanpa sebab.", "Ambil rehat cukup masa kerja.", "Nafas tenang, tak laju.", "Minum air secukupnya.", "Boleh buat aktiviti tanpa letih melampau.", "Kesihatan fizikal baik."] },
+            { id:'mental', title:"Tangki Mental", color:"text-blue-500", bg:"bg-blue-500 text-white", icon:"fa-brain", q:["Dapat fokus tugasan.", "Jarang overthinking.", "Ada perancangan harian.", "Boleh buat keputusan.", "Dapat kawal fikiran negatif.", "Tahu keutamaan hidup.", "Jelas matlamat terdekat.", "Jarang letih mental.", "Beri ruang refleksi diri.", "Mampu tenangkan fikiran bila stres."] },
+            { id:'emosi', title:"Tangki Emosi", color:"text-pink-500", bg:"bg-pink-500 text-white", icon:"fa-heart", q:["Rasa disayangi/disokong.", "Mampu luah emosi sihat.", "Amal kesyukuran harian.", "Jarang simpan dendam.", "Rasa hidup bermakna.", "Dapat kawal marah.", "Gembira beberapa kali seminggu.", "Amal self-compassion.", "Jarang rasa sunyi.", "Emosi keseluruhan stabil."] },
+            { id:'tingkahlaku', title:"Tangki Tingkah Laku", color:"text-green-500", bg:"bg-green-500 text-white", icon:"fa-users", q:["Rutin harian konsisten.", "Aktif aktiviti bermakna.", "Tak suka bertangguh.", "Ada interaksi sosial.", "Cuba perkara baru.", "Beri self-reward.", "Mampu bangun walau tak motivasi.", "Tak bergantung gajet melampau.", "Ambil tindakan bila ada masalah.", "Tingkah laku bantu kesejahteraan diri."] }
         ];
+        let aAns = { fizikal:Array(10).fill(0), mental:Array(10).fill(0), emosi:Array(10).fill(0), tingkahlaku:Array(10).fill(0) };
 
-        const actionPlans = {
-            fizikal: ["Pemakanan seimbang", "Tidur berkualiti 7–8 jam", "Hidrasi mencukupi", "Senaman ringan berkala", "Rehat berkala semasa kerja", "Pendedahan cahaya matahari pagi", "Pernafasan dalam & relaksasi", "Pemeriksaan kesihatan", "Postur badan yang baik", "Jadual harian konsisten"],
-            mental: ["Fokus pada satu tugasan", "Perancangan harian jelas", "Reframing kognitif", "Pembelajaran perkara baru", "Time blocking", "Menetapkan keutamaan", "Jurnal refleksi", "Membaca bahan inspirasi", "Mindfulness kognitif", "Sasaran realistik"],
-            emosi: ["Sokongan sosial", "Amalan kesyukuran", "Ekspresi emosi sihat", "Memaafkan", "Aktiviti spiritual", "Sentuhan kasih sayang", "Humor & ketawa", "Muzik menenangkan", "Self-compassion", "Aktiviti yang memberi makna"],
-            tingkahlaku: ["Tingkah laku aktif", "Rutin harian teratur", "Aktiviti fizikal ringan", "Membantu orang lain", "Terlibat dalam komuniti", "Aktiviti kreatif", "Cabaran kecil harian", "Pencapaian mikro", "Pengurusan masa berstruktur", "Self-reward sihat"]
-        };
-
-        const compassionExamples = [
-            { bad: "Aku memang tak berguna.", good: "Aku sedang belajar. Semua orang buat silap.", context: "Gagal melakukan sesuatu tugas" },
-            { bad: "Aku lemah sebab tak mampu handle semua.", good: "Aku penat kerana aku telah berusaha. Aku perlukan rehat.", context: "Rasa penat melampau" },
-            { bad: "Kenapa aku tak boleh berhenti fikir?", good: "Ini hanya fikiran, bukan realiti. Aku boleh perlahan-lahan lepaskan.", context: "Overthinking / Ruminasi" }
-        ];
-
-        let currentSectionIndex = 0;
-        let userResponses = {}; 
-        quizData.forEach(s => userResponses[s.id] = new Array(10).fill(0));
-
-        function startGame() {
-            let nameInput = document.getElementById('playerName').value.trim();
-            if(!nameInput) {
-                const inputEl = document.getElementById('playerName');
-                inputEl.classList.add('ring-4', 'ring-red-200', 'border-red-500');
-                setTimeout(() => inputEl.classList.remove('ring-4', 'ring-red-200', 'border-red-500'), 1000);
-                inputEl.placeholder = "Sila isi nama anda dahulu!"; return;
-            }
-            document.getElementById('displayPlayerName').innerText = nameInput;
-            hideAll();
-            document.getElementById('progressBarContainer').classList.remove('hidden-section');
-            document.getElementById('quiz-container').classList.remove('hidden-section');
-            renderSection();
+        function startAudit() {
+            let nm = $('auditName').value.trim();
+            if(!nm) return alert("Sila masukkan nama!");
+            $('auditResName').innerText = nm;
+            aIdx=0; show('ui-audit-quiz'); $('progressBarContainer').classList.remove('hidden-section'); renderAudit();
         }
-
-        function renderSection() {
-            const section = quizData[currentSectionIndex];
-            document.getElementById('sectionTitle').innerHTML = `<span class="${section.color}">${section.title}</span>`;
-            document.getElementById('sectionIcon').className = `text-4xl ${section.bg} w-16 h-16 flex items-center justify-center rounded-2xl shadow-lg pop-in`;
-            document.getElementById('sectionIcon').innerHTML = `<i class="fas ${section.icon}"></i>`;
-            const qDiv = document.getElementById('questionsDiv'); qDiv.innerHTML = ''; 
-            const emojis = [{v:1,i:'😭',l:'Sangat Tidak Setuju'},{v:2,i:'🙁',l:'Tidak Setuju'},{v:3,i:'😐',l:'Neutral'},{v:4,i:'🙂',l:'Setuju'},{v:5,i:'🤩',l:'Sangat Setuju'}];
-
-            section.questions.forEach((q, idx) => {
-                let currentVal = userResponses[section.id][idx];
-                let html = `
-                <div class="bg-white/70 p-5 md:p-6 rounded-3xl border-2 border-white shadow-sm mb-4 pop-in" style="animation-delay: ${idx*0.05}s">
-                    <p class="font-bold mb-6 text-gray-800 text-lg flex items-start gap-3"><span class="bg-${section.accent}-100 text-${section.accent}-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5">${idx + 1}</span> ${q}</p>
-                    <div class="flex justify-between items-end w-full max-w-2xl mx-auto gap-2">
-                        ${emojis.map(e => `
-                            <div class="emoji-radio text-center flex-1">
-                                <input type="radio" name="${section.id}_q${idx}" id="${section.id}_q${idx}_v${e.v}" value="${e.v}" onchange="saveAnswer('${section.id}', ${idx}, ${e.v})" ${currentVal===e.v?'checked':''}>
-                                <label for="${section.id}_q${idx}_v${e.v}"><div class="emoji-wrapper bg-gray-50 shadow-sm border border-gray-100"><div class="text-3xl md:text-4xl">${e.i}</div></div><div class="text-[10px] md:text-xs text-gray-500 font-medium leading-tight mt-1 h-8 flex items-center justify-center">${e.l}</div></label>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-                qDiv.insertAdjacentHTML('beforeend', html);
+        function renderAudit() {
+            let s = aData[aIdx];
+            $('auditTitle').innerHTML = `<span class="${s.color}">${s.title}</span>`;
+            let h = '';
+            s.q.forEach((q,i) => {
+                let cv = aAns[s.id][i];
+                h += `<div class="bg-white/80 p-4 rounded-2xl mb-4 border border-white shadow-sm"><p class="font-bold mb-3">${i+1}. ${q}</p><div class="flex justify-between gap-1">`;
+                [{v:1,e:'😭',l:'Sgt Tidak'},{v:2,e:'🙁',l:'Tidak'},{v:3,e:'😐',l:'Neutral'},{v:4,e:'🙂',l:'Ya'},{v:5,e:'🤩',l:'Sgt Ya'}].forEach(m=>{
+                    h += `<div class="emoji-radio text-center flex-1"><input type="radio" name="${s.id}_${i}" id="${s.id}_${i}_${m.v}" value="${m.v}" onchange="setAAns('${s.id}',${i},${m.v})" ${cv===m.v?'checked':''}><label for="${s.id}_${i}_${m.v}"><div class="emoji-wrapper text-3xl shadow-sm border border-gray-200">${m.e}</div><div class="text-[10px] text-gray-500">${m.l}</div></label></div>`;
+                });
+                h += `</div></div>`;
             });
-            document.getElementById('btnBack').style.display = currentSectionIndex === 0 ? 'none' : 'block';
-            if(currentSectionIndex === quizData.length - 1) {
-                document.getElementById('btnNext').innerHTML = 'Lihat Keputusan <i class="fas fa-magic ml-2"></i>';
-                document.getElementById('btnNext').className = "bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 px-10 rounded-full shadow-lg text-lg btn-bounce";
-            } else {
-                document.getElementById('btnNext').innerHTML = 'Seterusnya <i class="fas fa-arrow-right ml-2"></i>';
-                document.getElementById('btnNext').className = "bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 px-10 rounded-full shadow-lg text-lg btn-bounce";
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            $('auditQuestions').innerHTML = h;
+            $('auditBtnBack').style.visibility = aIdx===0?'hidden':'visible';
+            window.scrollTo(0,0);
         }
-
-        function saveAnswer(sId, qIdx, val) {
-            userResponses[sId][qIdx] = val;
-            let answered = 0; for (let k in userResponses) answered += userResponses[k].filter(v => v>0).length;
-            let pct = Math.round((answered/40)*100);
-            document.getElementById('progressText').innerText = pct + "%";
-            document.getElementById('progressBar').style.width = pct + "%";
+        function setAAns(id,i,v) { 
+            aAns[id][i]=v; 
+            let ans=0; for(let k in aAns) ans+=aAns[k].filter(x=>x>0).length; 
+            let p=Math.round((ans/40)*100); $('auditProgress').style.width=p+'%'; $('progressText').innerText=p+'%'; 
         }
-        function nextSection() {
-            if (userResponses[quizData[currentSectionIndex].id].includes(0)) return alert("Sila jawab semua soalan dalam level ini!");
-            if (currentSectionIndex < 3) { currentSectionIndex++; renderSection(); } 
-            else { calculateResults(); }
+        function auditPrev() { if(aIdx>0){aIdx--; renderAudit();} }
+        function auditNext() {
+            if(aAns[aData[aIdx].id].includes(0)) return alert("Jawab semua soalan!");
+            if(aIdx<3){ aIdx++; renderAudit(); } else { calcAudit(); }
         }
-        function prevSection() { if (currentSectionIndex > 0) { currentSectionIndex--; renderSection(); } }
-
-        function calculateResults() {
-            hideAll(); document.getElementById('step-results').classList.remove('hidden-section');
-            for (let i = 0; i < 60; i++) {
-                let c = document.createElement('div'); c.classList.add('confetti');
-                c.style.left = Math.random() * 100 + 'vw'; c.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                c.style.backgroundColor = ['#ff4d4d', '#ff9933', '#ffcc00', '#3399ff', '#33cc33'][Math.floor(Math.random()*5)];
-                document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
-            }
-            let total = 0;
-            const grid = document.getElementById('resultsGrid'); grid.innerHTML = '';
-            quizData.forEach((s, i) => {
-                let score = userResponses[s.id].reduce((a,b)=>a+b,0); total += score;
-                let interp = score >= 41 ? { t: "Sangat Penuh", c: "#10b981", bg: "bg-green-200 text-green-800" } : 
-                             score >= 31 ? { t: "Stabil", c: "#3b82f6", bg: "bg-blue-200 text-blue-800" } : 
-                             score >= 21 ? { t: "Perlu Perhatian", c: "#f59e0b", bg: "bg-yellow-200 text-yellow-800" } : 
-                                           { t: "Risiko Tinggi", c: "#ef4444", bg: "bg-red-200 text-red-800" };
-                let recs = [actionPlans[s.id][0], actionPlans[s.id][3], actionPlans[s.id][8]];
-                let html = `
-                <div class="bg-white/70 p-6 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden pop-in" style="animation-delay: ${i*0.1}s">
-                    <div class="flex items-center gap-3 mb-6 justify-center">
-                        <div class="${s.bg} w-10 h-10 rounded-full flex items-center justify-center shadow-sm"><i class="fas ${s.icon}"></i></div>
-                        <span class="font-bold text-xl ${s.color}">${s.title.split(' ')[1]}</span>
-                    </div>
-                    <div class="tank-container mb-4"><div class="tank-liquid" style="height:0%; background:${interp.c};" id="liq-${s.id}"></div></div>
-                    <div class="text-center mt-2 mb-4 border-b border-gray-200 pb-4">
-                        <span class="text-3xl font-extrabold text-gray-800">${score}<span class="text-lg text-gray-400">/50</span></span>
-                        <div class="mt-3 ${interp.bg} text-xs font-bold px-3 py-1.5 rounded-full border shadow-sm inline-block w-full">${interp.t}</div>
-                    </div>
-                    <ul class="text-sm space-y-2 text-gray-700">${recs.map(r => `<li class="flex items-start gap-2 bg-white p-2 rounded-lg border shadow-sm"><i class="fas fa-check-circle text-green-500 mt-0.5"></i> <span>${r}</span></li>`).join('')}</ul>
-                </div>`;
-                grid.insertAdjacentHTML('beforeend', html);
-                setTimeout(() => { document.getElementById(`liq-${s.id}`).style.height = `${(score/50)*100}%`; }, 300 + (i*200));
+        function calcAudit() {
+            show('ui-audit-result');
+            let h='';
+            aData.forEach(s => {
+                let sc = aAns[s.id].reduce((a,b)=>a+b,0);
+                let c = sc>=41?'#10b981':sc>=31?'#3b82f6':sc>=21?'#f59e0b':'#ef4444';
+                let t = sc>=41?'Sangat Penuh':sc>=31?'Stabil':sc>=21?'Perlu Perhatian':'Risiko Tinggi';
+                h+=`<div class="bg-white/80 p-4 rounded-3xl shadow-lg border-2 border-white"><div class="text-center font-bold text-lg ${s.color} mb-4">${s.title}</div><div class="tank-container"><div class="tank-liquid" style="height:${(sc/50)*100}%; background:${c}"></div></div><div class="text-center mt-4 font-bold text-2xl">${sc}/50</div><div class="text-center text-xs mt-1 font-bold" style="color:${c}">${t}</div></div>`;
             });
-            document.getElementById('totalScore').innerText = `${total} / 200`;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            $('auditResultGrid').innerHTML = h;
         }
 
-        function showActionPlan() {
-            hideAll(); document.getElementById('step-action-plan').classList.remove('hidden-section');
-            const container = document.getElementById('actionPlanContainer'); container.innerHTML = '';
-            [{ id: 'fizikal', t: 'Fizikal', c: 'orange', i: 'fa-running' }, { id: 'mental', t: 'Mental', c: 'blue', i: 'fa-brain' }, { id: 'emosi', t: 'Emosi', c: 'pink', i: 'fa-heart' }, { id: 'tingkahlaku', t: 'Tingkah Laku', c: 'green', i: 'fa-users' }].forEach(th => {
-                let itemsHTML = actionPlans[th.id].map(item => `<label class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl hover:bg-white cursor-pointer border-2 border-transparent shadow-sm"><input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-${th.c}-600"><span class="text-sm font-semibold text-gray-700">${item}</span></label>`).join('');
-                container.insertAdjacentHTML('beforeend', `<div class="bg-${th.c}-50 p-6 rounded-3xl border-2 border-${th.c}-200 shadow-sm pop-in"><h3 class="text-2xl font-extrabold text-${th.c}-600 mb-6 flex items-center gap-3 bg-white p-3 rounded-2xl inline-flex"><i class="fas ${th.i}"></i> Power-up ${th.t}</h3><div class="space-y-3">${itemsHTML}</div></div>`);
+        // --- IPW LOGIC ---
+        // Compacted IPW questions to save space. Full array maintained.
+        const ipwQ = ["Cepat sesuai diri.","Lebih tua dari umur(fikiran).","Mudah mesra.","Golongan pandai.","Selesa hidup tradisi.","Suka subjek merangsang minda.","Suka nampak berbeza.","Aktiviti luar seronok.","Hargai keluarga.","Sentiasa membaca.","Tunjuk peribadi sebenar.","Bergaul semua orang.","Kerja sistematik.","Tanya guru bab minda.","Beri dorongan orang lain.","Tak gentar cabaran.","Hormat pihak berkuasa.","Guru sgt dihormati.","Senang berinteraksi.","Suka perkhemahan.","Emosi stabil.","Teroka semua bidang.","Suka kerja pendidikan.","Persaingan tu baik.","Patuh peraturan.","Penyabar.","Suka tolong orang.","Suka amali dari teori.","Hargai masa.","Suka analisis orang/diri.","Suka kerja seni.","Ceriakan suasana tegang.","Kerja keras untuk organisasi.","Puas hati kerja sempurna.","Selami perasaan orang.","Gerakbalas spontan.","Patuhi peraturan.","Suka bincang falsafah.","Ciri pengasuh.","Suka luar biasa & cabaran.","Suka jimat cermat.","Minta penjelasan soalan.","Percaya harga diri.","Suka bahaya tapi seronok.","Tak suka selekeh.","Suka aktiviti penyelidikan.","Motivasi bila didorong.","Kelakar.","Bersifat konkrit.","Bahas teori.","Tak minat persaingan.","Tak suka baca banyak.","Bertanggungjawab.","Prinsip jelas.","Mahu pujian kejayaan.","Suka koku lasak.","Bersifat keibubapaan.","Cipta benda baru.","Perbalahan ganggu emosi.","Bosan kerja berstruktur.","Pentingkan harmoni.","Tugas sempurna.","Pendengar baik.","Bosan kerja rigid.","Amanah.","Ingin tahu tinggi.","Mudah sayang orang.","Bosan kerja rutin.","Bersedia kerja.","Seorang tenang.","Mudah terasa bila orang cakap.","Puas kerja bebas.","Beza baik buruk.","Suka tanding cabar minda.","Tak gemar cerita ganas.","Puas kerja guna fizikal.","Puas tolong orang.","Kerja itu permainan.","Rasa salah ingkar ibubapa.","Puas kerja guna alat.","Pastikan stabil kat tempat kerja.","Suka tugas mencabar.","Mudah maafkan orang.","Performer semulajadi.","Teliti buat kerja.","Reka model.","Mudah simpati walau dia salah.","Tak suka dikongkong.","Wajar buat keputusan.","Teroka idea baru.","Tiru gaya orang.","Tak suka peraturan.","Kendalikan urusan perincian.","Aktiviti ilmiah.","Bosan sekolah sbb peraturan.","Suka kerja tanpa jadual.","Mahir susun tempat kerja.","Alih projek lepas siap lama.","Berkhayal masa depan.","Suka kerja tanpa tekanan."];
+        let ipwI = 0; let ipwS = {emas:0, hijau:0, biru:0, jingga:0}; let ipwA = Array(100).fill(null);
+        
+        function startIPW() { ipwI=0; ipwS={emas:0, hijau:0, biru:0, jingga:0}; ipwA.fill(null); show('ui-ipw-quiz'); renderIPW(); }
+        function renderIPW() {
+            $('ipwQuestionText').innerText = `${ipwI+1}. ${ipwQ[ipwI]}`;
+            $('ipwProgressText').innerText = `Soalan ${ipwI+1}/100`;
+            $('ipwProgress').style.width = ((ipwI+1)/100)*100 + '%';
+        }
+        function ipwAnswer(v) {
+            ipwA[ipwI] = v;
+            if(v===1) { let r=(ipwI+1)%4; if(r===1) ipwS.emas++; else if(r===2) ipwS.hijau++; else if(r===3) ipwS.biru++; else ipwS.jingga++; }
+            ipwI++;
+            if(ipwI === 100) showIPWRes();
+            else if(ipwI%20 === 0) show('ui-ipw-break');
+            else renderIPW();
+        }
+        function continueIPW() { show('ui-ipw-quiz'); renderIPW(); }
+        function showIPWRes() {
+            show('ui-ipw-result');
+            let m = Math.max(ipwS.emas, ipwS.hijau, ipwS.biru, ipwS.jingga);
+            let dom = ipwS.emas===m?'Emas (Berstruktur)':ipwS.hijau===m?'Hijau (Pemikir)':ipwS.biru===m?'Biru (Perasaan)':'Jingga (Adventurous)';
+            $('ipwDomName').innerText = dom;
+            ['emas','hijau','biru','jingga'].forEach(k => {
+                $(`ipwScore${k.charAt(0).toUpperCase()+k.slice(1)}`).innerText = ipwS[k] + '/25';
+                setTimeout(()=> $(`ipwBar${k.charAt(0).toUpperCase()+k.slice(1)}`).style.width = (ipwS[k]/25)*100+'%', 500);
             });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showSelfCompassion() {
-            hideAll(); document.getElementById('step-compassion').classList.remove('hidden-section');
-            const container = document.getElementById('compassionCards'); container.innerHTML = '';
-            compassionExamples.forEach((item, idx) => {
-                container.insertAdjacentHTML('beforeend', `<div class="bg-white/80 p-5 md:p-6 rounded-3xl shadow-sm border-l-8 border-pink-400 flex flex-col md:flex-row gap-6 items-center hover:shadow-lg transition-shadow pop-in" style="animation-delay: ${idx * 0.1}s"><div class="md:w-1/4 bg-gray-50 p-4 rounded-2xl border flex items-center justify-center text-center"><div><span class="text-[10px] font-bold text-pink-500 uppercase block mb-1">Situasi</span><p class="font-extrabold text-gray-800">${item.context}</p></div></div><div class="md:w-2/4 bg-red-50 p-5 rounded-2xl border border-red-100 relative"><span class="text-xs font-bold text-red-500 mb-2 block"><i class="fas fa-times-circle"></i> Suara Kritikan</span><p class="text-red-900 font-medium italic">"${item.bad}"</p></div><div class="md:w-2/4 bg-green-50 p-5 rounded-2xl border border-green-100 relative shadow-sm"><span class="text-xs font-bold text-green-600 mb-2 block"><i class="fas fa-check-circle"></i> Self-Compassion</span><p class="text-green-900 font-bold">"${item.good}"</p></div></div>`);
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // ==========================================
-        // IPW DATA & LOGIC
-        // ==========================================
-        const ipwQuestions = [
-            "Saya cepat menyesuaikan diri dengan situasi baru.", "Saya lebih tua dari umur sebenar saya daripada segi pemikiran.", "Saya mudah mesra bila berhubung dengan orang lain.", "Saya adalah dalam golongan orang yang pandai.", "Saya amat selesa dengan pengekalan cara hidup tradisi.", "Saya bersemangat mengikuti subjek yang merangsang minda.", "Saya suka kelihatan berbeza daripada orang lain.", "Saya isikan masa lapang dengan aktiviti luar yang menyeronokkan.", "Saya sangat menghargai kehidupan berkeluarga.", "Saya sentiasa membaca untuk menambah ilmu pengetahuan.",
-            "Saya suka menunjukkan keperibadian saya sebenar dalam semua keadaan.", "Saya suka bergaul dengan semua orang.", "Saya akan melakukan segala kerja secara bersistematik.", "Saya sering bertanya guru mengenai persoalan yang mengganggu minda saya.", "Saya selalu memberi dorongan kepada orang lain untuk melakukan sesuatu pekerjaan.", "Saya tidak gentar dengan sebarang cabaran.", "Saya selesa menghormati pihak berkuasa.", "Guru merupakan orang yang sangat saya hormati.", "Saya senang berinteraksi dengan orang lain.", "Saya seorang yang suka aktiviti perkhemahan.",
-            "Saya mempunyai emosi yang stabil.", "Saya berminat untuk meneroka semua bidang.", "Saya cenderung memilih pekerjaan dalam bidang pendidikan.", "Persaingan adalah baik bagi saya.", "Saya sentiasa patuh kepada peraturan walau di mana saya berada.", "Saya seorang yang sabar.", "Saya amat sesuai melibatkan diri dalam aktiviti menolong orang lain.", "Saya sukakan perkara yang berbentuk amali daripada teori.", "Saya amat menghargai masa.", "Saya suka menganalisis diri sendiri dan orang lain.",
-            "Saya lebih suka melibatkan diri dalam pekerjaan yang ada unsur-unsur kesenian.", "Saya selalu menimbulkan suasana keceriaan ketika tegang.", "Saya sanggup bekerja keras untuk kepentingan organisasi.", "Saya akan berpuas hati setelah kerja disiapkan dengan sempurna.", "Saya berkebolehan untuk menyelami perasaan orang.", "Saya selalu memberikan gerakbalas yang spontan dalam setiap tindakan.", "Saya selesa mematuhi peraturan-peraturan yang ditetapkan.", "Saya suka membincangkan falsafah tentang sesuatu perkara.", "Saya memiliki ciri-ciri seorang pengasuh.", "Saya suka kepada sesuatu yang luar biasa dan mencabar.",
-            "Saya seorang yang suka berjimat cermat.", "Saya sering meminta penjelasan tentang sesuatu persoalan.", "Saya percaya setiap orang mempunyai harga diri.", "Saya sukakan aktiviti yang berbahaya tetapi menyeronokkan.", "Saya tidak suka berpakaian selekeh.", "Saya suka kepada perkara yang memerlukan aktiviti penyelidikan.", "Saya lebih bermotivasi sekiranya diberi dorongan.", "Saya seorang yang kelakar.", "Saya sering kali bersifat konkrit.", "Saya gemar membahaskan sesuatu teori.",
-            "Saya tidak berminat dengan aktiviti yang melibatkan persaingan.", "Saya tidak suka pelajaran yang memerlukan pembacaan yang banyak.", "Saya seorang yang bertanggungjawab.", "Saya mempunyai prinsip hidup yang jelas.", "Saya mahu mendapat kepujian daripada orang lain di atas setiap kejayaan saya.", "Saya suka aktiviti ko-kurikulum yang lasak.", "Saya bersifat keibubapaan.", "Saya cenderung untuk merekacipta sesuatu yang baru.", "Keadaan perbalahan selalu mengganggu emosi saya.", "Saya bosan dengan kerja berstruktur.",
-            "Saya seorang yang mementingkan keharmonian.", "Saya berkebolehan menjalankan sesuatu tugas dengan sempurna.", "Saya seorang pendengar yang baik.", "Saya bosan dengan kerja-kerja yang rigid.", "Saya seorang yang amanah.", "Saya sentiasa bersifat ingin tahu yang tinggi terhadap sesuatu.", "Adakah anda seorang yang mudah menyayangi orang lain.", "Saya bosan dengan kerja yang rutin.", "Saya sentiasa bersedia untuk melakukan sesuatu kerja.", "Saya adalah seorang yang tenang.",
-            "Sekali sekala saya mudah terasa apabila orang lain bercakap mengenai diri saya.", "Saya puas hati dengan kerja yang melibatkan kebebasan.", "Saya selalunya dapat membezakan perkara yang baik dan buruk dalam kehidupan.", "Saya berminat menyertai pertandingan yang mencabar minda.", "Saya tidak gemar menonton cerita yang berunsur keganasan.", "Saya puas hati dengan kerja yang dapat menggunakan koordinasi fizikal.", "Saya berpuas hati kerana dapat menolong seseorang yang memerlukan pertolongan.", "Bagi saya kerja itu adalah suatu permainan.", "Saya mudah rasa bersalah apabila tidak mematuhi nasihat ibu bapa.", "Saya puas hati dengan kerja yang menggunakan alatan.",
-            "Saya selalu memastikan kestabilan dalam suasana pekerjaan.", "Saya seorang yang sangat menyukai tugas yang mencabar.", "Saya mudah memaafkan kesalahan orang lain.", "Saya seorang yang performer semula jadi.", "Saya seorang yang teliti dalam membuat sesuatu pekerjaan.", "Saya suka merekacipta sesuatu model.", "Saya mudah simpati kepada seseorang walaupun ternyata dia bersalah.", "Saya tidak suka dikongkong.", "Saya sentiasa bersifat wajar dalam membuat sebarang keputusan.", "Saya lebih suka meneroka idea-idea baru.",
-            "Saya suka meniru gaya orang lain.", "Saya tidak suka kepada peraturan.", "Saya berkebolehan untuk mengendalikan urusan yang memerlukan perincian.", "Saya berminat untuk menyertai aktiviti-aktiviti berbentuk ilmiah.", "Zaman persekolahan saya begitu membosankan kerana terpaksa mengikut peraturan.", "Pekerjaan tanpa jadual sangat menarik minat saya.", "Saya mahir menyusun atur tempat kerja.", "Saya akan beralih ke projek yang baru setelah menyelesaikan tugas yang lama.", "Saya suka berkhayal tentang masa hadapan.", "Saya suka melakukan kerja tanpa tekanan."
-        ];
-
-        const ipwInterpretations = {
-            gold: {
-                title: "EMAS (Peraturan & Tanggungjawab)", keywords: "Peraturan, Tanggungjawab, Tradisional, Stabil",
-                general: "Anda bersikap keibubapaan, mengikut adat resam, bertanggungjawab, praktikal, waras fikiran, boleh dipercayai, setia, tradisional, konservatif, hidup bersistem dan berperaturan.",
-                self: ["Perlu mengikut peraturan dan menghormati pihak berkuasa.", "Sangat bertanggungjawab, taat dan boleh diharap.", "Tahu apa yang baik dan buruk.", "Menghargai hidup berkeluarga, tradisi dan rumah tangga.", "Seorang peneliti dan bersifat wajar."],
-                work: ["Menjaga kestabilan dan menyusun atur tempat kerja.", "Berkebolehan mengendalikan urusan yang perlu perincian.", "Sanggup bekerja keras, dianggap 'tulang belakang' organisasi.", "Percaya kerja dahulu baru main."],
-                child: ["Sentiasa mahu mengikut undang-undang dan peraturan sekolah.", "Memahami dan menghormati pihak berkuasa.", "Rasa selesa dengan rutin pelajaran.", "Menyesuaikan diri dengan mudah dalam sistem sekolah."],
-                colorClass: "bg-theme-gold", textColor: "text-theme-gold", icon: "fa-balance-scale"
-            },
-            green: {
-                title: "HIJAU (Intelektual & Teori)", keywords: "Ingin Tahu, Teori, Pencipta, Analitikal",
-                general: "Anda cenderung dan cekap dalam pelbagai lapangan, suka mereka cipta, cekap, ingin tahu, memahami konsep, berpengetahuan luas, bijak, tenang, sabar, berprinsip, dan berasaskan logik.",
-                self: ["Cenderung dan cekap dalam pelbagai lapangan.", "Suka mereka cipta sesuatu yang baru.", "Berminat tentang konsep, gagasan, dan idea.", "Mempunyai pengetahuan luas berdasarkan teori.", "Tenang, sabar, berprinsip dan jujur."],
-                work: ["Seorang pemikir konsep yang bebas.", "Menganggap kerja sebagai satu permainan intelektual.", "Suka meneroka idea atau membina sistem baru.", "Suka beralih ke projek baru setelah idea lama disempurnakan."],
-                child: ["Pemikiran lebih tua dari umur sebenar.", "Fokus kepada perkara yang merangsang mental.", "Tidak sabar dengan kaedah latih-tubi atau rutin.", "Perlu menghormati guru sebelum boleh belajar daripada mereka."],
-                colorClass: "bg-theme-green", textColor: "text-theme-green", icon: "fa-brain"
-            },
-            blue: {
-                title: "BIRU (Romantis & Harmoni)", keywords: "Romantis, Harmoni, Empati, Kasih Sayang",
-                general: "Anda bersifat tulen, mesra, mengasihani, bersimpati, unik, menyelami perasaan orang lain, penyayang, setia, berseni, memberi inspirasi, riang, dan penuh kasih sayang.",
-                self: ["Mahu merasa unik dan tulen.", "Mudah bersimpati dan mencari makna kehidupan.", "Inginkan perhubungan yang mesra.", "Romantis, bersemangat, gembira dan imaginatif.", "Suka membelai dan membantu orang lain."],
-                work: ["Dorongan kuat mempengaruhi orang lain ke arah kebaikan.", "Sesuai dalam bidang seni, komunikasi, pendidikan, dan menolong orang.", "Mahir memberi motivasi dan berinteraksi."],
-                child: ["Sangat imaginatif.", "Sukar menyesuaikan diri dalam struktur sekolah yang kaku.", "Mahukan pengiktirafan dan galakan, bukan persaingan.", "Tidak suka perbalahan atau penolakan."],
-                colorClass: "bg-theme-blue", textColor: "text-theme-blue", icon: "fa-heart"
-            },
-            orange: {
-                title: "JINGGA (Adventurous & Spontan)", keywords: "Spontan, Berani, Kebebasan, Pertandingan",
-                general: "Anda cergas, pandai guna kesempatan, spontan, suka pertandingan, tergopoh-gapah tapi bersemangat, realistik, berfikiran terbuka, gemar pengalaman berbahaya tapi menyeronokkan.",
-                self: ["Bertindak spontan, suka berjenaka dan menawan.", "Menganggap hidup sebagai permainan.", "Sukakan keseronokan, cabaran dan persaingan.", "Tabah, berani dan tidak gentar.", "Gemar pengalaman luar biasa yang berbahaya."],
-                work: ["Bosan dengan kerja berstruktur dan rutin.", "Suka kerja yang beri kebebasan dan guna koordinasi fizikal.", "Seorang 'performer' semula jadi."],
-                child: ["Menghadapi kesulitan menyesuaikan diri dengan rutin sekolah.", "Belajar dengan mencuba atau mengalami (hands-on).", "Perlukan penglibatan fizikal dalam pembelajaran.", "Suka bersaing dan inginkan keseronokan."],
-                colorClass: "bg-theme-orange", textColor: "text-theme-orange", icon: "fa-running"
-            }
-        };
-
-        let ipwCurrentQuestion = 0;
-        let ipwScores = { gold: 0, green: 0, blue: 0, orange: 0 };
-        let ipwAnswers = new Array(100).fill(null);
-
-        function startIPW() {
-            ipwCurrentQuestion = 0;
-            ipwScores = { gold: 0, green: 0, blue: 0, orange: 0 };
-            ipwAnswers.fill(null);
-            hideAll();
-            document.getElementById('step-ipw-quiz').classList.remove('hidden-section');
-            renderIPWQuestion();
-        }
-
-        function renderIPWQuestion() {
-            document.getElementById('ipw-question-text').innerText = `${ipwCurrentQuestion + 1}. ${ipwQuestions[ipwCurrentQuestion]}`;
-            document.getElementById('ipw-progress-text').innerText = `Soalan ${ipwCurrentQuestion + 1} / 100`;
-            const percent = ((ipwCurrentQuestion + 1) / 100) * 100;
-            const pb = document.getElementById('ipw-progress-bar');
-            pb.style.width = `${percent}%`;
-
-            const type = (ipwCurrentQuestion + 1) % 4;
-            if(type === 1) pb.className = "h-4 rounded-full transition-all duration-300 bg-yellow-500";
-            if(type === 2) pb.className = "h-4 rounded-full transition-all duration-300 bg-green-500";
-            if(type === 3) pb.className = "h-4 rounded-full transition-all duration-300 bg-blue-500";
-            if(type === 0) pb.className = "h-4 rounded-full transition-all duration-300 bg-orange-500";
             
-            const btnBack = document.getElementById('ipw-btn-back');
-            if(ipwCurrentQuestion > 0) btnBack.classList.remove('hidden');
-            else btnBack.classList.add('hidden');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            let desc = "";
+            if(dom.includes('Emas')) desc="Anda bersikap keibubapaan, mengikut adat, bertanggungjawab, stabil dan berstruktur.";
+            if(dom.includes('Hijau')) desc="Anda analitikal, pencipta, tenang, sabar, berprinsip, dan berasaskan logik/teori.";
+            if(dom.includes('Biru')) desc="Anda romantis, harmoni, empati, penyayang, dan sangat pandai menyelami emosi.";
+            if(dom.includes('Jingga')) desc="Anda spontan, berani, suka kebebasan, pertandingan, dan sangat aktif.";
+            $('ipwDesc').innerText = desc;
         }
 
-        function ipwPrevQuestion() {
-            if(ipwCurrentQuestion > 0) {
-                const prevAnswer = ipwAnswers[ipwCurrentQuestion - 1];
-                if (prevAnswer === true) updateIPWScore(ipwCurrentQuestion, -1); 
-                ipwCurrentQuestion--;
-                renderIPWQuestion();
-            }
+        // --- GAMES LOGIC ---
+        function openGame(g) { show('game-'+g); }
+        function stopGame(g) {
+            if(g==='clap'){ if(micSource) micSource.disconnect(); if(audioCtx) audioCtx.close(); }
+            if(g==='gesture'){ isGestActive=false; clearInterval(gestInt); if(camG)camG.stop(); }
+            if(g==='scream'){ isScrm=false; clearInterval(scrInt); if(scrCtx)scrCtx.close(); }
+            if(g==='kucing'){ isCat=false; cancelAnimationFrame(catReq); if(camK)camK.stop(); }
+            if(g==='cawan'){ isCw=false; cancelAnimationFrame(cwReq); if(camC)camC.stop(); }
+            show('ui-games-hub');
         }
 
-        function ipwAnswer(isYes) {
-            ipwAnswers[ipwCurrentQuestion] = isYes;
-            if (isYes) updateIPWScore(ipwCurrentQuestion + 1, 1);
+        // Game 1: Clap
+        let clpTgt=0, clpCnt=0, isClap=false, lstClp=0;
+        async function initClap(){ try{ const s=await navigator.mediaDevices.getUserMedia({audio:true}); audioCtx=new(window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); micSource=audioCtx.createMediaStreamSource(s); audioProcessor=audioCtx.createScriptProcessor(2048,1,1); gainNodeSilent=audioCtx.createGain(); gainNodeSilent.gain.value=0; micSource.connect(analyser); analyser.connect(audioProcessor); audioProcessor.connect(gainNodeSilent); gainNodeSilent.connect(audioCtx.destination); audioProcessor.onaudioprocess=function(){ if(!isClap)return; let arr=new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(arr); let v=0; for(let i=0;i<arr.length;i++)v+=arr[i]; let avg=v/arr.length; if(avg>40 && Date.now()-lstClp>350){lstClp=Date.now(); clpCnt++; $('c-count').innerText=clpCnt;} }; $('c-setup').classList.add('hidden'); $('c-lvl').classList.remove('hidden'); }catch(e){alert("Ralat Mic: "+e);} }
+        async function startClap(t){ clpTgt=t; clpCnt=0; $('c-count').innerText=0; $('c-lvl').classList.add('hidden'); $('c-play').classList.remove('hidden'); $('c-btn').classList.add('hidden'); $('c-status').innerText="Dengar..."; if(audioCtx.state==='suspended')await audioCtx.resume(); for(let i=0;i<t;i++){ playSynth(); $('c-icon').style.transform="scale(1.3)"; setTimeout(()=>$('c-icon').style.transform="scale(1)",150); await new Promise(r=>setTimeout(r,600)); } $('c-status').innerText="Tepuk Sekarang!"; $('c-btn').classList.remove('hidden'); isClap=true; }
+        function playSynth(){ if(!audioCtx)return; let b=audioCtx.createBuffer(1,audioCtx.sampleRate*0.1,audioCtx.sampleRate); let d=b.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1; let n=audioCtx.createBufferSource(); n.buffer=b; let f=audioCtx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=1000; let g=audioCtx.createGain(); g.gain.setValueAtTime(1,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.1); n.connect(f).connect(g).connect(audioCtx.destination); n.start(); }
+        function checkClap(){ isClap=false; alert(clpCnt===clpTgt?"Tepat!":"Salah. Anda tepuk "+clpCnt+", sasaran: "+clpTgt); $('c-play').classList.add('hidden'); $('c-lvl').classList.remove('hidden'); }
+        function resetClapCount(){ clpCnt=0; $('c-count').innerText=0; }
 
-            ipwCurrentQuestion++;
+        // Game 2: Gesture Dual
+        const gVid=$('g-vid'), gCan=$('g-can'), gCtx=gCan?gCan.getContext('2d'):null; let camG, hG, gestInt, isGestActive=false, gTime=100, gScore=0, gLives=3, gRnd=0;
+        let gTgts = [{i:'🖐️'},{i:'✊'},{i:'✌️'},{i:'🤟'},{i:'👈'},{i:'👉'}], gTL='', gTR='';
+        async function initGesture(){ $('g-startBtn').classList.add('hidden'); $('g-load').classList.remove('hidden'); try{ hG=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`}); hG.setOptions({maxNumHands:2}); hG.onResults(resG); camG=new Camera(gVid,{onFrame:async()=>{await hG.send({image:gVid})},width:400,height:300}); await camG.start(); $('g-setup').classList.add('hidden'); $('g-play').classList.remove('hidden'); gCan.width=400; gCan.height=300; gScore=0; gLives=3; gRnd=0; nextGest(); }catch(e){alert("Kamera Ralat");} }
+        function nextGest(){ isGestActive=true; gRnd++; let t1=gTgts[Math.floor(Math.random()*gTgts.length)], t2; if(gRnd<=3){t2=t1;} else if(gRnd<=6){do{t2=gTgts[Math.floor(Math.random()*gTgts.length)]}while(t1.i===t2.i);} else{t2=gTgts[Math.floor(Math.random()*gTgts.length)];} gTL=t1.i; gTR=t2.i; $('g-target').innerHTML=`<span>${gTL}</span>+<span>${gTR}</span>`; gTime=100; clearInterval(gestInt); let spd=gRnd<=5?100:gRnd<=10?70:gRnd<=15?50:gRnd<=20?30:20; gestInt=setInterval(()=>{gTime--; $('g-bar').style.width=gTime+'%'; if(gTime<=0){clearInterval(gestInt); isGestActive=false; gLives--; $('g-lives').innerText="❤️".repeat(Math.max(0,gLives)); if(gLives<=0){alert("Tamat! Skor: "+gScore); stopGame('gesture');}else{setTimeout(nextGest,1000);}} },spd); }
+        function resG(res){ gCtx.clearRect(0,0,gCan.width,gCan.height); if(res.multiHandLandmarks){ res.multiHandLandmarks.forEach(lm=>{ drawConnectors(gCtx,lm,HAND_CONNECTIONS,{color:'#fff',lineWidth:2}); drawLandmarks(gCtx,lm,{color:'#3b82f6',radius:3}); }); if(isGestActive&&res.multiHandLandmarks.length===2){ let p1=getPose(res.multiHandLandmarks[0]), p2=getPose(res.multiHandLandmarks[1]); if(p1&&p2 && ((p1===gTL&&p2===gTR)||(p1===gTR&&p2===gTL))){ isGestActive=false; clearInterval(gestInt); gScore+=10; $('g-score').innerText=gScore; setTimeout(nextGest,500); } } } }
+        function getPose(lm){ let iU=lm[8].y<lm[6].y-0.02, mU=lm[12].y<lm[10].y-0.02, rU=lm[16].y<lm[14].y-0.02, pU=lm[20].y<lm[18].y-0.02, dx=lm[8].x-lm[5].x, dy=lm[8].y-lm[5].y; if(iU&&mU&&rU&&pU)return '🖐️'; if(iU&&mU&&!rU&&!pU)return '✌️'; if(iU&&!mU&&!rU&&pU)return '🤟'; if(!mU&&!rU&&!pU){if(dx>0.06&&Math.abs(dx)>Math.abs(dy))return '👈'; if(dx<-0.06&&Math.abs(dx)>Math.abs(dy))return '👉'; if(!iU)return '✊';} return null; }
 
-            if (ipwCurrentQuestion === 100) {
-                showIPWResults();
-            } else if (ipwCurrentQuestion % 20 === 0) {
-                showIPWBreak();
-            } else {
-                const card = document.getElementById('ipw-question-card');
-                card.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => {
-                    renderIPWQuestion();
-                    card.classList.remove('opacity-0', 'translate-x-10');
-                    card.classList.add('slide-in');
-                }, 200);
-            }
-        }
+        // Game 3: Scream
+        let scrCtx, scrAna, scrArr, scrInt, isScrm=false, sPeak=0, sTime=10;
+        async function initScream(){ if(!$('s-txt').value)return alert("Isi luahan dahulu"); try{ let s=await navigator.mediaDevices.getUserMedia({audio:true}); scrCtx=new(window.AudioContext||window.webkitAudioContext)(); scrAna=scrCtx.createAnalyser(); scrCtx.createMediaStreamSource(s).connect(scrAna); scrArr=new Uint8Array(scrAna.frequencyBinCount); $('s-setup').classList.add('hidden'); $('s-play').classList.remove('hidden'); sTime=10; sPeak=0; isScrm=true; scrInt=setInterval(()=>{sTime-=0.1; $('s-time').innerText=Math.max(0,sTime).toFixed(1); if(sTime<=0){clearInterval(scrInt); isScrm=false; alert("Terapi Selesai! Puncak: "+sPeak.toFixed(1)+"%"); $('s-play').classList.add('hidden'); $('s-setup').classList.remove('hidden');} },100); updScrm(); }catch(e){alert("Mic Ralat");} }
+        function updScrm(){ if(!isScrm)return; scrAna.getByteFrequencyData(scrArr); let v=scrArr.reduce((a,b)=>a+b)/scrArr.length; let p=Math.min(99.8, 100*(1-Math.exp(-0.027*v))); $('s-bar').style.height=p+'%'; if(p>sPeak){sPeak=p; $('s-peak').innerText=p.toFixed(1);} requestAnimationFrame(updScrm); }
 
-        function updateIPWScore(qNumber, value) {
-            const remainder = qNumber % 4;
-            if (remainder === 1) ipwScores.gold += value;
-            else if (remainder === 2) ipwScores.green += value;
-            else if (remainder === 3) ipwScores.blue += value;
-            else if (remainder === 0) ipwScores.orange += value;
-        }
+        // Game 4: Kucing
+        const kCan=$('k-can'), kCtx=kCan?kCan.getContext('2d'):null, kVid=$('k-vid'); let isCat=false, cScore=0, cLives=3, kItems=[], catX=170, catTgtX=170, catReq, camK, hK, kMode='touch';
+        async function initCat(m){ kMode=m; $('k-setup').classList.add('hidden'); $('k-play').classList.remove('hidden'); kCan.width=400; kCan.height=450; if(m==='ai'){ $('k-cam').classList.remove('hidden'); try{ hK=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`}); hK.setOptions({maxNumHands:1}); hK.onResults(r=>{if(isCat&&r.multiHandLandmarks&&r.multiHandLandmarks.length>0) catTgtX=(1-r.multiHandLandmarks[0][8].x)*400 - 30;}); camK=new Camera(kVid,{onFrame:async()=>{await hK.send({image:kVid})},width:160,height:120}); await camK.start(); }catch(e){alert("Kamera ralat");} } else { $('k-cam').classList.add('hidden'); kCan.onmousemove=e=>{let r=kCan.getBoundingClientRect(); catTgtX=(e.clientX-r.left)*(400/r.width)-30;}; kCan.ontouchmove=e=>{e.preventDefault(); let r=kCan.getBoundingClientRect(); catTgtX=(e.touches[0].clientX-r.left)*(400/r.width)-30;}; } cScore=0; cLives=3; kItems=[]; isCat=true; loopCat(); }
+        function loopCat(){ if(!isCat)return; kCtx.clearRect(0,0,400,450); catX+=(catTgtX-catX)*0.3; catX=Math.max(0,Math.min(340,catX)); kCtx.font="50px Arial"; kCtx.fillText("🧺",catX,390); kCtx.font="30px Arial"; kCtx.fillText("🐱",catX+10,375); if(Math.random()<0.03+(cScore*0.001)){ kItems.push({x:Math.random()*370, y:-30, s:3+Math.random()*2+(cScore*0.05), b:Math.random()<0.2, e:['🍎','🍌','🍇'][Math.floor(Math.random()*3)]}); } for(let i=kItems.length-1;i>=0;i--){ let it=kItems[i]; it.y+=it.s; kCtx.font="30px Arial"; kCtx.fillText(it.b?'💣':it.e, it.x, it.y); if(it.x<catX+60 && it.x+30>catX && it.y<450 && it.y+30>390){ if(it.b){cLives--; $('k-lives').innerText="❤️".repeat(Math.max(0,cLives));} else{cScore+=5; $('k-score').innerText=cScore;} kItems.splice(i,1); } else if(it.y>450) kItems.splice(i,1); } if(cLives<=0){isCat=false; alert("Tamat! Skor: "+cScore); stopGame('kucing');} else catReq=requestAnimationFrame(loopCat); }
 
-        function showIPWBreak() {
-            hideAll();
-            document.getElementById('step-ipw-break').classList.remove('hidden-section');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        // Game 5: Cawan
+        const cwCan=$('cw-can'), cwCtx=cwCan?cwCan.getContext('2d'):null, cwVid=$('cw-vid'); let isCw=false, cwScore=0, cwLives=3, cwCups=[], cwPhase='', cwShuf=0, cwMax=5, cwReq, camC, hC, cMode='touch', cwCur={x:200,y:200}, cwHov=-1, cwHovP=0;
+        async function initCawan(m){ cMode=m; $('cw-setup').classList.add('hidden'); $('cw-play').classList.remove('hidden'); cwCan.width=400; cwCan.height=450; if(m==='ai'){ $('cw-cam').classList.remove('hidden'); try{ hC=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`}); hC.setOptions({maxNumHands:1}); hC.onResults(r=>{if(isCw&&r.multiHandLandmarks&&r.multiHandLandmarks.length>0){ cwCur.x=(1-r.multiHandLandmarks[0][8].x)*400; cwCur.y=r.multiHandLandmarks[0][8].y*450; }}); camC=new Camera(cwVid,{onFrame:async()=>{await hC.send({image:cwVid})},width:160,height:120}); await camC.start(); }catch(e){alert("Kamera ralat");} } else { $('cw-cam').classList.add('hidden'); let tap=e=>{if(cwPhase!=='guess')return; let r=cwCan.getBoundingClientRect(), x=(e.clientX||e.touches[0].clientX)-r.left, y=(e.clientY||e.touches[0].clientY)-r.top; x*=400/r.width; y*=450/r.height; selCw(x,y);}; cwCan.onmousedown=tap; cwCan.ontouchstart=e=>{e.preventDefault();tap(e);}; } cwScore=0; cwLives=3; cwMax=5; isCw=true; startCwRnd(); }
+        function startCwRnd(){ cwPhase='reveal'; $('cw-status').innerText="Perhati Bola!"; let bI=Math.floor(Math.random()*3); cwCups=[]; for(let i=0;i<3;i++) cwCups.push({x:80+(i*120),y:150, tx:80+(i*120), ty:250, b:i===bI}); if(cwReq)cancelAnimationFrame(cwReq); loopCw(); setTimeout(()=>{cwPhase='shuf'; cwShuf=0; $('cw-status').innerText="Fokus...";},2000); }
+        function selCw(x,y){ let sC=null; for(let c of cwCups) if(Math.abs(x-c.x)<40 && Math.abs(y-c.y)<50){sC=c; break;} if(sC){ cwPhase='res'; cwCups.forEach(c=>c.ty=150); if(sC.b){cwScore+=10; $('cw-score').innerText=cwScore; $('cw-status').innerText="Tepat!"; if(cwScore%30===0)cwMax+=2; setTimeout(startCwRnd,2000);}else{cwLives--; $('cw-lives').innerText="❤️".repeat(Math.max(0,cwLives)); $('cw-status').innerText="Salah!"; setTimeout(()=>{if(cwLives<=0){isCw=false; alert("Tamat! Skor: "+cwScore); stopGame('cawan');}else startCwRnd();},2000);} } }
+        function loopCw(){ if(!isCw)return; cwCtx.clearRect(0,0,400,450); let d=true; cwCups.forEach((c,i)=>{ c.x+=(c.tx-c.x)*0.1; c.y+=(c.ty-c.y)*0.1; if(Math.abs(c.x-c.tx)>2)d=false; if((cwPhase==='reveal'||cwPhase==='res')&&c.b){cwCtx.font="40px Arial"; cwCtx.fillText("🔴",c.tx-20,280);} cwCtx.font="60px Arial"; cwCtx.fillText("🥤",c.x-30,c.y+20); if(cMode==='ai'&&cwPhase==='guess'&&cwHov===i){cwCtx.fillStyle="#10b981"; cwCtx.fillRect(c.x-30,c.y-20,60*(cwHovP/100),5);} }); if(cwPhase==='shuf'&&d){ if(cwShuf>=cwMax){cwPhase='guess'; $('cw-status').innerText="Mana bola?";}else{let i1=Math.floor(Math.random()*3), i2; do{i2=Math.floor(Math.random()*3);}while(i1===i2); let t=cwCups[i1].tx; cwCups[i1].tx=cwCups[i2].tx; cwCups[i2].tx=t; cwShuf++;} } if(cMode==='ai'){ cwCtx.beginPath(); cwCtx.arc(cwCur.x,cwCur.y,10,0,2*Math.PI); cwCtx.fillStyle="yellow"; cwCtx.fill(); if(cwPhase==='guess'){ let hv=-1; cwCups.forEach((c,i)=>{if(Math.abs(cwCur.x-c.x)<40 && Math.abs(cwCur.y-c.y)<50)hv=i;}); if(hv!==-1){ if(cwHov===hv){cwHovP+=2; if(cwHovP>=100){selCw(cwCups[hv].x,cwCups[hv].y); cwHovP=0; cwHov=-1;}} else{cwHov=hv; cwHovP=0;} }else{cwHov=-1; cwHovP=0;} } } cwReq=requestAnimationFrame(loopCw); }
 
-        function continueFromIPWBreak() {
-            hideAll();
-            document.getElementById('step-ipw-quiz').classList.remove('hidden-section');
-            renderIPWQuestion();
-        }
-
-        function showIPWResults() {
-            hideAll();
-            document.getElementById('step-ipw-results').classList.remove('hidden-section');
-
-            const maxScore = Math.max(ipwScores.gold, ipwScores.green, ipwScores.blue, ipwScores.orange);
-            let dominant = [];
-            if (ipwScores.gold === maxScore) dominant.push('gold');
-            if (ipwScores.green === maxScore) dominant.push('green');
-            if (ipwScores.blue === maxScore) dominant.push('blue');
-            if (ipwScores.orange === maxScore) dominant.push('orange');
-
-            const mainTraitKey = dominant[0];
-            const traitData = ipwInterpretations[mainTraitKey];
-
-            document.getElementById('ipw-dominant-trait').innerText = traitData.title;
-            document.getElementById('ipw-dominant-trait').className = `text-4xl md:text-5xl font-extrabold mb-8 text-center ${traitData.textColor}`;
-            
-            document.getElementById('ipw-score-gold').innerText = `${ipwScores.gold} / 25`;
-            document.getElementById('ipw-score-green').innerText = `${ipwScores.green} / 25`;
-            document.getElementById('ipw-score-blue').innerText = `${ipwScores.blue} / 25`;
-            document.getElementById('ipw-score-orange').innerText = `${ipwScores.orange} / 25`;
-
-            setTimeout(() => {
-                document.getElementById('ipw-bar-gold').style.width = `${(ipwScores.gold / 25) * 100}%`;
-                document.getElementById('ipw-bar-green').style.width = `${(ipwScores.green / 25) * 100}%`;
-                document.getElementById('ipw-bar-blue').style.width = `${(ipwScores.blue / 25) * 100}%`;
-                document.getElementById('ipw-bar-orange').style.width = `${(ipwScores.orange / 25) * 100}%`;
-            }, 500);
-
-            const iconContainer = document.getElementById('ipw-result-icon');
-            iconContainer.innerHTML = `<i class="fas ${traitData.icon} ${traitData.textColor}"></i>`;
-            document.getElementById('ipw-short-desc').innerText = traitData.keywords;
-
-            let detailsHTML = '';
-            dominant.forEach(key => {
-                const data = ipwInterpretations[key];
-                detailsHTML += `
-                    <div class="bg-white/90 p-8 rounded-3xl border-l-8 ${data.colorClass.replace('bg-', 'border-')} shadow-lg mb-6">
-                        <h3 class="text-3xl font-extrabold mb-6 ${data.textColor}"><i class="fas ${data.icon} mr-2"></i> ${data.title}</h3>
-                        <div class="mb-6">
-                            <h4 class="font-bold text-gray-800 text-lg mb-2 border-b-2 pb-1 inline-block">Ciri-Ciri Umum:</h4>
-                            <p class="text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100 font-medium">${data.general}</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-                            <div>
-                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 pb-1 inline-block">Tentang Diri Saya:</h4>
-                                <ul class="list-none space-y-3">
-                                    ${data.self.map(item => `<li class="flex items-start bg-gray-50 p-2 rounded-lg border border-gray-100 shadow-sm"><i class="fas fa-check-circle text-gray-400 mt-1 mr-2 text-sm"></i><span class="text-gray-600 text-sm font-medium">${item}</span></li>`).join('')}
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 pb-1 inline-block">Di Tempat Kerja:</h4>
-                                <ul class="list-none space-y-3">
-                                    ${data.work.map(item => `<li class="flex items-start bg-gray-50 p-2 rounded-lg border border-gray-100 shadow-sm"><i class="fas fa-briefcase text-gray-400 mt-1 mr-2 text-sm"></i><span class="text-gray-600 text-sm font-medium">${item}</span></li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="bg-gray-100 p-6 rounded-2xl border border-gray-200">
-                            <h4 class="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wider"><i class="fas fa-child text-gray-500 mr-2"></i>Semasa Kanak-Kanak:</h4>
-                             <ul class="list-disc list-inside space-y-2">
-                                ${data.child.map(item => `<li class="text-gray-600 text-sm font-medium">${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('ipw-interpretation-container').innerHTML = detailsHTML;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-
-        // ==========================================
-        // GAMES LOGIC (CLAP, GESTURE, SCREAM, CAT, CUPS)
-        // ==========================================
-
-        // --- GAME 1: CLAP ---
-        let audioCtx, analyser, micSource, audioProcessor, gainNodeSilent; let clapTarget = 0, currentClapCount = 0, lastClapTimestamp = 0, isClappingPhase = false;
-        function openClapGame() { hideAll(); document.getElementById('step-game-clap').classList.remove('hidden-section'); document.getElementById('clapInitPhase').classList.remove('hidden'); document.getElementById('clapLevelSelection').classList.add('hidden'); document.getElementById('clapActivePhase').classList.add('hidden'); document.getElementById('clapResult').classList.add('hidden'); }
-        async function initClapSystem() { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') await audioCtx.resume(); analyser = audioCtx.createAnalyser(); analyser.smoothingTimeConstant = 0.2; analyser.fftSize = 512; micSource = audioCtx.createMediaStreamSource(stream); audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1); gainNodeSilent = audioCtx.createGain(); gainNodeSilent.gain.value = 0; micSource.connect(analyser); analyser.connect(audioProcessor); audioProcessor.connect(gainNodeSilent); gainNodeSilent.connect(audioCtx.destination); audioProcessor.onaudioprocess = function() { if(!isClappingPhase) return; const array = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(array); let values = 0; for (let i = 0; i < array.length; i++) values += array[i]; let average = values / array.length; if (average > 40 && (Date.now() - lastClapTimestamp > 350)) { lastClapTimestamp = Date.now(); registerPhysicalClap(); } }; document.getElementById('clapInitPhase').classList.add('hidden'); document.getElementById('clapLevelSelection').classList.remove('hidden'); } catch (err) { alert("Gagal mengakses Mikrofon. " + err); } }
-        function playSynthClap() { if(!audioCtx) return; const bufferSize = audioCtx.sampleRate * 0.1; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1; const noise = audioCtx.createBufferSource(); noise.buffer = buffer; const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1000; const clapGain = audioCtx.createGain(); clapGain.gain.setValueAtTime(1, audioCtx.currentTime); clapGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); noise.connect(filter).connect(clapGain).connect(audioCtx.destination); noise.start(); }
-        async function playClapSequence(level) { document.getElementById('clapLevelSelection').classList.add('hidden'); document.getElementById('clapActivePhase').classList.remove('hidden'); document.getElementById('clapResult').classList.add('hidden'); document.getElementById('clapActionButtons').classList.add('hidden'); if(level === 'easy') { clapTarget = Math.floor(Math.random() * 3) + 3; } else if(level === 'medium') { clapTarget = Math.floor(Math.random() * 4) + 5; } else { clapTarget = Math.floor(Math.random() * 5) + 8; } isClappingPhase = false; currentClapCount = 0; document.getElementById('clapCountDisplay').innerText = 0; const statusEl = document.getElementById('clapStatusTitle'); const pcArea = document.getElementById('pcClapArea'); const playerArea = document.getElementById('playerClapArea'); statusEl.innerHTML = "<span>🔊</span> <span>Dengar...</span>"; pcArea.style.opacity = "1"; playerArea.style.opacity = "0.3"; if(audioCtx.state === 'suspended') await audioCtx.resume(); await new Promise(r => setTimeout(r, 1000)); for(let i=0; i<clapTarget; i++) { playSynthClap(); pcArea.style.transform = "scale(1.2)"; setTimeout(()=> pcArea.style.transform = "scale(1)", 150); await new Promise(r => setTimeout(r, 600)); } statusEl.innerHTML = "<span>👏</span> <span>Giliran Anda!</span>"; pcArea.style.opacity = "0.3"; playerArea.style.opacity = "1"; document.getElementById('clapActionButtons').classList.remove('hidden'); isClappingPhase = true; }
-        function registerPhysicalClap() { currentClapCount++; document.getElementById('clapCountDisplay').innerText = currentClapCount; const visualizer = document.getElementById('clapVisualizer'); visualizer.classList.add('clap-detected'); setTimeout(() => visualizer.classList.remove('clap-detected'), 150); }
-        function resetClapCount() { currentClapCount = 0; document.getElementById('clapCountDisplay').innerText = 0; }
-        function submitClapAnswer() { isClappingPhase = false; document.getElementById('clapActionButtons').classList.add('hidden'); let resultDiv = document.getElementById('clapResult'); resultDiv.classList.remove('hidden'); if(currentClapCount === clapTarget) { resultDiv.innerHTML = '<span class="text-green-600 block mb-2"><i class="fas fa-check-circle text-4xl"></i></span> Tepat Sekali!'; resultDiv.style.borderColor = '#4ade80'; } else { resultDiv.innerHTML = `<span class="text-red-500 block mb-2"><i class="fas fa-times-circle text-4xl"></i></span> Anda menepuk <strong>${currentClapCount}</strong> kali.<br>Komputer menepuk <strong>${clapTarget}</strong> kali.`; resultDiv.style.borderColor = '#f87171'; } setTimeout(() => { document.getElementById('clapActivePhase').classList.add('hidden'); document.getElementById('clapLevelSelection').classList.remove('hidden'); }, 4000); }
-        function stopClapSystem() { isClappingPhase = false; if(micSource) micSource.disconnect(); if(audioProcessor) audioProcessor.disconnect(); if(gainNodeSilent) gainNodeSilent.disconnect(); if(audioCtx && audioCtx.state !== 'closed') audioCtx.close(); navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { stream.getTracks().forEach(track => track.stop()); }).catch(e=>{}); }
-
-        // --- GAME 2: GESTURE DUAL ---
-        const videoElement = document.getElementById('gestureVideo'); const canvasElement = document.getElementById('gestureCanvas'); const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null; let camera = null; let hands = null; let gestureTargets = [{ icon: '🖐️', name: 'Buka' }, { icon: '✊', name: 'Genggam' }, { icon: '✌️', name: 'Peace' }, { icon: '🤟', name: 'Rock / ILY' }, { icon: '👈', name: 'Tunjuk Kiri' }, { icon: '👉', name: 'Tunjuk Kanan' }]; let currentTargetLeft = ''; let currentTargetRight = ''; let isGestureGameActive = false; let gestureTimerInt; let gestureTimeLeft = 100; let totalGestureScore = 0; let gestureLives = 3; let gestureRound = 0;
-        function openGestureGame() { hideAll(); document.getElementById('step-game-gesture').classList.remove('hidden-section'); document.getElementById('gesturePreGame').classList.remove('hidden'); document.getElementById('gestureActiveGame').classList.add('hidden'); document.getElementById('btnStartCam').classList.remove('hidden'); document.getElementById('camLoadingText').classList.add('hidden'); }
-        async function initMediaPipe() { document.getElementById('btnStartCam').classList.add('hidden'); document.getElementById('camLoadingText').classList.remove('hidden'); try { hands = new Hands({locateFile: (file) => { return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`; }}); hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 }); hands.onResults(onResultsHands); camera = new Camera(videoElement, { onFrame: async () => { await hands.send({image: videoElement}); }, width: 400, height: 300 }); await camera.start(); document.getElementById('gesturePreGame').classList.add('hidden'); document.getElementById('gestureActiveGame').classList.remove('hidden'); canvasElement.width = videoElement.videoWidth || 400; canvasElement.height = videoElement.videoHeight || 300; resetGestureGameState(); } catch (err) { alert("Gagal mengakses Kamera. " + err); document.getElementById('btnStartCam').classList.remove('hidden'); document.getElementById('camLoadingText').classList.add('hidden'); } }
-        function resetGestureGameState() { totalGestureScore = 0; gestureLives = 3; gestureRound = 0; document.getElementById('gestureScore').innerText = totalGestureScore; updateGestureLivesUI(); document.getElementById('gestureRoundText').innerText = "Bersedia..."; document.getElementById('gestureTargetDisplay').innerHTML = `<div class="text-2xl text-gray-400 font-bold">Sedia...</div>`; setTimeout(startNextGestureRound, 2000); }
-        function updateGestureLivesUI() { let hearts = ""; for(let i=0; i<gestureLives; i++) hearts += "❤️"; document.getElementById('gestureLivesUI').innerText = hearts || "💀"; }
-        function startNextGestureRound() { isGestureGameActive = true; gestureRound++; let t1, t2; let roundLabel = ""; if (gestureRound <= 3) { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; t2 = t1; roundLabel = `Pusingan ${gestureRound}: Isyarat SAMA`; } else if (gestureRound <= 6) { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; do { t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; } while (t1.icon === t2.icon); roundLabel = `Pusingan ${gestureRound}: Isyarat BERBEZA`; } else { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; roundLabel = `Pusingan ${gestureRound}: Rawak Laju!`; } currentTargetLeft = t1.icon; currentTargetRight = t2.icon; document.getElementById('gestureRoundText').innerText = roundLabel; const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<div class="flex gap-4 items-center justify-center pop-in"><div class="border-4 border-blue-400 rounded-xl p-4 bg-blue-50 text-5xl">${t1.icon}</div><div class="text-3xl text-gray-400 font-bold">+</div><div class="border-4 border-purple-400 rounded-xl p-4 bg-purple-50 text-5xl">${t2.icon}</div></div>`; gestureTimeLeft = 100; clearInterval(gestureTimerInt); let speed; if (gestureRound <= 5) speed = 100; else if (gestureRound <= 10) speed = 70; else if (gestureRound <= 15) speed = 50; else if (gestureRound <= 20) speed = 30; else speed = 20; gestureTimerInt = setInterval(() => { gestureTimeLeft -= 1; let bar = document.getElementById('gestureTimerBar'); bar.style.width = gestureTimeLeft + "%"; bar.style.background = gestureTimeLeft > 50 ? "#4ade80" : gestureTimeLeft > 20 ? "#facc15" : "#ef4444"; if (gestureTimeLeft <= 0) { clearInterval(gestureTimerInt); isGestureGameActive = false; gestureLives--; updateGestureLivesUI(); if(gestureLives <= 0) { endGestureGame("Nyawa Habis! 💔"); } else { display.innerHTML = `<span class="text-red-500 text-2xl font-bold"><i class="fas fa-times-circle"></i> Terlalu Lambat!</span>`; setTimeout(startNextGestureRound, 1500); } } }, speed); }
-        function onResultsHands(results) { canvasCtx.save(); canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height); if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) { for (const landmarks of results.multiHandLandmarks) { drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 3}); drawLandmarks(canvasCtx, landmarks, {color: '#3b82f6', lineWidth: 1, radius: 4}); } if(isGestureGameActive) { if (results.multiHandLandmarks.length === 2) { detectDualPose(results.multiHandLandmarks); } } } canvasCtx.restore(); }
-        function getSinglePose(landmarks) { const isIndexUp = landmarks[8].y < landmarks[6].y - 0.02; const isMidUp = landmarks[12].y < landmarks[10].y - 0.02; const isRingUp = landmarks[16].y < landmarks[14].y - 0.02; const isPinkyUp = landmarks[20].y < landmarks[18].y - 0.02; const dx = landmarks[8].x - landmarks[5].x; const dy = landmarks[8].y - landmarks[5].y; const isIndexPointUserLeft = dx > 0.06 && Math.abs(dx) > Math.abs(dy); const isIndexPointUserRight = dx < -0.06 && Math.abs(dx) > Math.abs(dy); if (isIndexUp && isMidUp && isRingUp && isPinkyUp) return '🖐️'; if (isIndexUp && isMidUp && !isRingUp && !isPinkyUp) return '✌️'; if (isIndexUp && !isMidUp && !isRingUp && isPinkyUp) return '🤟'; if (!isMidUp && !isRingUp && !isPinkyUp) { if (isIndexPointUserLeft) return '👈'; if (isIndexPointUserRight) return '👉'; if (!isIndexUp) return '✊'; } return null; }
-        function detectDualPose(multiLandmarks) { let pose1 = getSinglePose(multiLandmarks[0]); let pose2 = getSinglePose(multiLandmarks[1]); if(pose1 && pose2) { let isMatch = (pose1 === currentTargetLeft && pose2 === currentTargetRight) || (pose1 === currentTargetRight && pose2 === currentTargetLeft); if (isMatch) { isGestureGameActive = false; clearInterval(gestureTimerInt); totalGestureScore += 10; document.getElementById('gestureScore').innerText = totalGestureScore; const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<span class="text-green-500 text-3xl font-bold"><i class="fas fa-check-circle"></i> Tepat!</span>`; setTimeout(startNextGestureRound, 800); } } }
-        function endGestureGame(reason) { isGestureGameActive = false; clearInterval(gestureTimerInt); const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<span class="text-red-500 text-3xl font-bold"><i class="fas fa-times-circle"></i> ${reason}</span>`; setTimeout(() => { if(confirm(`Skor Akhir Anda: ${totalGestureScore}.\nMahu main semula?`)) { resetGestureGameState(); } else { stopGestureDetection(); showBrainGamesHub(); } }, 1000); }
-        function stopGestureDetection() { isGestureGameActive = false; clearInterval(gestureTimerInt); if(camera) camera.stop(); if(videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop()); }
-
-        // --- GAME 3: SCREAM THERAPY ---
-        let screamAudioCtx; let screamAnalyser, screamDataArray; let screamMicSource; let screamGlobalMaxPeak = 0; let screamTargetSec = 10; let screamAttemptsUsed = 0; let screamTimeLeft = 0; let isScreaming = false; let screamTimerIntv; let screamVisualIntv;
-        function openScreamGame() { hideAll(); document.getElementById('step-game-scream').classList.remove('hidden-section'); showScreamPage('screamPagePrivacy'); }
-        function showScreamPage(id) { document.querySelectorAll('.scream-page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function screamInitAudioContext() { if (!screamAudioCtx) screamAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function screamPlayBeep() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.frequency.setValueAtTime(800, screamAudioCtx.currentTime); gain.gain.setValueAtTime(0.1, screamAudioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1); osc.start(); osc.stop(screamAudioCtx.currentTime + 0.1); }
-        function screamPlayTreet() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(1000, screamAudioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1500, screamAudioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.05, screamAudioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1); osc.start(); osc.stop(screamAudioCtx.currentTime + 0.1); }
-        function screamPlayStartBell() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1200, screamAudioCtx.currentTime); gain.gain.setValueAtTime(0, screamAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.2, screamAudioCtx.currentTime + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, screamAudioCtx.currentTime + 0.8); osc.start(screamAudioCtx.currentTime); osc.stop(screamAudioCtx.currentTime + 0.8); }
-        function screamPrepareTherapy() { if(!document.getElementById('screamStressInput').value) { screamPlayBeep(); return alert("Sila tulis luahan anda."); } screamPlayTreet(); showScreamPage('screamPageReady'); }
-        async function screamStartCountdown() { showScreamPage('screamPageCountdown'); let c = 3; const disp = document.getElementById('screamCountdownDisplay'); disp.innerText = c; screamPlayBeep(); try { if(!screamAnalyser) { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); screamInitAudioContext(); if(screamAudioCtx.state === 'suspended') await screamAudioCtx.resume(); screamAnalyser = screamAudioCtx.createAnalyser(); screamMicSource = screamAudioCtx.createMediaStreamSource(stream); screamAnalyser.fftSize = 256; screamDataArray = new Uint8Array(screamAnalyser.frequencyBinCount); screamMicSource.connect(screamAnalyser); } } catch(e) { alert("Mikrofon diperlukan untuk mendaftar lontaran suara anda."); showScreamPage('screamPageReady'); return; } let intv = setInterval(() => { c--; if(c > 0) { disp.innerText = c; screamPlayBeep(); } else if(c === 0) { disp.innerText = "JERIT!"; screamPlayStartBell(); } else { clearInterval(intv); screamStartSession(); } }, 1000); }
-        function screamStartSession() { showScreamPage('screamPageScream'); screamTimeLeft = screamTargetSec; isScreaming = true; screamTimerIntv = setInterval(() => { screamTimeLeft -= 0.1; document.getElementById('screamTimerCircle').innerText = Math.max(0, screamTimeLeft).toFixed(1) + "s"; if(screamTimeLeft <= 0) { clearInterval(screamTimerIntv); isScreaming = false; screamFinishSession(); } }, 100); screamUpdateVisuals(); }
-        function screamUpdateVisuals() { if(!isScreaming) return; screamAnalyser.getByteFrequencyData(screamDataArray); let volume = screamDataArray.reduce((a, b) => a + b) / screamDataArray.length; let k = 0.027; let calculatedPercent = 100 * (1 - Math.exp(-k * volume)); let volPercent = Math.min(99.8, calculatedPercent); document.getElementById('screamVolumeBar').style.height = volPercent + "%"; if(volPercent > screamGlobalMaxPeak) { screamGlobalMaxPeak = volPercent; document.getElementById('screamPeakIndicator').style.bottom = screamGlobalMaxPeak + "%"; document.getElementById('screamPeakValue').innerText = screamGlobalMaxPeak.toFixed(1) + "%"; } screamVisualIntv = requestAnimationFrame(screamUpdateVisuals); }
-        function screamFinishSession() { document.getElementById('screamAttemptInfo').innerText = `Jumlah Sesi Dilakukan: ${screamAttemptsUsed + 1}`; showScreamPage('screamPageFeedback'); }
-        function screamRetry() { screamAttemptsUsed++; screamStartCountdown(); }
-        function screamShowFinalResult() { document.getElementById('screamFinalPeak').innerText = screamGlobalMaxPeak.toFixed(1); showScreamPage('screamPageFinal'); }
-        function stopScreamSystem() { isScreaming = false; clearInterval(screamTimerIntv); cancelAnimationFrame(screamVisualIntv); if(screamMicSource) { screamMicSource.disconnect(); screamMicSource = null; } if(screamAudioCtx && screamAudioCtx.state !== 'closed') { screamAudioCtx.close(); screamAudioCtx = null; } screamAnalyser = null; navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { stream.getTracks().forEach(track => track.stop()); }).catch(e=>{}); }
-
-        // --- GAME 4: KUCING ---
-        let kucingMode = 'touch'; const kCanvas = document.getElementById('kucingCanvas'); const kCtx = kCanvas ? kCanvas.getContext('2d') : null; let kGameLoopReq; let kScore = 0; let kLives = 3; let isKucingPlaying = false; const cat = { x: 170, y: 390, width: 60, height: 60, targetX: 170 }; let items = []; let kFrameCount = 0; const kVideo = document.getElementById('kucingVideo'); let kHands = null; let kCamera = null; let aiHandX = 0.5;
-        function openKucingGame() { hideAll(); document.getElementById('step-game-kucing').classList.remove('hidden-section'); document.getElementById('kucingModeSelection').classList.remove('hidden'); document.getElementById('kucingActiveGame').classList.add('hidden'); document.getElementById('kucingResult').classList.add('hidden'); document.getElementById('btnKucingExit').classList.add('hidden'); }
-        async function initKucingGame(mode) { kucingMode = mode; document.getElementById('kucingModeSelection').classList.add('hidden'); if (mode === 'ai') { document.getElementById('kucingModeSelection').classList.remove('hidden'); document.getElementById('kucingLoadingText').classList.remove('hidden'); try { if(!kHands) { kHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`}); kHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 }); kHands.onResults(onKucingAIResults); kCamera = new Camera(kVideo, { onFrame: async () => { await kHands.send({image: kVideo}); }, width: 160, height: 120 }); await kCamera.start(); } document.getElementById('kucingMiniCam').classList.remove('hidden'); } catch (e) { alert("Kamera gagal diakses. " + e); kucingMode = 'touch'; document.getElementById('kucingMiniCam').classList.add('hidden'); } } else { document.getElementById('kucingMiniCam').classList.add('hidden'); setupKucingTouchControls(); } document.getElementById('kucingModeSelection').classList.add('hidden'); document.getElementById('kucingLoadingText').classList.add('hidden'); document.getElementById('kucingActiveGame').classList.remove('hidden'); document.getElementById('btnKucingExit').classList.remove('hidden'); resetKucingGame(); }
-        function setupKucingTouchControls() { if(!kCanvas) return; kCanvas.addEventListener('mousemove', (e) => { if(!isKucingPlaying || kucingMode !== 'touch') return; const rect = kCanvas.getBoundingClientRect(); const scaleX = kCanvas.width / rect.width; cat.targetX = (e.clientX - rect.left) * scaleX - cat.width/2; }); kCanvas.addEventListener('touchmove', (e) => { if(!isKucingPlaying || kucingMode !== 'touch') return; e.preventDefault(); const rect = kCanvas.getBoundingClientRect(); const scaleX = kCanvas.width / rect.width; cat.targetX = (e.touches[0].clientX - rect.left) * scaleX - cat.width/2; }, {passive: false}); }
-        function onKucingAIResults(results) { if (!isKucingPlaying || kucingMode !== 'ai') return; if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) { const indexFinger = results.multiHandLandmarks[0][8]; aiHandX = 1 - indexFinger.x; cat.targetX = (aiHandX * kCanvas.width) - (cat.width / 2); } }
-        function resetKucingGame() { kScore = 0; kLives = 3; items = []; cat.x = kCanvas.width/2 - cat.width/2; cat.targetX = cat.x; isKucingPlaying = true; kFrameCount = 0; document.getElementById('kucingScore').innerText = kScore; updateKucingLivesUI(); document.getElementById('kucingActiveGame').classList.remove('hidden'); document.getElementById('kucingResult').classList.add('hidden'); if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq); kucingGameLoop(); }
-        function updateKucingLivesUI() { let hearts = ""; for(let i=0; i<kLives; i++) hearts += "❤️"; document.getElementById('kucingLives').innerText = hearts || "💀"; }
-        function spawnItem() { const types = ['🍎', '🍌', '🍇', '💣']; let isBomb = Math.random() < 0.2 + (kScore * 0.005); let emoji = isBomb ? '💣' : types[Math.floor(Math.random() * 3)]; let speed = 3 + Math.random() * 2 + (kScore * 0.1); let size = 30; let x = Math.random() * (kCanvas.width - size); items.push({ x: x, y: -size, speed: speed, emoji: emoji, size: size, isBomb: isBomb }); }
-        function kucingGameLoop() { if(!isKucingPlaying || !kCtx) return; kCtx.clearRect(0, 0, kCanvas.width, kCanvas.height); if(cat.targetX < 0) cat.targetX = 0; if(cat.targetX > kCanvas.width - cat.width) cat.targetX = kCanvas.width - cat.width; cat.x += (cat.targetX - cat.x) * (kucingMode === 'ai' ? 0.2 : 0.4); kCtx.font = "50px Arial"; kCtx.textAlign = "left"; kCtx.textBaseline = "top"; kCtx.fillText("🧺", cat.x, cat.y); kCtx.font = "30px Arial"; kCtx.fillText("🐱", cat.x + 10, cat.y - 15); kFrameCount++; let spawnRate = Math.max(20, 60 - Math.floor(kScore/5)); if(kFrameCount % spawnRate === 0) spawnItem(); for(let i = items.length - 1; i >= 0; i--) { let item = items[i]; item.y += item.speed; kCtx.font = "30px Arial"; kCtx.fillText(item.emoji, item.x, item.y); if (item.x < cat.x + cat.width && item.x + item.size > cat.x && item.y < cat.y + cat.height && item.y + item.size > cat.y) { if (item.isBomb) { kLives--; updateKucingLivesUI(); kCtx.fillStyle = "rgba(255, 0, 0, 0.4)"; kCtx.fillRect(0, 0, kCanvas.width, kCanvas.height); } else { kScore += 5; document.getElementById('kucingScore').innerText = kScore; } items.splice(i, 1); continue; } if(item.y > kCanvas.height) { items.splice(i, 1); } } if(kLives <= 0) { endKucingGame(); } else { kGameLoopReq = requestAnimationFrame(kucingGameLoop); } }
-        function endKucingGame() { isKucingPlaying = false; document.getElementById('kucingActiveGame').classList.add('hidden'); document.getElementById('kucingResult').classList.remove('hidden'); document.getElementById('kucingFinalScore').innerText = kScore; }
-        function stopKucingGame() { isKucingPlaying = false; if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq); if(kCamera) { kCamera.stop(); if(kVideo.srcObject) kVideo.srcObject.getTracks().forEach(t => t.stop()); } kucingMode = 'touch'; }
-
-        // --- GAME 5: SUSUN CAWAN ---
-        let cawanMode = 'touch'; const cCanvas = document.getElementById('cawanCanvas'); const cCtx = cCanvas ? cCanvas.getContext('2d') : null; const cVideo = document.getElementById('cawanVideo'); let cGameLoopReq; let cScore = 0; let cLives = 3; let isCawanPlaying = false; let cawanPhase = 'idle'; let cups = []; let numCups = 3; let shuffleCount = 0; let maxShuffles = 5; let shuffleSpeed = 0.08; let cHands = null; let cCamera = null; let cAiCursor = {x: 200, y: 225}; let cAiHoverIndex = -1; let cAiHoverProgress = 0;
-        function openCawanGame() { hideAll(); document.getElementById('step-game-cawan').classList.remove('hidden-section'); document.getElementById('cawanModeSelection').classList.remove('hidden'); document.getElementById('cawanActiveGame').classList.add('hidden'); document.getElementById('cawanResult').classList.add('hidden'); document.getElementById('btnCawanExit').classList.add('hidden'); }
-        async function initCawanGame(mode) { cawanMode = mode; document.getElementById('cawanModeSelection').classList.add('hidden'); if (mode === 'ai') { document.getElementById('cawanModeSelection').classList.remove('hidden'); document.getElementById('cawanLoadingText').classList.remove('hidden'); try { if(!cHands) { cHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`}); cHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 }); cHands.onResults(onCawanAIResults); cCamera = new Camera(cVideo, { onFrame: async () => { await cHands.send({image: cVideo}); }, width: 160, height: 120 }); await cCamera.start(); } document.getElementById('cawanMiniCam').classList.remove('hidden'); } catch (e) { alert("Kamera gagal diakses. " + e); cawanMode = 'touch'; document.getElementById('cawanMiniCam').classList.add('hidden'); } } else { document.getElementById('cawanMiniCam').classList.add('hidden'); setupCawanTouchControls(); } document.getElementById('cawanModeSelection').classList.add('hidden'); document.getElementById('cawanLoadingText').classList.add('hidden'); document.getElementById('cawanActiveGame').classList.remove('hidden'); document.getElementById('btnCawanExit').classList.remove('hidden'); cScore = 0; cLives = 3; numCups = 3; maxShuffles = 5; shuffleSpeed = 0.08; document.getElementById('cawanScore').innerText = cScore; updateCawanLivesUI(); startCawanRound(); }
-        function setupCawanTouchControls() { if(!cCanvas) return; cCanvas.addEventListener('mousedown', handleCawanTouch); cCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCawanTouch(e.touches[0]); }, {passive: false}); }
-        function handleCawanTouch(e) { if(!isCawanPlaying || cawanPhase !== 'guess' || cawanMode !== 'touch') return; const rect = cCanvas.getBoundingClientRect(); const scaleX = cCanvas.width / rect.width; const scaleY = cCanvas.height / rect.height; const x = (e.clientX - rect.left) * scaleX; const y = (e.clientY - rect.top) * scaleY; checkCupSelection(x, y); }
-        function onCawanAIResults(results) { if (!isCawanPlaying || cawanMode !== 'ai') return; if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) { const indexFinger = results.multiHandLandmarks[0][8]; cAiCursor.x = (1 - indexFinger.x) * cCanvas.width; cAiCursor.y = indexFinger.y * cCanvas.height; } }
-        function updateCawanLivesUI() { let hearts = ""; for(let i=0; i<cLives; i++) hearts += "❤️"; document.getElementById('cawanLives').innerText = hearts || "💀"; }
-        function startCawanRound() { isCawanPlaying = true; cawanPhase = 'reveal'; document.getElementById('cawanStatusText').innerText = "Perhatikan Bola!"; document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-yellow-300 h-8"; cups = []; const gap = 120; const startX = (cCanvas.width - (gap * (numCups - 1))) / 2; const ballIndex = Math.floor(Math.random() * numCups); for(let i=0; i<numCups; i++) { cups.push({ x: startX + (i * gap), y: 150, targetX: startX + (i * gap), targetY: 250, hasBall: (i === ballIndex) }); } if(cGameLoopReq) cancelAnimationFrame(cGameLoopReq); cawanGameLoop(); setTimeout(() => { cawanPhase = 'hiding'; setTimeout(() => { cawanPhase = 'shuffling'; shuffleCount = 0; document.getElementById('cawanStatusText').innerText = "Fokus..."; }, 1000); }, 2000); }
-        function doShuffle() { if(shuffleCount >= maxShuffles) { cawanPhase = 'guess'; document.getElementById('cawanStatusText').innerText = "Di mana bola?"; return; } let idx1 = Math.floor(Math.random() * numCups); let idx2; do { idx2 = Math.floor(Math.random() * numCups); } while(idx1 === idx2); let tempX = cups[idx1].targetX; cups[idx1].targetX = cups[idx2].targetX; cups[idx2].targetX = tempX; shuffleCount++; }
-        function checkCupSelection(x, y) { if(cawanPhase !== 'guess') return; let selectedCup = null; for(let cup of cups) { if(Math.abs(x - cup.x) < 40 && Math.abs(y - cup.y) < 50) { selectedCup = cup; break; } } if(selectedCup) { cawanPhase = 'result'; cups.forEach(c => c.targetY = 150); if(selectedCup.hasBall) { document.getElementById('cawanStatusText').innerText = "Tahniah! Tepat!"; document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-green-400 h-8"; cScore += 10; document.getElementById('cawanScore').innerText = cScore; if(cScore % 30 === 0 && maxShuffles < 12) { maxShuffles += 2; shuffleSpeed += 0.02; } setTimeout(startCawanRound, 2000); } else { document.getElementById('cawanStatusText').innerText = "Salah!"; document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-red-400 h-8"; cLives--; updateCawanLivesUI(); setTimeout(() => { if(cLives <= 0) endCawanGame(); else startCawanRound(); }, 2000); } } }
-        function cawanGameLoop() { if(!isCawanPlaying || !cCtx) return; cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height); let allReached = true; cCtx.fillStyle = "rgba(0,0,0,0.2)"; cCtx.beginPath(); cCtx.ellipse(200, 300, 150, 40, 0, 0, 2 * Math.PI); cCtx.fill(); cups.forEach((cup, i) => { cup.x += (cup.targetX - cup.x) * shuffleSpeed; cup.y += (cup.targetY - cup.y) * shuffleSpeed; if(Math.abs(cup.x - cup.targetX) > 2 || Math.abs(cup.y - cup.targetY) > 2) allReached = false; if((cawanPhase === 'reveal' || cawanPhase === 'result') && cup.hasBall) { cCtx.font = "40px Arial"; cCtx.textAlign = "center"; cCtx.textBaseline = "middle"; cCtx.fillText("🔴", cup.targetX, 280); } cCtx.font = "60px Arial"; cCtx.textAlign = "center"; cCtx.textBaseline = "middle"; cCtx.fillText("🥤", cup.x, cup.y); if(cawanMode === 'ai' && cawanPhase === 'guess' && cAiHoverIndex === i) { cCtx.fillStyle = "rgba(255,255,255,0.3)"; cCtx.fillRect(cup.x - 30, cup.y - 45, 60, 5); cCtx.fillStyle = "#10b981"; cCtx.fillRect(cup.x - 30, cup.y - 45, (cAiHoverProgress/100)*60, 5); } }); if(cawanPhase === 'shuffling' && allReached) { doShuffle(); } if(cawanMode === 'ai') { cCtx.beginPath(); cCtx.arc(cAiCursor.x, cAiCursor.y, 10, 0, 2*Math.PI); cCtx.fillStyle = "rgba(252, 211, 77, 0.8)"; cCtx.fill(); cCtx.lineWidth = 2; cCtx.strokeStyle = "#fff"; cCtx.stroke(); if(cawanPhase === 'guess') { let hovering = -1; cups.forEach((cup, i) => { if(Math.abs(cAiCursor.x - cup.x) < 40 && Math.abs(cAiCursor.y - cup.y) < 50) hovering = i; }); if(hovering !== -1) { if(cAiHoverIndex === hovering) { cAiHoverProgress += 2; if(cAiHoverProgress >= 100) { checkCupSelection(cups[hovering].x, cups[hovering].y); cAiHoverProgress = 0; cAiHoverIndex = -1; } } else { cAiHoverIndex = hovering; cAiHoverProgress = 0; } } else { cAiHoverIndex = -1; cAiHoverProgress = 0; } } } cGameLoopReq = requestAnimationFrame(cawanGameLoop); }
-        function endCawanGame() { isCawanPlaying = false; document.getElementById('cawanActiveGame').classList.add('hidden'); document.getElementById('cawanResult').classList.remove('hidden'); document.getElementById('cawanFinalScore').innerText = cScore; }
-        function resetCawanGame() { document.getElementById('cawanResult').classList.add('hidden'); document.getElementById('cawanActiveGame').classList.remove('hidden'); cScore = 0; cLives = 3; numCups = 3; maxShuffles = 5; shuffleSpeed = 0.08; document.getElementById('cawanScore').innerText = cScore; updateCawanLivesUI(); startCawanRound(); }
-        function stopCawanGame() { isCawanPlaying = false; if(cGameLoopReq) cancelAnimationFrame(cGameLoopReq); if(cCamera) { cCamera.stop(); if(cVideo.srcObject) cVideo.srcObject.getTracks().forEach(t => t.stop()); } cawanMode = 'touch'; }
     </script>
 </body>
 </html>

@@ -102,7 +102,7 @@
     <div class="bg-animated"></div>
     <div class="particles-container" id="particles"></div>
 
-    <div class="max-w-5xl mx-auto glass-card p-6 md:p-10 relative mt-4">
+    <div class="max-w-6xl mx-auto glass-card p-6 md:p-10 relative mt-4">
         
         <!-- ==========================================
              MENU UTAMA (PILIHAN LALUAN)
@@ -114,21 +114,67 @@
             </h1>
             <p class="text-lg text-gray-600 mb-10 font-medium">Pilih laluan penerokaan anda hari ini.</p>
             
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-purple-200" onclick="showAuditIntro()">
-                    <div class="text-7xl mb-4">📝</div>
-                    <h2 class="text-3xl font-extrabold text-purple-700 mb-2">Audit Tangki Tenaga</h2>
-                    <p class="text-gray-600 mb-8 font-medium">Ukur tahap tenaga Fizikal, Mental, Emosi & Tingkah Laku anda secara saintifik.</p>
+            <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- Pilihan 1: JOM SARING (BARU) -->
+                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-pink-200 flex flex-col justify-between" onclick="showJomSaring()">
+                    <div>
+                        <div class="text-7xl mb-4">📋</div>
+                        <h2 class="text-3xl font-extrabold text-pink-700 mb-2">Jom Saring</h2>
+                        <p class="text-gray-600 mb-8 font-medium">Saringan Minda Sihat untuk menyemak status kesihatan mental anda.</p>
+                    </div>
+                    <button class="btn-bounce bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-4 px-8 rounded-full w-full text-xl shadow-md">Pilih Saringan</button>
+                </div>
+
+                <!-- Pilihan 2: AUDIT TANGKI TENAGA -->
+                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-purple-200 flex flex-col justify-between" onclick="showAuditIntro()">
+                    <div>
+                        <div class="text-7xl mb-4">📝</div>
+                        <h2 class="text-3xl font-extrabold text-purple-700 mb-2">Audit Tangki Tenaga</h2>
+                        <p class="text-gray-600 mb-8 font-medium">Ukur tahap tenaga Fizikal, Mental, Emosi & Tingkah Laku anda secara saintifik.</p>
+                    </div>
                     <button class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-4 px-8 rounded-full w-full text-xl shadow-md">Mula Penilaian</button>
                 </div>
 
-                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-blue-200" onclick="showBrainGamesHub()">
-                    <div class="text-7xl mb-4">🎮</div>
-                    <h2 class="text-3xl font-extrabold text-blue-700 mb-2">Gim Otak AI</h2>
-                    <p class="text-gray-600 mb-8 font-medium">Rehatkan minda, asah refleks & lepaskan tekanan melalui koleksi permainan interaktif.</p>
+                <!-- Pilihan 3: GIM OTAK AI -->
+                <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-blue-200 flex flex-col justify-between" onclick="showBrainGamesHub()">
+                    <div>
+                        <div class="text-7xl mb-4">🎮</div>
+                        <h2 class="text-3xl font-extrabold text-blue-700 mb-2">Gim Otak AI</h2>
+                        <p class="text-gray-600 mb-8 font-medium">Rehatkan minda, asah refleks & lepaskan tekanan melalui koleksi permainan interaktif.</p>
+                    </div>
                     <button class="btn-bounce bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 px-8 rounded-full w-full text-xl shadow-md">Teroka Permainan</button>
                 </div>
             </div>
+        </div>
+
+        <!-- ==========================================
+             MODUL: JOM SARING (DASS-21)
+        =========================================== -->
+        <div id="step-jom-saring" class="hidden-section fade-in text-center py-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-pink-700 mb-6 drop-shadow-sm">Jom Saring 📋</h1>
+            <p class="text-lg text-gray-600 mb-10 font-medium">Sila pilih kategori anda untuk memulakan Saringan Minda Sihat (DASS-21).</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-10">
+                <a href="https://ncdjknkedah.github.io/saringan-minda-sihat/saringan%20minda%20sihat.html" target="_blank" class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-blue-200 block text-center no-underline">
+                    <div class="text-6xl mb-4 flex justify-center gap-4">
+                        <span>👨</span><span>👩</span>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-blue-700 mb-2">Orang Awam</h2>
+                    <p class="text-gray-600 font-medium mb-6">Saringan khas untuk komuniti dan masyarakat awam.</p>
+                    <div class="btn-bounce bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-8 rounded-full w-full shadow-md inline-block">Saring Sekarang</div>
+                </a>
+
+                <a href="https://ncdjknkedah.github.io/saringan-minda-sihat/saringan%20minda%20sihat%20staf.html" target="_blank" class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-teal-200 block text-center no-underline">
+                    <div class="text-5xl mb-4 flex justify-center gap-2">
+                        <span>👨‍⚕️</span><span>👩‍⚕️</span><span>👨‍⚕️</span><span>👨‍💼</span>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-teal-700 mb-2">Staf Kesihatan</h2>
+                    <p class="text-gray-600 font-medium mb-6">Saringan khas untuk warga kerja Kementerian Kesihatan Malaysia.</p>
+                    <div class="btn-bounce bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold py-3 px-8 rounded-full w-full shadow-md inline-block">Saring Sekarang</div>
+                </a>
+            </div>
+            
+            <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-gray-800 text-sm"><i class="fas fa-home"></i> Kembali ke Menu Utama</button>
         </div>
 
         <!-- ==========================================
@@ -336,7 +382,7 @@
                     <button class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 text-sm w-full">Main</button>
                 </div>
 
-                <!-- 2. Gesture AI Game (KEMASKINI DUAL HANDS & MORE GESTURES) -->
+                <!-- 2. Gesture AI Game -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-blue-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openGestureGame()" style="animation-delay: 0.1s">
                     <div class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">HARD!</div>
                     <div>
@@ -371,7 +417,7 @@
                 </div>
 
                 <!-- 5. Susun Cawan -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-yellow-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openCawanGame()" style="animation-delay: 0.4s">
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-yellow-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between relative" onclick="openCawanGame()" style="animation-delay: 0.4s">
                     <div>
                         <div class="text-5xl mb-4">🥤</div>
                         <h3 class="text-lg font-bold text-yellow-600 mb-2">Susun Cawan</h3>
@@ -741,12 +787,15 @@
         createParticles();
 
         function hideAll() {
-            ['step-main-menu', 'step-audit-intro', 'quiz-container', 'step-results', 'step-action-plan', 'step-compassion', 'step-brain-games-hub', 'step-game-clap', 'step-game-gesture', 'step-game-scream', 'step-game-kucing', 'step-game-cawan', 'progressBarContainer'].forEach(id => {
+            ['step-main-menu', 'step-jom-saring', 'step-audit-intro', 'quiz-container', 'step-results', 'step-action-plan', 'step-compassion', 'step-brain-games-hub', 'step-game-clap', 'step-game-gesture', 'step-game-scream', 'step-game-kucing', 'step-game-cawan', 'progressBarContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden-section');
             });
         }
 
+        function showJomSaring() {
+            hideAll(); document.getElementById('step-jom-saring').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         function showAuditIntro() {
             hideAll(); document.getElementById('step-audit-intro').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -876,7 +925,6 @@
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
 
         // ==========================================
         // GAME 1: AUDIO & MIC CLAP SEQUENCE
@@ -1044,7 +1092,7 @@
 
 
         // ==========================================
-        // GAME 2: KETUA GERAK ISYARAT (DUAL HANDS + MORE GESTURES + DYNAMIC TIME)
+        // GAME 2: KETUA GERAK ISYARAT (DUAL HANDS)
         // ==========================================
         const videoElement = document.getElementById('gestureVideo');
         const canvasElement = document.getElementById('gestureCanvas');
@@ -1164,20 +1212,12 @@
             gestureTimeLeft = 100;
             clearInterval(gestureTimerInt);
             
-            // Dynamic Time Calculation berdasarkan Round
-            // Round 1-5: 10s | Round 6-10: 7s | Round 11-15: 5s | Round 16-20: 3s | Round 21+: 2s
             let speed;
-            if (gestureRound <= 5) {
-                speed = 100; // 100 ticks * 100ms = 10000ms = 10s
-            } else if (gestureRound <= 10) {
-                speed = 70;  // 100 ticks * 70ms = 7000ms = 7s
-            } else if (gestureRound <= 15) {
-                speed = 50;  // 100 ticks * 50ms = 5000ms = 5s
-            } else if (gestureRound <= 20) {
-                speed = 30;  // 100 ticks * 30ms = 3000ms = 3s
-            } else {
-                speed = 20;  // 100 ticks * 20ms = 2000ms = 2s
-            }
+            if (gestureRound <= 5) { speed = 100; } 
+            else if (gestureRound <= 10) { speed = 70; } 
+            else if (gestureRound <= 15) { speed = 50; } 
+            else if (gestureRound <= 20) { speed = 30; } 
+            else { speed = 20; }
 
             gestureTimerInt = setInterval(() => {
                 gestureTimeLeft -= 1;
@@ -1219,28 +1259,24 @@
         }
         
         function getSinglePose(landmarks) {
-            // Y is inverted (0 top, 1 bottom)
             const isIndexUp = landmarks[8].y < landmarks[6].y - 0.02;
             const isMidUp = landmarks[12].y < landmarks[10].y - 0.02;
             const isRingUp = landmarks[16].y < landmarks[14].y - 0.02;
             const isPinkyUp = landmarks[20].y < landmarks[18].y - 0.02;
 
-            // X is mirrored (0 is unmirrored left edge, 1 is unmirrored right edge)
-            // Pointing to user's left = unmirrored right = dx > 0
-            // Pointing to user's right = unmirrored left = dx < 0
             const dx = landmarks[8].x - landmarks[5].x;
             const dy = landmarks[8].y - landmarks[5].y;
             const isIndexPointUserLeft = dx > 0.06 && Math.abs(dx) > Math.abs(dy);
             const isIndexPointUserRight = dx < -0.06 && Math.abs(dx) > Math.abs(dy);
 
-            if (isIndexUp && isMidUp && isRingUp && isPinkyUp) return '🖐️'; // Buka
-            if (isIndexUp && isMidUp && !isRingUp && !isPinkyUp) return '✌️'; // Peace
-            if (isIndexUp && !isMidUp && !isRingUp && isPinkyUp) return '🤟'; // Rock
+            if (isIndexUp && isMidUp && isRingUp && isPinkyUp) return '🖐️'; 
+            if (isIndexUp && isMidUp && !isRingUp && !isPinkyUp) return '✌️'; 
+            if (isIndexUp && !isMidUp && !isRingUp && isPinkyUp) return '🤟'; 
             
             if (!isMidUp && !isRingUp && !isPinkyUp) {
-                if (isIndexPointUserLeft) return '👈'; // Kiri
-                if (isIndexPointUserRight) return '👉'; // Kanan
-                if (!isIndexUp) return '✊'; // Genggam
+                if (isIndexPointUserLeft) return '👈'; 
+                if (isIndexPointUserRight) return '👉'; 
+                if (!isIndexUp) return '✊'; 
             }
             return null;
         }

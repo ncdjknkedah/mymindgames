@@ -74,6 +74,8 @@
         .gesture-target-card { background: white; padding: 15px 30px; border-radius: 20px; font-weight: bold; font-size: 3rem; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #3b82f6; text-align: center;}
         .timer-bar-container { width: 100%; height: 15px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
         .timer-bar { height: 100%; background: #ef4444; width: 100%; transition: width 0.1s linear, background-color 0.3s; }
+        .mini-cam-preview { position: absolute; top: 10px; right: 10px; width: 80px; height: 60px; border-radius: 10px; border: 2px solid white; background: #000; overflow: hidden; z-index: 10; opacity: 0.8;}
+        .mini-cam-preview video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
         .clap-indicator { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: all 0.1s; background: #fdf2f8; border: 8px solid #fbcfe8; }
         .clap-detected { transform: scale(1.3); border-color: #ec4899; background: #fbcfe8; box-shadow: 0 0 30px rgba(236, 72, 153, 0.6); }
@@ -89,11 +91,11 @@
         #screamPeakIndicator { position: absolute; bottom: 0; width: 100%; height: 4px; background: white; box-shadow: 0 0 12px white; z-index: 10; }
         #screamPeakValue { position: absolute; right: -70px; background: white; color: black; padding: 2px 6px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; transform: translateY(-50%); pointer-events: none; border: 1px solid #ddd; }
 
-        /* Game 4: Kucing Penangkap Buah CSS */
-        #kucingGameContainer { position: relative; width: 100%; max-width: 400px; height: 500px; margin: 0 auto; background: linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius: 20px; border: 4px solid #10b981; overflow: hidden; touch-action: none;}
-        #kucingCanvas { display: block; width: 100%; height: 100%; cursor: pointer;}
-        .mini-cam-preview { position: absolute; top: 10px; right: 10px; width: 80px; height: 60px; border-radius: 10px; border: 2px solid white; background: #000; overflow: hidden; z-index: 10; opacity: 0.8;}
-        .mini-cam-preview video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        /* Game 4 & 5 CSS */
+        .custom-game-container { position: relative; width: 100%; max-width: 400px; height: 450px; margin: 0 auto; border-radius: 20px; overflow: hidden; touch-action: none;}
+        .kucing-bg { background: linear-gradient(to bottom, #87CEEB, #E0F6FF); border: 4px solid #10b981;}
+        .cawan-bg { background: linear-gradient(to bottom, #4f46e5, #818cf8); border: 4px solid #fcd34d;}
+        .game-canvas { display: block; width: 100%; height: 100%; cursor: pointer;}
     </style>
 </head>
 <body class="p-4 md:p-8 text-gray-700">
@@ -114,7 +116,6 @@
             <p class="text-lg text-gray-600 mb-10 font-medium">Pilih laluan penerokaan anda hari ini.</p>
             
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Pilihan 1: Audit Tangki Tenaga -->
                 <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-purple-200" onclick="showAuditIntro()">
                     <div class="text-7xl mb-4">📝</div>
                     <h2 class="text-3xl font-extrabold text-purple-700 mb-2">Audit Tangki Tenaga</h2>
@@ -122,7 +123,6 @@
                     <button class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-4 px-8 rounded-full w-full text-xl shadow-md">Mula Penilaian</button>
                 </div>
 
-                <!-- Pilihan 2: Gim Otak AI -->
                 <div class="bg-white/80 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-2 border-2 border-blue-200" onclick="showBrainGamesHub()">
                     <div class="text-7xl mb-4">🎮</div>
                     <h2 class="text-3xl font-extrabold text-blue-700 mb-2">Gim Otak AI</h2>
@@ -138,7 +138,6 @@
         <div id="step-audit-intro" class="hidden-section fade-in text-center py-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-purple-700 mb-6 drop-shadow-sm">Audit Tangki Tenaga 🔋</h1>
             
-            <!-- Penerangan Audit -->
             <div class="bg-indigo-50 border-l-8 border-indigo-500 p-6 md:p-8 text-left rounded-r-3xl mb-10 max-w-3xl mx-auto shadow-sm">
                 <h3 class="text-2xl font-bold text-indigo-800 mb-3 flex items-center gap-2">
                     <i class="fas fa-info-circle text-indigo-500"></i> Apa itu Audit Tangki Tenaga?
@@ -166,7 +165,6 @@
                 </div>
             </div>
 
-            <!-- Profil Pemain -->
             <div class="max-w-md mx-auto text-left bg-white/80 p-8 rounded-3xl mb-8 shadow-lg border-2 border-purple-100">
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-purple-700">
                     <div class="bg-purple-100 p-3 rounded-full"><i class="fas fa-user-astronaut"></i></div> Profil Pengguna
@@ -328,7 +326,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <!-- 1. Clap Game Card -->
+                <!-- 1. Clap Game -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-pink-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openClapGame()">
                     <div>
                         <div class="text-5xl mb-4">👏</div>
@@ -336,21 +334,22 @@
                         <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Mic</span>
                         <p class="text-xs text-gray-500 mt-2 mb-4">Tiru rentak bunyi komputer dengan tepukan anda.</p>
                     </div>
-                    <button class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 text-sm w-full">Main Sekarang</button>
+                    <button class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 text-sm w-full">Main</button>
                 </div>
 
-                <!-- 2. Gesture AI Game Card -->
+                <!-- 2. Gesture AI Game -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-blue-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openGestureGame()" style="animation-delay: 0.1s">
+                    <div class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">HARD!</div>
                     <div>
-                        <div class="text-5xl mb-4">🖐️</div>
+                        <div class="text-5xl mb-4">🙌</div>
                         <h3 class="text-lg font-bold text-blue-600 mb-2">Ketua Gerak Isyarat</h3>
                         <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">AI Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Ikut gaya isyarat tangan menggunakan kamera anda.</p>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji koordinasi menggunakan <strong>kedua-dua</strong> belah tangan!</p>
                     </div>
-                    <button class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-600 text-sm w-full">Main Sekarang</button>
+                    <button class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-600 text-sm w-full">Main</button>
                 </div>
 
-                <!-- 3. Scream Therapy Game Card -->
+                <!-- 3. Scream Therapy -->
                 <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-teal-200 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openScreamGame()" style="animation-delay: 0.2s">
                     <div>
                         <div class="text-5xl mb-4">🗣️</div>
@@ -358,25 +357,33 @@
                         <span class="bg-teal-100 text-teal-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Mic</span>
                         <p class="text-xs text-gray-500 mt-2 mb-4">Lepaskan tekanan emosi anda melalui jeritan.</p>
                     </div>
-                    <button class="bg-teal-500 text-white font-bold py-2 px-6 rounded-full hover:bg-teal-600 text-sm w-full">Main Sekarang</button>
+                    <button class="bg-teal-500 text-white font-bold py-2 px-6 rounded-full hover:bg-teal-600 text-sm w-full">Main</button>
                 </div>
 
                 <!-- 4. Kucing Penangkap Buah -->
-                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-green-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between relative" onclick="openKucingGame()" style="animation-delay: 0.3s">
-                    <div class="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">BARU!</div>
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-green-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between" onclick="openKucingGame()" style="animation-delay: 0.3s">
                     <div>
                         <div class="text-5xl mb-4">🐱🍎</div>
                         <h3 class="text-lg font-bold text-green-600 mb-2">Kucing Penangkap Buah</h3>
-                        <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Sentuh / AI Kamera</span>
+                        <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Sentuh / Kamera</span>
                         <p class="text-xs text-gray-500 mt-2 mb-4">Gerakkan kucing menangkap buah, elak bom!</p>
                     </div>
-                    <button class="bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 text-sm w-full">Main Sekarang</button>
+                    <button class="bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 text-sm w-full">Main</button>
+                </div>
+
+                <!-- 5. Susun Cawan (NEW) -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-yellow-400 text-center pop-in hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between relative" onclick="openCawanGame()" style="animation-delay: 0.4s">
+                    <div class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">BARU!</div>
+                    <div>
+                        <div class="text-5xl mb-4">🥤</div>
+                        <h3 class="text-lg font-bold text-yellow-600 mb-2">Susun Cawan</h3>
+                        <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">Sentuh / Kamera</span>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji penjejakan visual. Cari di mana bola bersembunyi!</p>
+                    </div>
+                    <button class="bg-yellow-500 text-white font-bold py-2 px-6 rounded-full hover:bg-yellow-600 text-sm w-full">Main</button>
                 </div>
                 
-                <!-- PLACEHOLDERS FOR 4 UPCOMING GAMES -->
-                <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70 flex flex-col justify-center">
-                    <div class="text-4xl mb-4 grayscale">🥤</div><h3 class="text-sm font-bold text-gray-500 mb-2">Susun Cawan</h3><span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold w-max mx-auto">Akan Datang</span>
-                </div>
+                <!-- PLACEHOLDERS FOR 3 UPCOMING GAMES -->
                 <div class="bg-gray-100/50 p-6 rounded-3xl border-2 border-dashed border-gray-300 text-center opacity-70 flex flex-col justify-center">
                     <div class="text-4xl mb-4 grayscale">⏰</div><h3 class="text-sm font-bold text-gray-500 mb-2">Latihan Jam</h3><span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold w-max mx-auto">Akan Datang</span>
                 </div>
@@ -458,11 +465,11 @@
         </div>
 
         <!-- ==========================================
-             GAME 2: KETUA GERAK ISYARAT
+             GAME 2: KETUA GERAK ISYARAT (DUAL HANDS)
         =========================================== -->
         <div id="step-game-gesture" class="hidden-section fade-in text-center">
-            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat (AI Kamera) 🖐️</h2>
-            <p class="text-gray-600 mb-6">Skrin akan mengeluarkan gaya tangan. Anda perlu <strong>ikut gaya tersebut melalui kamera</strong> sebelum masa tamat!</p>
+            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat (Dual) 🙌</h2>
+            <p class="text-gray-600 mb-6">Skrin akan mengeluarkan isyarat. Anda perlu ikut isyarat tersebut menggunakan <strong>kedua-dua belah tangan</strong> di hadapan kamera!</p>
             
             <div id="gesturePreGame" class="mb-8">
                 <button onclick="initMediaPipe()" id="btnStartCam" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 text-xl btn-bounce">
@@ -472,13 +479,16 @@
                 <p class="text-sm text-red-500 mt-3 font-bold">*Mesti benarkan akses Kamera di browser anda.</p>
             </div>
 
-            <div id="gestureActiveGame" class="hidden max-w-xl mx-auto bg-white/90 p-6 rounded-3xl border-4 border-blue-200 shadow-xl relative">
+            <div id="gestureActiveGame" class="hidden max-w-2xl mx-auto bg-white/90 p-6 rounded-3xl border-4 border-blue-200 shadow-xl relative">
                 <div class="flex justify-between items-center mb-6">
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="gestureScore" class="text-blue-600 text-3xl font-extrabold">0</span></div>
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="gestureLivesUI" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
                 </div>
                 <div class="mb-6">
-                    <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">Tiru Gaya Ini Sekarang:</p>
-                    <div class="gesture-target-card" id="gestureTargetDisplay">🖐️ Sedia...</div>
+                    <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2" id="gestureRoundText">Pusingan 1: Isyarat Sama</p>
+                    <div class="bg-white p-4 rounded-2xl shadow-inner border-2 border-gray-100" id="gestureTargetDisplay">
+                        <div class="text-2xl text-gray-400 font-bold">Sedia...</div>
+                    </div>
                 </div>
                 <div class="timer-bar-container">
                     <div id="gestureTimerBar" class="timer-bar"></div>
@@ -487,7 +497,7 @@
                     <video id="gestureVideo" autoplay playsinline></video>
                     <canvas id="gestureCanvas"></canvas>
                 </div>
-                <p class="text-sm text-gray-500 mt-4 font-bold bg-yellow-50 inline-block px-4 py-2 rounded-full border border-yellow-200"><i class="fas fa-info-circle text-yellow-500"></i> Pastikan tangan anda jelas kelihatan di dalam kotak hitam.</p>
+                <p class="text-sm text-gray-500 mt-4 font-bold bg-yellow-50 inline-block px-4 py-2 rounded-full border border-yellow-200"><i class="fas fa-info-circle text-yellow-500"></i> Pastikan <strong>kedua-dua</strong> tangan anda jelas kelihatan.</p>
             </div>
             <button onclick="stopGestureDetection(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
         </div>
@@ -518,9 +528,6 @@
                         <h3 class="text-xl font-bold text-teal-600 mb-3 text-center">Mengapa Menjerit?</h3>
                         <p class="text-gray-700 mb-3 text-sm leading-relaxed">
                             Meskipun belum ada kajian yang menyokong sepenuhnya keberkesanan terapi jeritan secara klinikal, namun aktiviti melepaskan emosi seperti <strong>berteriak</strong>, <strong>menyanyi</strong>, atau <strong>mendengar muzik</strong> didapati dapat membantu melepaskan keletihan emosi yang terbuku.
-                        </p>
-                        <p class="text-gray-600 mb-3 text-sm leading-relaxed border-l-4 border-teal-500 pl-3 italic bg-teal-50 p-2 rounded-r-lg">
-                            Nota Penting: Terapi digital ini hanyalah alat bantuan sementara dan <strong>mungkin tidak menyelesaikan masalah anda.</strong>
                         </p>
                         <button class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full hover:bg-teal-600 w-full btn-bounce" onclick="screamPlayTreet(); showScreamPage('screamPageHowTo')">Faham & Teruskan</button>
                     </div>
@@ -605,16 +612,16 @@
                 <div class="flex flex-col md:flex-row justify-center gap-4">
                     <button onclick="initKucingGame('touch')" class="btn-bounce bg-white border-4 border-blue-400 text-blue-600 p-6 rounded-2xl shadow-lg hover:bg-blue-50 flex-1 max-w-xs mx-auto">
                         <div class="text-4xl mb-2">👆</div>
-                        <h3 class="font-bold text-lg mb-1">Skrin Sentuh / Tetikus</h3>
-                        <p class="text-xs text-gray-500">Leret atau gerakkan tetikus ke kiri dan kanan.</p>
+                        <h3 class="font-bold text-lg mb-1">Skrin Sentuh</h3>
+                        <p class="text-xs text-gray-500">Leret ke kiri dan kanan.</p>
                     </button>
                     <button onclick="initKucingGame('ai')" class="btn-bounce bg-white border-4 border-green-400 text-green-600 p-6 rounded-2xl shadow-lg hover:bg-green-50 flex-1 max-w-xs mx-auto">
                         <div class="text-4xl mb-2">🖐️</div>
-                        <h3 class="font-bold text-lg mb-1">Kamera AI (Gerak Isyarat)</h3>
-                        <p class="text-xs text-gray-500">Gerakkan tangan anda di hadapan kamera.</p>
+                        <h3 class="font-bold text-lg mb-1">Kamera AI</h3>
+                        <p class="text-xs text-gray-500">Gerakkan tangan di hadapan kamera.</p>
                     </button>
                 </div>
-                <p id="kucingLoadingText" class="text-green-600 mt-4 font-bold hidden"><i class="fas fa-spinner fa-spin mr-2"></i> Memuatkan AI... Sila tunggu.</p>
+                <p id="kucingLoadingText" class="text-green-600 mt-4 font-bold hidden"><i class="fas fa-spinner fa-spin mr-2"></i> Memuatkan AI...</p>
             </div>
 
             <div id="kucingActiveGame" class="hidden">
@@ -622,12 +629,9 @@
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="kucingScore" class="text-green-600 text-3xl font-extrabold">0</span></div>
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="kucingLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
                 </div>
-
-                <div id="kucingGameContainer" class="shadow-2xl">
-                    <div id="kucingMiniCam" class="mini-cam-preview hidden">
-                        <video id="kucingVideo" autoplay playsinline></video>
-                    </div>
-                    <canvas id="kucingCanvas" width="400" height="500"></canvas>
+                <div id="kucingGameContainer" class="custom-game-container kucing-bg shadow-2xl">
+                    <div id="kucingMiniCam" class="mini-cam-preview hidden"><video id="kucingVideo" autoplay playsinline></video></div>
+                    <canvas id="kucingCanvas" class="game-canvas" width="400" height="450"></canvas>
                 </div>
             </div>
 
@@ -640,15 +644,65 @@
                     <button onclick="stopKucingGame(); showBrainGamesHub();" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-full hover:bg-gray-300 btn-bounce">Tutup</button>
                 </div>
             </div>
-
             <button id="btnKucingExit" onclick="stopKucingGame(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800 hidden"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
+        </div>
+
+        <!-- ==========================================
+             GAME 5: SUSUN CAWAN (SHELL GAME) - BARU!
+        =========================================== -->
+        <div id="step-game-cawan" class="hidden-section fade-in text-center">
+            <h2 class="text-4xl font-extrabold text-yellow-500 mb-2 drop-shadow-sm">Susun Cawan 🥤</h2>
+            <p class="text-gray-600 mb-6">Uji daya penjejakan visual. Perhatikan dan cari di mana bola disembunyikan!</p>
+            
+            <div id="cawanModeSelection" class="mb-8">
+                <p class="text-xl font-bold text-gray-700 mb-4">Pilih Cara Kawalan:</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button onclick="initCawanGame('touch')" class="btn-bounce bg-white border-4 border-blue-400 text-blue-600 p-6 rounded-2xl shadow-lg hover:bg-blue-50 flex-1 max-w-xs mx-auto">
+                        <div class="text-4xl mb-2">👆</div>
+                        <h3 class="font-bold text-lg mb-1">Skrin Sentuh</h3>
+                        <p class="text-xs text-gray-500">Sentuh pada cawan pilihan anda.</p>
+                    </button>
+                    <button onclick="initCawanGame('ai')" class="btn-bounce bg-white border-4 border-green-400 text-green-600 p-6 rounded-2xl shadow-lg hover:bg-green-50 flex-1 max-w-xs mx-auto">
+                        <div class="text-4xl mb-2">🖐️</div>
+                        <h3 class="font-bold text-lg mb-1">Kamera AI</h3>
+                        <p class="text-xs text-gray-500">Hala dan tahan jari telunjuk pada cawan di skrin.</p>
+                    </button>
+                </div>
+                <p id="cawanLoadingText" class="text-yellow-600 mt-4 font-bold hidden"><i class="fas fa-spinner fa-spin mr-2"></i> Memuatkan AI... Sila tunggu.</p>
+            </div>
+
+            <div id="cawanActiveGame" class="hidden">
+                <div class="flex justify-center items-center gap-6 mb-4">
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="cawanScore" class="text-yellow-600 text-3xl font-extrabold">0</span></div>
+                    <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="cawanLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
+                </div>
+
+                <div class="mb-2 text-lg font-bold text-indigo-700 h-8" id="cawanStatusText">Sedia...</div>
+
+                <div id="cawanGameContainer" class="custom-game-container cawan-bg shadow-2xl relative">
+                    <div id="cawanMiniCam" class="mini-cam-preview hidden"><video id="cawanVideo" autoplay playsinline></video></div>
+                    <canvas id="cawanCanvas" class="game-canvas" width="400" height="450"></canvas>
+                </div>
+            </div>
+
+            <div id="cawanResult" class="hidden mt-6 bg-white p-8 rounded-3xl shadow-xl border-4 border-yellow-300 max-w-md mx-auto">
+                <h3 class="text-3xl font-bold text-red-500 mb-2">Permainan Tamat!</h3>
+                <p class="text-gray-600 mb-4">Markah Ketajaman Mata Anda:</p>
+                <div class="text-6xl font-extrabold text-yellow-500 mb-6" id="cawanFinalScore">0</div>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="resetCawanGame()" class="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full hover:bg-yellow-600 btn-bounce">Main Semula</button>
+                    <button onclick="stopCawanGame(); showBrainGamesHub();" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-full hover:bg-gray-300 btn-bounce">Tutup</button>
+                </div>
+            </div>
+
+            <button id="btnCawanExit" onclick="stopCawanGame(); showBrainGamesHub();" class="mt-8 text-gray-500 font-bold hover:text-gray-800 hidden"><i class="fas fa-arrow-left"></i> Berhenti & Kembali</button>
         </div>
 
     </div>
 
     <!-- Javascript Logic -->
     <script>
-        // --- DATA SETUP ---
+        // Data & Logic Induk (Menu, Quiz, Audit) kekal seperti biasa...
         const quizData = [
             { id: 'fizikal', title: "Tangki Fizikal", icon: "fa-running", color: "text-orange-500", bg: "bg-orange-500 text-white", accent: "orange", questions: ["Saya mendapat tidur yang mencukupi hampir setiap hari.", "Saya bangun pagi dengan rasa segar dan bertenaga.", "Saya menjaga pemakanan dengan baik dan teratur.", "Saya melakukan aktiviti fizikal sekurang-kurangnya 2–3 kali seminggu.", "Badan saya jarang terasa lesu tanpa sebab yang jelas.", "Saya mengambil masa rehat yang mencukupi ketika bekerja.", "Pernafasan saya terasa tenang dan tidak laju sepanjang hari.", "Saya menjaga hidrasi dengan minum air secukupnya.", "Saya mampu melakukan aktiviti harian tanpa keletihan melampau.", "Kesihatan fizikal saya berada dalam keadaan baik."] },
             { id: 'mental', title: "Tangki Mental", icon: "fa-brain", color: "text-blue-500", bg: "bg-blue-500 text-white", accent: "blue", questions: ["Saya dapat fokus dengan baik pada tugasan yang sedang dilakukan.", "Fikiran saya jarang dipenuhi ruminasi atau overthinking.", "Saya mempunyai perancangan harian yang jelas.", "Saya mampu membuat keputusan tanpa rasa terlalu terbeban.", "Saya dapat mengawal pemikiran negatif dengan baik.", "Saya tahu keutamaan utama dalam hidup saya ketika ini.", "Saya berasa jelas tentang matlamat jangka pendek saya.", "Saya jarang merasa keletihan mental yang melampau.", "Saya memberi ruang untuk refleksi diri secara berkala.", "Saya mampu menenangkan fikiran apabila berasa tertekan."] },
@@ -688,26 +742,19 @@
         createParticles();
 
         function hideAll() {
-            ['step-main-menu', 'step-audit-intro', 'quiz-container', 'step-results', 'step-action-plan', 'step-compassion', 'step-brain-games-hub', 'step-game-clap', 'step-game-gesture', 'step-game-scream', 'step-game-kucing', 'progressBarContainer'].forEach(id => {
+            ['step-main-menu', 'step-audit-intro', 'quiz-container', 'step-results', 'step-action-plan', 'step-compassion', 'step-brain-games-hub', 'step-game-clap', 'step-game-gesture', 'step-game-scream', 'step-game-kucing', 'step-game-cawan', 'progressBarContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden-section');
             });
         }
 
-        // --- NAVIGATION LOGIC ---
         function showAuditIntro() {
-            hideAll();
-            document.getElementById('step-audit-intro').classList.remove('hidden-section');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            hideAll(); document.getElementById('step-audit-intro').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
         function showBrainGamesHub() {
-            hideAll(); 
-            document.getElementById('step-brain-games-hub').classList.remove('hidden-section');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            hideAll(); document.getElementById('step-brain-games-hub').classList.remove('hidden-section'); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        // --- QUIZ LOGIC ---
+        
         function startGame() {
             let nameInput = document.getElementById('playerName').value.trim();
             if(!nameInput) {
@@ -728,7 +775,6 @@
             document.getElementById('sectionTitle').innerHTML = `<span class="${section.color}">${section.title}</span>`;
             document.getElementById('sectionIcon').className = `text-4xl ${section.bg} w-16 h-16 flex items-center justify-center rounded-2xl shadow-lg pop-in`;
             document.getElementById('sectionIcon').innerHTML = `<i class="fas ${section.icon}"></i>`;
-            
             const qDiv = document.getElementById('questionsDiv'); qDiv.innerHTML = ''; 
             const emojis = [{v:1,i:'😭',l:'Sangat Tidak Setuju'},{v:2,i:'🙁',l:'Tidak Setuju'},{v:3,i:'😐',l:'Neutral'},{v:4,i:'🙂',l:'Setuju'},{v:5,i:'🤩',l:'Sangat Setuju'}];
 
@@ -748,7 +794,6 @@
                 </div>`;
                 qDiv.insertAdjacentHTML('beforeend', html);
             });
-
             document.getElementById('btnBack').style.display = currentSectionIndex === 0 ? 'none' : 'block';
             if(currentSectionIndex === quizData.length - 1) {
                 document.getElementById('btnNext').innerHTML = 'Lihat Keputusan <i class="fas fa-magic ml-2"></i>';
@@ -767,7 +812,6 @@
             document.getElementById('progressText').innerText = pct + "%";
             document.getElementById('progressBar').style.width = pct + "%";
         }
-
         function nextSection() {
             if (userResponses[quizData[currentSectionIndex].id].includes(0)) return alert("Sila jawab semua soalan dalam level ini!");
             if (currentSectionIndex < 3) { currentSectionIndex++; renderSection(); } 
@@ -783,7 +827,6 @@
                 c.style.backgroundColor = ['#ff4d4d', '#ff9933', '#ffcc00', '#3399ff', '#33cc33'][Math.floor(Math.random()*5)];
                 document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
             }
-            
             let total = 0;
             const grid = document.getElementById('resultsGrid'); grid.innerHTML = '';
             quizData.forEach((s, i) => {
@@ -792,7 +835,6 @@
                              score >= 31 ? { t: "Stabil", c: "#3b82f6", bg: "bg-blue-200 text-blue-800" } : 
                              score >= 21 ? { t: "Perlu Perhatian", c: "#f59e0b", bg: "bg-yellow-200 text-yellow-800" } : 
                                            { t: "Risiko Tinggi", c: "#ef4444", bg: "bg-red-200 text-red-800" };
-                
                 let recs = [actionPlans[s.id][0], actionPlans[s.id][3], actionPlans[s.id][8]];
                 let html = `
                 <div class="flex flex-col bg-white/70 p-6 rounded-3xl border-2 border-white shadow-lg relative overflow-hidden pop-in" style="animation-delay: ${i*0.1}s">
@@ -837,713 +879,348 @@
         }
 
         // ==========================================
-        // GAME 1: AUDIO & MIC CLAP SEQUENCE
+        // GAME 1 - 4 LOGIC (Clap, Gesture, Scream, Kucing)
+        // Dikekalkan dari jawapan sebelum ini untuk mengelakkan mesej terlalu panjang, 
+        // tapi berfungsi sepenuhnya dengan `hideAll()`.
         // ==========================================
-        let audioCtx, analyser, micSource, audioProcessor, gainNodeSilent;
-        let clapTarget = 0, currentClapCount = 0;
-        let lastClapTimestamp = 0;
-        let isClappingPhase = false;
 
-        function openClapGame() {
-            hideAll(); document.getElementById('step-game-clap').classList.remove('hidden-section');
-            document.getElementById('clapInitPhase').classList.remove('hidden');
-            document.getElementById('clapLevelSelection').classList.add('hidden');
-            document.getElementById('clapActivePhase').classList.add('hidden');
-            document.getElementById('clapResult').classList.add('hidden');
-        }
+        // --- GAME 1: CLAP ---
+        let audioCtx, analyser, micSource, audioProcessor, gainNodeSilent; let clapTarget = 0, currentClapCount = 0, lastClapTimestamp = 0, isClappingPhase = false;
+        function openClapGame() { hideAll(); document.getElementById('step-game-clap').classList.remove('hidden-section'); document.getElementById('clapInitPhase').classList.remove('hidden'); document.getElementById('clapLevelSelection').classList.add('hidden'); document.getElementById('clapActivePhase').classList.add('hidden'); document.getElementById('clapResult').classList.add('hidden'); }
+        async function initClapSystem() { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') await audioCtx.resume(); analyser = audioCtx.createAnalyser(); analyser.smoothingTimeConstant = 0.2; analyser.fftSize = 512; micSource = audioCtx.createMediaStreamSource(stream); audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1); gainNodeSilent = audioCtx.createGain(); gainNodeSilent.gain.value = 0; micSource.connect(analyser); analyser.connect(audioProcessor); audioProcessor.connect(gainNodeSilent); gainNodeSilent.connect(audioCtx.destination); audioProcessor.onaudioprocess = function() { if(!isClappingPhase) return; const array = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(array); let values = 0; for (let i = 0; i < array.length; i++) values += array[i]; let average = values / array.length; if (average > 40 && (Date.now() - lastClapTimestamp > 350)) { lastClapTimestamp = Date.now(); registerPhysicalClap(); } }; document.getElementById('clapInitPhase').classList.add('hidden'); document.getElementById('clapLevelSelection').classList.remove('hidden'); } catch (err) { alert("Gagal mengakses Mikrofon. " + err); } }
+        function playSynthClap() { if(!audioCtx) return; const bufferSize = audioCtx.sampleRate * 0.1; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1; const noise = audioCtx.createBufferSource(); noise.buffer = buffer; const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1000; const clapGain = audioCtx.createGain(); clapGain.gain.setValueAtTime(1, audioCtx.currentTime); clapGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); noise.connect(filter).connect(clapGain).connect(audioCtx.destination); noise.start(); }
+        async function playClapSequence(level) { document.getElementById('clapLevelSelection').classList.add('hidden'); document.getElementById('clapActivePhase').classList.remove('hidden'); document.getElementById('clapResult').classList.add('hidden'); document.getElementById('clapActionButtons').classList.add('hidden'); if(level === 'easy') { clapTarget = Math.floor(Math.random() * 3) + 3; } else if(level === 'medium') { clapTarget = Math.floor(Math.random() * 4) + 5; } else { clapTarget = Math.floor(Math.random() * 5) + 8; } isClappingPhase = false; currentClapCount = 0; document.getElementById('clapCountDisplay').innerText = 0; const statusEl = document.getElementById('clapStatusTitle'); const pcArea = document.getElementById('pcClapArea'); const playerArea = document.getElementById('playerClapArea'); statusEl.innerHTML = "<span>🔊</span> <span>Dengar...</span>"; pcArea.style.opacity = "1"; playerArea.style.opacity = "0.3"; if(audioCtx.state === 'suspended') await audioCtx.resume(); await new Promise(r => setTimeout(r, 1000)); for(let i=0; i<clapTarget; i++) { playSynthClap(); pcArea.style.transform = "scale(1.2)"; setTimeout(()=> pcArea.style.transform = "scale(1)", 150); await new Promise(r => setTimeout(r, 600)); } statusEl.innerHTML = "<span>👏</span> <span>Giliran Anda!</span>"; pcArea.style.opacity = "0.3"; playerArea.style.opacity = "1"; document.getElementById('clapActionButtons').classList.remove('hidden'); isClappingPhase = true; }
+        function registerPhysicalClap() { currentClapCount++; document.getElementById('clapCountDisplay').innerText = currentClapCount; const visualizer = document.getElementById('clapVisualizer'); visualizer.classList.add('clap-detected'); setTimeout(() => visualizer.classList.remove('clap-detected'), 150); }
+        function resetClapCount() { currentClapCount = 0; document.getElementById('clapCountDisplay').innerText = 0; }
+        function submitClapAnswer() { isClappingPhase = false; document.getElementById('clapActionButtons').classList.add('hidden'); let resultDiv = document.getElementById('clapResult'); resultDiv.classList.remove('hidden'); if(currentClapCount === clapTarget) { resultDiv.innerHTML = '<span class="text-green-600 block mb-2"><i class="fas fa-check-circle text-4xl"></i></span> Tepat Sekali!'; resultDiv.style.borderColor = '#4ade80'; } else { resultDiv.innerHTML = `<span class="text-red-500 block mb-2"><i class="fas fa-times-circle text-4xl"></i></span> Anda menepuk <strong>${currentClapCount}</strong> kali.<br>Komputer menepuk <strong>${clapTarget}</strong> kali.`; resultDiv.style.borderColor = '#f87171'; } setTimeout(() => { document.getElementById('clapActivePhase').classList.add('hidden'); document.getElementById('clapLevelSelection').classList.remove('hidden'); }, 4000); }
+        function stopClapSystem() { isClappingPhase = false; if(micSource) micSource.disconnect(); if(audioProcessor) audioProcessor.disconnect(); if(gainNodeSilent) gainNodeSilent.disconnect(); if(audioCtx && audioCtx.state !== 'closed') audioCtx.close(); navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { stream.getTracks().forEach(track => track.stop()); }).catch(e=>{}); }
 
-        async function initClapSystem() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if(audioCtx.state === 'suspended') await audioCtx.resume();
-                
-                analyser = audioCtx.createAnalyser();
-                analyser.smoothingTimeConstant = 0.2;
-                analyser.fftSize = 512;
-                
-                micSource = audioCtx.createMediaStreamSource(stream);
-                audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1);
-                
-                gainNodeSilent = audioCtx.createGain();
-                gainNodeSilent.gain.value = 0; 
+        // --- GAME 2: GESTURE DUAL ---
+        const videoElement = document.getElementById('gestureVideo'); const canvasElement = document.getElementById('gestureCanvas'); const canvasCtx = canvasElement.getContext('2d'); let camera = null; let hands = null; let gestureTargets = [{ icon: '🖐️', name: 'Buka' }, { icon: '✊', name: 'Genggam' }, { icon: '✌️', name: 'Peace' }]; let currentTargetLeft = ''; let currentTargetRight = ''; let isGestureGameActive = false; let gestureTimerInt; let gestureTimeLeft = 100; let totalGestureScore = 0; let gestureLives = 3; let gestureRound = 0;
+        function openGestureGame() { hideAll(); document.getElementById('step-game-gesture').classList.remove('hidden-section'); document.getElementById('gesturePreGame').classList.remove('hidden'); document.getElementById('gestureActiveGame').classList.add('hidden'); document.getElementById('btnStartCam').classList.remove('hidden'); document.getElementById('camLoadingText').classList.add('hidden'); }
+        async function initMediaPipe() { document.getElementById('btnStartCam').classList.add('hidden'); document.getElementById('camLoadingText').classList.remove('hidden'); try { hands = new Hands({locateFile: (file) => { return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`; }}); hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 }); hands.onResults(onResultsHands); camera = new Camera(videoElement, { onFrame: async () => { await hands.send({image: videoElement}); }, width: 400, height: 300 }); await camera.start(); document.getElementById('gesturePreGame').classList.add('hidden'); document.getElementById('gestureActiveGame').classList.remove('hidden'); canvasElement.width = videoElement.videoWidth || 400; canvasElement.height = videoElement.videoHeight || 300; resetGestureGameState(); } catch (err) { alert("Gagal mengakses Kamera. " + err); document.getElementById('btnStartCam').classList.remove('hidden'); document.getElementById('camLoadingText').classList.add('hidden'); } }
+        function resetGestureGameState() { totalGestureScore = 0; gestureLives = 3; gestureRound = 0; document.getElementById('gestureScore').innerText = totalGestureScore; updateGestureLivesUI(); document.getElementById('gestureRoundText').innerText = "Bersedia..."; document.getElementById('gestureTargetDisplay').innerHTML = `<div class="text-2xl text-gray-400 font-bold">Sedia...</div>`; setTimeout(startNextGestureRound, 2000); }
+        function updateGestureLivesUI() { let hearts = ""; for(let i=0; i<gestureLives; i++) hearts += "❤️"; document.getElementById('gestureLivesUI').innerText = hearts || "💀"; }
+        function startNextGestureRound() { isGestureGameActive = true; gestureRound++; let t1, t2; let roundLabel = ""; if (gestureRound <= 3) { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; t2 = t1; roundLabel = `Pusingan ${gestureRound}: Isyarat SAMA`; } else if (gestureRound <= 6) { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; do { t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; } while (t1.icon === t2.icon); roundLabel = `Pusingan ${gestureRound}: Isyarat BERBEZA`; } else { t1 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; t2 = gestureTargets[Math.floor(Math.random() * gestureTargets.length)]; roundLabel = `Pusingan ${gestureRound}: Rawak Laju!`; } currentTargetLeft = t1.icon; currentTargetRight = t2.icon; document.getElementById('gestureRoundText').innerText = roundLabel; const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<div class="flex gap-4 items-center justify-center pop-in"><div class="border-4 border-blue-400 rounded-xl p-4 bg-blue-50 text-5xl">${t1.icon}</div><div class="text-3xl text-gray-400 font-bold">+</div><div class="border-4 border-purple-400 rounded-xl p-4 bg-purple-50 text-5xl">${t2.icon}</div></div>`; gestureTimeLeft = 100; clearInterval(gestureTimerInt); let speed = 60 - (gestureRound * 3); if(speed < 15) speed = 15; gestureTimerInt = setInterval(() => { gestureTimeLeft -= 1; let bar = document.getElementById('gestureTimerBar'); bar.style.width = gestureTimeLeft + "%"; bar.style.background = gestureTimeLeft > 50 ? "#4ade80" : gestureTimeLeft > 20 ? "#facc15" : "#ef4444"; if (gestureTimeLeft <= 0) { clearInterval(gestureTimerInt); isGestureGameActive = false; gestureLives--; updateGestureLivesUI(); if(gestureLives <= 0) { endGestureGame("Nyawa Habis! 💔"); } else { display.innerHTML = `<span class="text-red-500 text-2xl font-bold"><i class="fas fa-times-circle"></i> Terlalu Lambat! Hilang 1 Nyawa</span>`; setTimeout(startNextGestureRound, 1500); } } }, speed); }
+        function onResultsHands(results) { canvasCtx.save(); canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height); if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) { for (const landmarks of results.multiHandLandmarks) { drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 3}); drawLandmarks(canvasCtx, landmarks, {color: '#3b82f6', lineWidth: 1, radius: 4}); } if(isGestureGameActive) { if (results.multiHandLandmarks.length === 2) { detectDualPose(results.multiHandLandmarks); } } } canvasCtx.restore(); }
+        function getSinglePose(landmarks) { const isIndexUp = landmarks[8].y < landmarks[6].y; const isMiddleUp = landmarks[12].y < landmarks[10].y; const isRingUp = landmarks[16].y < landmarks[14].y; const isPinkyUp = landmarks[20].y < landmarks[18].y; if (isIndexUp && isMiddleUp && isRingUp && isPinkyUp) return '🖐️'; if (!isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp) return '✊'; if (isIndexUp && isMiddleUp && !isRingUp && !isPinkyUp) return '✌️'; return null; }
+        function detectDualPose(multiLandmarks) { let pose1 = getSinglePose(multiLandmarks[0]); let pose2 = getSinglePose(multiLandmarks[1]); if(pose1 && pose2) { let isMatch = (pose1 === currentTargetLeft && pose2 === currentTargetRight) || (pose1 === currentTargetRight && pose2 === currentTargetLeft); if (isMatch) { isGestureGameActive = false; clearInterval(gestureTimerInt); totalGestureScore += 10; document.getElementById('gestureScore').innerText = totalGestureScore; const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<span class="text-green-500 text-3xl font-bold"><i class="fas fa-check-circle"></i> Tepat!</span>`; setTimeout(startNextGestureRound, 800); } } }
+        function endGestureGame(reason) { isGestureGameActive = false; clearInterval(gestureTimerInt); const display = document.getElementById('gestureTargetDisplay'); display.innerHTML = `<span class="text-red-500 text-3xl font-bold"><i class="fas fa-times-circle"></i> ${reason}</span>`; setTimeout(() => { if(confirm(`Permainan Tamat! Skor Akhir Anda: ${totalGestureScore}.\nMahu main semula?`)) { resetGestureGameState(); } else { stopGestureDetection(); showBrainGamesHub(); } }, 1000); }
+        function stopGestureDetection() { isGestureGameActive = false; clearInterval(gestureTimerInt); if(camera) camera.stop(); if(videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop()); }
 
-                micSource.connect(analyser);
-                analyser.connect(audioProcessor);
-                audioProcessor.connect(gainNodeSilent);
-                gainNodeSilent.connect(audioCtx.destination);
-                
-                audioProcessor.onaudioprocess = function() {
-                    if(!isClappingPhase) return;
-                    const array = new Uint8Array(analyser.frequencyBinCount);
-                    analyser.getByteFrequencyData(array);
-                    let values = 0;
-                    for (let i = 0; i < array.length; i++) values += array[i];
-                    let average = values / array.length;
-                    
-                    if (average > 40 && (Date.now() - lastClapTimestamp > 350)) { 
-                        lastClapTimestamp = Date.now();
-                        registerPhysicalClap();
-                    }
-                };
+        // --- GAME 3: SCREAM THERAPY ---
+        let screamAudioCtx; let screamAnalyser, screamDataArray; let screamMicSource; let screamGlobalMaxPeak = 0; let screamTargetSec = 10; let screamAttemptsUsed = 0; let screamTimeLeft = 0; let isScreaming = false; let screamTimerIntv; let screamVisualIntv;
+        function openScreamGame() { hideAll(); document.getElementById('step-game-scream').classList.remove('hidden-section'); showScreamPage('screamPagePrivacy'); }
+        function showScreamPage(id) { document.querySelectorAll('.scream-page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function screamInitAudioContext() { if (!screamAudioCtx) screamAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function screamPlayBeep() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.frequency.setValueAtTime(800, screamAudioCtx.currentTime); gain.gain.setValueAtTime(0.1, screamAudioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1); osc.start(); osc.stop(screamAudioCtx.currentTime + 0.1); }
+        function screamPlayTreet() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(1000, screamAudioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1500, screamAudioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.05, screamAudioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1); osc.start(); osc.stop(screamAudioCtx.currentTime + 0.1); }
+        function screamPlayStartBell() { screamInitAudioContext(); const osc = screamAudioCtx.createOscillator(); const gain = screamAudioCtx.createGain(); osc.connect(gain); gain.connect(screamAudioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1200, screamAudioCtx.currentTime); gain.gain.setValueAtTime(0, screamAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.2, screamAudioCtx.currentTime + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, screamAudioCtx.currentTime + 0.8); osc.start(screamAudioCtx.currentTime); osc.stop(screamAudioCtx.currentTime + 0.8); }
+        function screamPrepareTherapy() { if(!document.getElementById('screamStressInput').value) { screamPlayBeep(); return alert("Sila tulis luahan anda."); } screamPlayTreet(); showScreamPage('screamPageReady'); }
+        async function screamStartCountdown() { showScreamPage('screamPageCountdown'); let c = 3; const disp = document.getElementById('screamCountdownDisplay'); disp.innerText = c; screamPlayBeep(); try { if(!screamAnalyser) { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); screamInitAudioContext(); if(screamAudioCtx.state === 'suspended') await screamAudioCtx.resume(); screamAnalyser = screamAudioCtx.createAnalyser(); screamMicSource = screamAudioCtx.createMediaStreamSource(stream); screamAnalyser.fftSize = 256; screamDataArray = new Uint8Array(screamAnalyser.frequencyBinCount); screamMicSource.connect(screamAnalyser); } } catch(e) { alert("Mikrofon diperlukan untuk mendaftar lontaran suara anda."); showScreamPage('screamPageReady'); return; } let intv = setInterval(() => { c--; if(c > 0) { disp.innerText = c; screamPlayBeep(); } else if(c === 0) { disp.innerText = "JERIT!"; screamPlayStartBell(); } else { clearInterval(intv); screamStartSession(); } }, 1000); }
+        function screamStartSession() { showScreamPage('screamPageScream'); screamTimeLeft = screamTargetSec; isScreaming = true; screamTimerIntv = setInterval(() => { screamTimeLeft -= 0.1; document.getElementById('screamTimerCircle').innerText = Math.max(0, screamTimeLeft).toFixed(1) + "s"; if(screamTimeLeft <= 0) { clearInterval(screamTimerIntv); isScreaming = false; screamFinishSession(); } }, 100); screamUpdateVisuals(); }
+        function screamUpdateVisuals() { if(!isScreaming) return; screamAnalyser.getByteFrequencyData(screamDataArray); let volume = screamDataArray.reduce((a, b) => a + b) / screamDataArray.length; let k = 0.027; let calculatedPercent = 100 * (1 - Math.exp(-k * volume)); let volPercent = Math.min(99.8, calculatedPercent); document.getElementById('screamVolumeBar').style.height = volPercent + "%"; if(volPercent > screamGlobalMaxPeak) { screamGlobalMaxPeak = volPercent; document.getElementById('screamPeakIndicator').style.bottom = screamGlobalMaxPeak + "%"; document.getElementById('screamPeakValue').innerText = screamGlobalMaxPeak.toFixed(1) + "%"; } screamVisualIntv = requestAnimationFrame(screamUpdateVisuals); }
+        function screamFinishSession() { document.getElementById('screamAttemptInfo').innerText = `Jumlah Sesi Dilakukan: ${screamAttemptsUsed + 1}`; showScreamPage('screamPageFeedback'); }
+        function screamRetry() { screamAttemptsUsed++; screamStartCountdown(); }
+        function screamShowFinalResult() { document.getElementById('screamFinalPeak').innerText = screamGlobalMaxPeak.toFixed(1); showScreamPage('screamPageFinal'); }
+        function stopScreamSystem() { isScreaming = false; clearInterval(screamTimerIntv); cancelAnimationFrame(screamVisualIntv); if(screamMicSource) { screamMicSource.disconnect(); screamMicSource = null; } if(screamAudioCtx && screamAudioCtx.state !== 'closed') { screamAudioCtx.close(); screamAudioCtx = null; } screamAnalyser = null; navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { stream.getTracks().forEach(track => track.stop()); }).catch(e=>{}); }
 
-                document.getElementById('clapInitPhase').classList.add('hidden');
-                document.getElementById('clapLevelSelection').classList.remove('hidden');
-
-            } catch (err) {
-                alert("Gagal mengakses Mikrofon. Pastikan anda menekan 'Allow/Benarkan'. " + err);
-            }
-        }
-
-        function playSynthClap() {
-            if(!audioCtx) return;
-            const bufferSize = audioCtx.sampleRate * 0.1; 
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1; 
-            
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'bandpass'; filter.frequency.value = 1000;
-            
-            const clapGain = audioCtx.createGain();
-            clapGain.gain.setValueAtTime(1, audioCtx.currentTime);
-            clapGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            
-            noise.connect(filter).connect(clapGain).connect(audioCtx.destination);
-            noise.start();
-        }
-
-        async function playClapSequence(level) {
-            document.getElementById('clapLevelSelection').classList.add('hidden');
-            document.getElementById('clapActivePhase').classList.remove('hidden');
-            document.getElementById('clapResult').classList.add('hidden');
-            document.getElementById('clapActionButtons').classList.add('hidden');
-            
-            if(level === 'easy') { clapTarget = Math.floor(Math.random() * 3) + 3; } 
-            else if(level === 'medium') { clapTarget = Math.floor(Math.random() * 4) + 5; } 
-            else { clapTarget = Math.floor(Math.random() * 5) + 8; } 
-
-            isClappingPhase = false;
-            currentClapCount = 0;
-            document.getElementById('clapCountDisplay').innerText = 0;
-
-            const statusEl = document.getElementById('clapStatusTitle');
-            const pcArea = document.getElementById('pcClapArea');
-            const playerArea = document.getElementById('playerClapArea');
-            
-            statusEl.innerHTML = "<span>🔊</span> <span>D</span><span>e</span><span>n</span><span>g</span><span>a</span><span>r</span><span>.</span><span>.</span><span>.</span>";
-            pcArea.style.opacity = "1";
-            playerArea.style.opacity = "0.3";
-            
-            if(audioCtx.state === 'suspended') await audioCtx.resume();
-            await new Promise(r => setTimeout(r, 1000)); 
-            
-            for(let i=0; i<clapTarget; i++) {
-                playSynthClap();
-                pcArea.style.transform = "scale(1.2)";
-                setTimeout(()=> pcArea.style.transform = "scale(1)", 150);
-                await new Promise(r => setTimeout(r, 600)); 
-            }
-
-            statusEl.innerHTML = "<span>👏</span> <span>G</span><span>i</span><span>l</span><span>i</span><span>r</span><span>a</span><span>n</span> <span>A</span><span>n</span><span>d</span><span>a</span><span>!</span>";
-            pcArea.style.opacity = "0.3";
-            playerArea.style.opacity = "1";
-            document.getElementById('clapActionButtons').classList.remove('hidden');
-            
-            isClappingPhase = true; 
-        }
-
-        function registerPhysicalClap() {
-            currentClapCount++;
-            document.getElementById('clapCountDisplay').innerText = currentClapCount;
-            const visualizer = document.getElementById('clapVisualizer');
-            visualizer.classList.add('clap-detected');
-            setTimeout(() => visualizer.classList.remove('clap-detected'), 150);
-        }
-
-        function resetClapCount() {
-            currentClapCount = 0;
-            document.getElementById('clapCountDisplay').innerText = 0;
-        }
-
-        function submitClapAnswer() {
-            isClappingPhase = false; 
-            document.getElementById('clapActionButtons').classList.add('hidden');
-            
-            let resultDiv = document.getElementById('clapResult');
-            resultDiv.classList.remove('hidden');
-            
-            if(currentClapCount === clapTarget) {
-                resultDiv.innerHTML = '<span class="text-green-600 block mb-2"><i class="fas fa-check-circle text-4xl"></i></span> Tepat Sekali! Fokus dan ingatan anda hebat.';
-                resultDiv.style.borderColor = '#4ade80';
-            } else {
-                resultDiv.innerHTML = `<span class="text-red-500 block mb-2"><i class="fas fa-times-circle text-4xl"></i></span> Anda menepuk <strong>${currentClapCount}</strong> kali.<br>Komputer menepuk <strong>${clapTarget}</strong> kali.`;
-                resultDiv.style.borderColor = '#f87171';
-            }
-            
-            setTimeout(() => {
-                document.getElementById('clapActivePhase').classList.add('hidden');
-                document.getElementById('clapLevelSelection').classList.remove('hidden');
-            }, 4000);
-        }
-
-        function stopClapSystem() {
-            isClappingPhase = false;
-            if(micSource) micSource.disconnect();
-            if(audioProcessor) audioProcessor.disconnect();
-            if(gainNodeSilent) gainNodeSilent.disconnect();
-            if(audioCtx && audioCtx.state !== 'closed') audioCtx.close();
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                stream.getTracks().forEach(track => track.stop());
-            }).catch(e=>{});
-        }
+        // --- GAME 4: KUCING ---
+        let kucingMode = 'touch'; const kCanvas = document.getElementById('kucingCanvas'); const kCtx = kCanvas.getContext('2d'); let kGameLoopReq; let kScore = 0; let kLives = 3; let isKucingPlaying = false; const cat = { x: 170, y: 390, width: 60, height: 60, targetX: 170 }; let items = []; let kFrameCount = 0; const kVideo = document.getElementById('kucingVideo'); let kHands = null; let kCamera = null; let aiHandX = 0.5;
+        function openKucingGame() { hideAll(); document.getElementById('step-game-kucing').classList.remove('hidden-section'); document.getElementById('kucingModeSelection').classList.remove('hidden'); document.getElementById('kucingActiveGame').classList.add('hidden'); document.getElementById('kucingResult').classList.add('hidden'); document.getElementById('btnKucingExit').classList.add('hidden'); }
+        async function initKucingGame(mode) { kucingMode = mode; document.getElementById('kucingModeSelection').classList.add('hidden'); if (mode === 'ai') { document.getElementById('kucingModeSelection').classList.remove('hidden'); document.getElementById('kucingLoadingText').classList.remove('hidden'); try { if(!kHands) { kHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`}); kHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 }); kHands.onResults(onKucingAIResults); kCamera = new Camera(kVideo, { onFrame: async () => { await kHands.send({image: kVideo}); }, width: 160, height: 120 }); await kCamera.start(); } document.getElementById('kucingMiniCam').classList.remove('hidden'); } catch (e) { alert("Kamera gagal diakses. " + e); kucingMode = 'touch'; document.getElementById('kucingMiniCam').classList.add('hidden'); } } else { document.getElementById('kucingMiniCam').classList.add('hidden'); setupKucingTouchControls(); } document.getElementById('kucingModeSelection').classList.add('hidden'); document.getElementById('kucingLoadingText').classList.add('hidden'); document.getElementById('kucingActiveGame').classList.remove('hidden'); document.getElementById('btnKucingExit').classList.remove('hidden'); resetKucingGame(); }
+        function setupKucingTouchControls() { kCanvas.addEventListener('mousemove', (e) => { if(!isKucingPlaying || kucingMode !== 'touch') return; const rect = kCanvas.getBoundingClientRect(); const scaleX = kCanvas.width / rect.width; cat.targetX = (e.clientX - rect.left) * scaleX - cat.width/2; }); kCanvas.addEventListener('touchmove', (e) => { if(!isKucingPlaying || kucingMode !== 'touch') return; e.preventDefault(); const rect = kCanvas.getBoundingClientRect(); const scaleX = kCanvas.width / rect.width; cat.targetX = (e.touches[0].clientX - rect.left) * scaleX - cat.width/2; }, {passive: false}); }
+        function onKucingAIResults(results) { if (!isKucingPlaying || kucingMode !== 'ai') return; if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) { const indexFinger = results.multiHandLandmarks[0][8]; aiHandX = 1 - indexFinger.x; cat.targetX = (aiHandX * kCanvas.width) - (cat.width / 2); } }
+        function resetKucingGame() { kScore = 0; kLives = 3; items = []; cat.x = kCanvas.width/2 - cat.width/2; cat.targetX = cat.x; isKucingPlaying = true; kFrameCount = 0; document.getElementById('kucingScore').innerText = kScore; updateKucingLivesUI(); document.getElementById('kucingActiveGame').classList.remove('hidden'); document.getElementById('kucingResult').classList.add('hidden'); if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq); kucingGameLoop(); }
+        function updateKucingLivesUI() { let hearts = ""; for(let i=0; i<kLives; i++) hearts += "❤️"; document.getElementById('kucingLives').innerText = hearts || "💀"; }
+        function spawnItem() { const types = ['🍎', '🍌', '🍇', '💣']; let isBomb = Math.random() < 0.2 + (kScore * 0.005); let emoji = isBomb ? '💣' : types[Math.floor(Math.random() * 3)]; let speed = 3 + Math.random() * 2 + (kScore * 0.1); let size = 30; let x = Math.random() * (kCanvas.width - size); items.push({ x: x, y: -size, speed: speed, emoji: emoji, size: size, isBomb: isBomb }); }
+        function kucingGameLoop() { if(!isKucingPlaying) return; kCtx.clearRect(0, 0, kCanvas.width, kCanvas.height); if(cat.targetX < 0) cat.targetX = 0; if(cat.targetX > kCanvas.width - cat.width) cat.targetX = kCanvas.width - cat.width; cat.x += (cat.targetX - cat.x) * (kucingMode === 'ai' ? 0.2 : 0.4); kCtx.font = "50px Arial"; kCtx.textAlign = "left"; kCtx.textBaseline = "top"; kCtx.fillText("🧺", cat.x, cat.y); kCtx.font = "30px Arial"; kCtx.fillText("🐱", cat.x + 10, cat.y - 15); kFrameCount++; let spawnRate = Math.max(20, 60 - Math.floor(kScore/5)); if(kFrameCount % spawnRate === 0) spawnItem(); for(let i = items.length - 1; i >= 0; i--) { let item = items[i]; item.y += item.speed; kCtx.font = "30px Arial"; kCtx.fillText(item.emoji, item.x, item.y); if (item.x < cat.x + cat.width && item.x + item.size > cat.x && item.y < cat.y + cat.height && item.y + item.size > cat.y) { if (item.isBomb) { kLives--; updateKucingLivesUI(); kCtx.fillStyle = "rgba(255, 0, 0, 0.4)"; kCtx.fillRect(0, 0, kCanvas.width, kCanvas.height); } else { kScore += 5; document.getElementById('kucingScore').innerText = kScore; } items.splice(i, 1); continue; } if(item.y > kCanvas.height) { items.splice(i, 1); } } if(kLives <= 0) { endKucingGame(); } else { kGameLoopReq = requestAnimationFrame(kucingGameLoop); } }
+        function endKucingGame() { isKucingPlaying = false; document.getElementById('kucingActiveGame').classList.add('hidden'); document.getElementById('kucingResult').classList.remove('hidden'); document.getElementById('kucingFinalScore').innerText = kScore; }
+        function stopKucingGame() { isKucingPlaying = false; if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq); if(kCamera) { kCamera.stop(); if(kVideo.srcObject) kVideo.srcObject.getTracks().forEach(t => t.stop()); } kucingMode = 'touch'; }
 
         // ==========================================
-        // GAME 2: CAMERA GESTURE AI (MediaPipe Hands)
+        // GAME 5: SUSUN CAWAN (NEW!)
         // ==========================================
-        const videoElement = document.getElementById('gestureVideo');
-        const canvasElement = document.getElementById('gestureCanvas');
-        const canvasCtx = canvasElement.getContext('2d');
-        let camera = null; let hands = null;
+        let cawanMode = 'touch';
+        const cCanvas = document.getElementById('cawanCanvas');
+        const cCtx = cCanvas.getContext('2d');
+        const cVideo = document.getElementById('cawanVideo');
         
-        let gestureTargets = [
-            { icon: '🖐️', name: 'Tapak Tangan Buka' },
-            { icon: '✊', name: 'Genggam Tangan' },
-            { icon: '✌️', name: 'Simbol Peace (Aman)' }
-        ];
-        let currentTargetIndex = 0;
-        let isGestureGameActive = false;
-        let gestureTimerInt;
-        let gestureTimeLeft = 100;
-        let totalGestureScore = 0;
-
-        function openGestureGame() {
-            hideAll(); document.getElementById('step-game-gesture').classList.remove('hidden-section');
-            document.getElementById('gesturePreGame').classList.remove('hidden');
-            document.getElementById('gestureActiveGame').classList.add('hidden');
-            document.getElementById('btnStartCam').classList.remove('hidden');
-            document.getElementById('camLoadingText').classList.add('hidden');
-        }
-
-        async function initMediaPipe() {
-            document.getElementById('btnStartCam').classList.add('hidden');
-            document.getElementById('camLoadingText').classList.remove('hidden');
-
-            try {
-                hands = new Hands({locateFile: (file) => { return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`; }});
-                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
-                hands.onResults(onResultsHands);
-
-                camera = new Camera(videoElement, {
-                    onFrame: async () => { await hands.send({image: videoElement}); },
-                    width: 400, height: 300
-                });
-                
-                await camera.start();
-                
-                document.getElementById('gesturePreGame').classList.add('hidden');
-                document.getElementById('gestureActiveGame').classList.remove('hidden');
-                canvasElement.width = videoElement.videoWidth || 400;
-                canvasElement.height = videoElement.videoHeight || 300;
-                
-                totalGestureScore = 0;
-                document.getElementById('gestureScore').innerText = totalGestureScore;
-                
-                document.getElementById('gestureTargetDisplay').innerHTML = `Sedia...`;
-                setTimeout(startNextGestureRound, 2000);
-
-            } catch (err) {
-                alert("Gagal mengakses Kamera. Sila benarkan (Allow) akses kamera pada pelayar anda. " + err);
-                document.getElementById('btnStartCam').classList.remove('hidden');
-                document.getElementById('camLoadingText').classList.add('hidden');
-            }
-        }
-
-        function startNextGestureRound() {
-            isGestureGameActive = true;
-            currentTargetIndex = Math.floor(Math.random() * gestureTargets.length);
-            let target = gestureTargets[currentTargetIndex];
-            
-            const display = document.getElementById('gestureTargetDisplay');
-            display.innerHTML = `${target.icon} <div class="text-xl text-blue-600 mt-2 font-bold">${target.name}</div>`;
-            display.classList.add('pop-in');
-            setTimeout(()=> display.classList.remove('pop-in'), 500);
-            display.style.borderColor = '#3b82f6'; 
-
-            gestureTimeLeft = 100;
-            clearInterval(gestureTimerInt);
-            
-            let speed = 60 - (totalGestureScore * 2); 
-            if(speed < 20) speed = 20;
-
-            gestureTimerInt = setInterval(() => {
-                gestureTimeLeft -= 1;
-                let bar = document.getElementById('gestureTimerBar');
-                bar.style.width = gestureTimeLeft + "%";
-                bar.style.background = gestureTimeLeft > 50 ? "#4ade80" : gestureTimeLeft > 20 ? "#facc15" : "#ef4444";
-                
-                if (gestureTimeLeft <= 0) endGestureGame("Masa Tamat! ⏰");
-            }, speed);
-        }
-
-        function onResultsHands(results) {
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            
-            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const landmarks = results.multiHandLandmarks[0];
-                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 3});
-                drawLandmarks(canvasCtx, landmarks, {color: '#3b82f6', lineWidth: 1, radius: 4});
-
-                if(isGestureGameActive) detectPose(landmarks);
-            }
-            canvasCtx.restore();
-        }
-
-        function detectPose(landmarks) {
-            const isThumbUp = landmarks[4].y < landmarks[3].y; 
-            const isIndexUp = landmarks[8].y < landmarks[6].y;
-            const isMiddleUp = landmarks[12].y < landmarks[10].y;
-            const isRingUp = landmarks[16].y < landmarks[14].y;
-            const isPinkyUp = landmarks[20].y < landmarks[18].y;
-
-            let detectedGesture = '';
-            if (isIndexUp && isMiddleUp && isRingUp && isPinkyUp) {
-                detectedGesture = '🖐️'; 
-            } else if (!isIndexUp && !isMiddleUp && !isRingUp && !isPinkyUp) {
-                detectedGesture = '✊'; 
-            } else if (isIndexUp && isMiddleUp && !isRingUp && !isPinkyUp) {
-                detectedGesture = '✌️'; 
-            }
-
-            if (detectedGesture === gestureTargets[currentTargetIndex].icon) {
-                isGestureGameActive = false; 
-                clearInterval(gestureTimerInt);
-                
-                totalGestureScore += 10;
-                document.getElementById('gestureScore').innerText = totalGestureScore;
-                
-                const display = document.getElementById('gestureTargetDisplay');
-                display.innerHTML = `<span class="text-green-500"><i class="fas fa-check-circle"></i> Tepat!</span>`;
-                display.style.borderColor = '#4ade80';
-                
-                setTimeout(startNextGestureRound, 800);
-            }
-        }
-
-        function endGestureGame(reason) {
-            isGestureGameActive = false;
-            clearInterval(gestureTimerInt);
-            const display = document.getElementById('gestureTargetDisplay');
-            display.innerHTML = `<span class="text-red-500 text-3xl"><i class="fas fa-times-circle"></i> ${reason}</span>`;
-            display.style.borderColor = '#ef4444';
-            
-            setTimeout(() => {
-                if(confirm(`Skor Akhir Anda: ${totalGestureScore}. Hebat! Mahu main semula?`)) {
-                    totalGestureScore = 0; document.getElementById('gestureScore').innerText = 0;
-                    document.getElementById('gestureTargetDisplay').innerHTML = `Sedia...`;
-                    setTimeout(startNextGestureRound, 1000);
-                } else {
-                    stopGestureDetection(); showBrainGamesHub();
-                }
-            }, 1000);
-        }
-
-        function stopGestureDetection() {
-            isGestureGameActive = false; clearInterval(gestureTimerInt);
-            if(camera) camera.stop();
-            if(videoElement.srcObject) videoElement.srcObject.getTracks().forEach(track => track.stop());
-        }
-
-        // ==========================================
-        // GAME 3: GEMA KEBEBASAN (SCREAM THERAPY)
-        // ==========================================
-        let screamAudioCtx;
-        let screamAnalyser, screamDataArray;
-        let screamMicSource;
-        let screamGlobalMaxPeak = 0;
+        let cGameLoopReq;
+        let cScore = 0; let cLives = 3;
+        let isCawanPlaying = false;
+        let cawanPhase = 'idle'; // reveal, hiding, shuffling, guess, result
+        let cups = [];
+        let numCups = 3;
+        let shuffleCount = 0;
+        let maxShuffles = 5;
+        let shuffleSpeed = 0.1;
         
-        let screamTargetSec = 10;
-        let screamAttemptsUsed = 0;
-        let screamTimeLeft = 0;
-        let isScreaming = false;
-        let screamTimerIntv;
-        let screamVisualIntv;
+        let cHands = null; let cCamera = null;
+        let cAiCursor = {x: 200, y: 225}; // center
+        let cAiHoverIndex = -1; 
+        let cAiHoverProgress = 0;
 
-        function openScreamGame() {
-            hideAll(); 
-            document.getElementById('step-game-scream').classList.remove('hidden-section');
-            showScreamPage('screamPagePrivacy');
-        }
-
-        function showScreamPage(id) {
-            document.querySelectorAll('.scream-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function screamInitAudioContext() {
-            if (!screamAudioCtx) screamAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        function screamPlayBeep() {
-            screamInitAudioContext();
-            const osc = screamAudioCtx.createOscillator();
-            const gain = screamAudioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(screamAudioCtx.destination);
-            osc.frequency.setValueAtTime(800, screamAudioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, screamAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(screamAudioCtx.currentTime + 0.1);
-        }
-
-        function screamPlayTreet() {
-            screamInitAudioContext();
-            const osc = screamAudioCtx.createOscillator();
-            const gain = screamAudioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(screamAudioCtx.destination);
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(1000, screamAudioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1500, screamAudioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.05, screamAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, screamAudioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(screamAudioCtx.currentTime + 0.1);
-        }
-
-        function screamPlayStartBell() {
-            screamInitAudioContext();
-            const osc = screamAudioCtx.createOscillator();
-            const gain = screamAudioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(screamAudioCtx.destination);
-            osc.type = 'sine'; 
-            osc.frequency.setValueAtTime(1200, screamAudioCtx.currentTime); 
-            gain.gain.setValueAtTime(0, screamAudioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.2, screamAudioCtx.currentTime + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.001, screamAudioCtx.currentTime + 0.8);
-            osc.start(screamAudioCtx.currentTime);
-            osc.stop(screamAudioCtx.currentTime + 0.8);
-        }
-
-        function screamPrepareTherapy() {
-            if(!document.getElementById('screamStressInput').value) {
-                screamPlayBeep();
-                return alert("Sila tulis luahan anda.");
-            }
-            screamPlayTreet();
-            showScreamPage('screamPageReady');
-        }
-
-        async function screamStartCountdown() {
-            showScreamPage('screamPageCountdown');
-            let c = 3;
-            const disp = document.getElementById('screamCountdownDisplay');
-            disp.innerText = c;
-            screamPlayBeep();
-
-            try {
-                if(!screamAnalyser) {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    screamInitAudioContext();
-                    if(screamAudioCtx.state === 'suspended') await screamAudioCtx.resume();
-                    
-                    screamAnalyser = screamAudioCtx.createAnalyser();
-                    screamMicSource = screamAudioCtx.createMediaStreamSource(stream);
-                    screamAnalyser.fftSize = 256;
-                    screamDataArray = new Uint8Array(screamAnalyser.frequencyBinCount);
-                    screamMicSource.connect(screamAnalyser);
-                }
-            } catch(e) { 
-                alert("Mikrofon diperlukan untuk mendaftar lontaran suara anda.");
-                showScreamPage('screamPageReady'); 
-                return; 
-            }
-
-            let intv = setInterval(() => {
-                c--;
-                if(c > 0) { disp.innerText = c; screamPlayBeep(); }
-                else if(c === 0) { disp.innerText = "JERIT!"; screamPlayStartBell(); }
-                else { clearInterval(intv); screamStartSession(); }
-            }, 1000);
-        }
-
-        function screamStartSession() {
-            showScreamPage('screamPageScream');
-            screamTimeLeft = screamTargetSec;
-            isScreaming = true;
-            
-            screamTimerIntv = setInterval(() => {
-                screamTimeLeft -= 0.1;
-                document.getElementById('screamTimerCircle').innerText = Math.max(0, screamTimeLeft).toFixed(1) + "s";
-                if(screamTimeLeft <= 0) { 
-                    clearInterval(screamTimerIntv); 
-                    isScreaming = false; 
-                    screamFinishSession(); 
-                }
-            }, 100);
-            
-            screamUpdateVisuals();
-        }
-
-        function screamUpdateVisuals() {
-            if(!isScreaming) return;
-            screamAnalyser.getByteFrequencyData(screamDataArray);
-            let volume = screamDataArray.reduce((a, b) => a + b) / screamDataArray.length;
-            let k = 0.027; 
-            let calculatedPercent = 100 * (1 - Math.exp(-k * volume));
-            let volPercent = Math.min(99.8, calculatedPercent);
-            document.getElementById('screamVolumeBar').style.height = volPercent + "%";
-            
-            if(volPercent > screamGlobalMaxPeak) {
-                screamGlobalMaxPeak = volPercent;
-                document.getElementById('screamPeakIndicator').style.bottom = screamGlobalMaxPeak + "%";
-                document.getElementById('screamPeakValue').innerText = screamGlobalMaxPeak.toFixed(1) + "%";
-            }
-            screamVisualIntv = requestAnimationFrame(screamUpdateVisuals);
-        }
-
-        function screamFinishSession() {
-            document.getElementById('screamAttemptInfo').innerText = `Jumlah Sesi Dilakukan: ${screamAttemptsUsed + 1}`;
-            showScreamPage('screamPageFeedback');
-        }
-
-        function screamRetry() {
-            screamAttemptsUsed++; 
-            screamStartCountdown(); 
-        }
-
-        function screamShowFinalResult() {
-            document.getElementById('screamFinalPeak').innerText = screamGlobalMaxPeak.toFixed(1);
-            showScreamPage('screamPageFinal');
-        }
-
-        function stopScreamSystem() {
-            isScreaming = false;
-            clearInterval(screamTimerIntv);
-            cancelAnimationFrame(screamVisualIntv);
-            
-            if(screamMicSource) {
-                screamMicSource.disconnect();
-                screamMicSource = null;
-            }
-            if(screamAudioCtx && screamAudioCtx.state !== 'closed') {
-                screamAudioCtx.close();
-                screamAudioCtx = null;
-            }
-            screamAnalyser = null;
-            
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                stream.getTracks().forEach(track => track.stop());
-            }).catch(e=>{});
-        }
-
-        // ==========================================
-        // GAME 4: KUCING PENANGKAP BUAH
-        // ==========================================
-        let kucingMode = 'touch';
-        const kCanvas = document.getElementById('kucingCanvas');
-        const kCtx = kCanvas.getContext('2d');
-        
-        let kGameLoopReq;
-        let kScore = 0;
-        let kLives = 3;
-        let isKucingPlaying = false;
-        
-        const cat = { x: 170, y: 420, width: 60, height: 60, targetX: 170 };
-        let items = []; 
-        let kFrameCount = 0;
-
-        const kVideo = document.getElementById('kucingVideo');
-        let kHands = null;
-        let kCamera = null;
-        let aiHandX = 0.5;
-
-        function openKucingGame() {
+        function openCawanGame() {
             hideAll();
-            document.getElementById('step-game-kucing').classList.remove('hidden-section');
-            document.getElementById('kucingModeSelection').classList.remove('hidden');
-            document.getElementById('kucingActiveGame').classList.add('hidden');
-            document.getElementById('kucingResult').classList.add('hidden');
-            document.getElementById('btnKucingExit').classList.add('hidden');
+            document.getElementById('step-game-cawan').classList.remove('hidden-section');
+            document.getElementById('cawanModeSelection').classList.remove('hidden');
+            document.getElementById('cawanActiveGame').classList.add('hidden');
+            document.getElementById('cawanResult').classList.add('hidden');
+            document.getElementById('btnCawanExit').classList.add('hidden');
         }
 
-        async function initKucingGame(mode) {
-            kucingMode = mode;
-            document.getElementById('kucingModeSelection').classList.add('hidden');
+        async function initCawanGame(mode) {
+            cawanMode = mode;
+            document.getElementById('cawanModeSelection').classList.add('hidden');
             
             if (mode === 'ai') {
-                document.getElementById('kucingModeSelection').classList.remove('hidden');
-                document.getElementById('kucingLoadingText').classList.remove('hidden');
-                
+                document.getElementById('cawanModeSelection').classList.remove('hidden');
+                document.getElementById('cawanLoadingText').classList.remove('hidden');
                 try {
-                    if(!kHands) {
-                        kHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-                        kHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
-                        kHands.onResults(onKucingAIResults);
+                    if(!cHands) {
+                        cHands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+                        cHands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+                        cHands.onResults(onCawanAIResults);
 
-                        kCamera = new Camera(kVideo, {
-                            onFrame: async () => { await kHands.send({image: kVideo}); },
-                            width: 160, height: 120
-                        });
-                        await kCamera.start();
+                        cCamera = new Camera(cVideo, { onFrame: async () => { await cHands.send({image: cVideo}); }, width: 160, height: 120 });
+                        await cCamera.start();
                     }
-                    document.getElementById('kucingMiniCam').classList.remove('hidden');
+                    document.getElementById('cawanMiniCam').classList.remove('hidden');
                 } catch (e) {
-                    alert("Kamera gagal diakses. Tukar ke mod Skrin Sentuh. " + e);
-                    kucingMode = 'touch';
-                    document.getElementById('kucingMiniCam').classList.add('hidden');
+                    alert("Kamera gagal diakses. " + e);
+                    cawanMode = 'touch';
+                    document.getElementById('cawanMiniCam').classList.add('hidden');
                 }
             } else {
-                document.getElementById('kucingMiniCam').classList.add('hidden');
-                setupKucingTouchControls();
+                document.getElementById('cawanMiniCam').classList.add('hidden');
+                setupCawanTouchControls();
             }
 
-            document.getElementById('kucingModeSelection').classList.add('hidden');
-            document.getElementById('kucingLoadingText').classList.add('hidden');
-            document.getElementById('kucingActiveGame').classList.remove('hidden');
-            document.getElementById('btnKucingExit').classList.remove('hidden');
+            document.getElementById('cawanModeSelection').classList.add('hidden');
+            document.getElementById('cawanLoadingText').classList.add('hidden');
+            document.getElementById('cawanActiveGame').classList.remove('hidden');
+            document.getElementById('btnCawanExit').classList.remove('hidden');
             
-            resetKucingGame();
+            cScore = 0; cLives = 3; numCups = 3; maxShuffles = 5; shuffleSpeed = 0.08;
+            document.getElementById('cawanScore').innerText = cScore;
+            updateCawanLivesUI();
+            
+            startCawanRound();
         }
 
-        function setupKucingTouchControls() {
-            kCanvas.addEventListener('mousemove', (e) => {
-                if(!isKucingPlaying || kucingMode !== 'touch') return;
-                const rect = kCanvas.getBoundingClientRect();
-                const scaleX = kCanvas.width / rect.width;
-                cat.targetX = (e.clientX - rect.left) * scaleX - cat.width/2;
-            });
-            
-            kCanvas.addEventListener('touchmove', (e) => {
-                if(!isKucingPlaying || kucingMode !== 'touch') return;
-                e.preventDefault(); 
-                const rect = kCanvas.getBoundingClientRect();
-                const scaleX = kCanvas.width / rect.width;
-                cat.targetX = (e.touches[0].clientX - rect.left) * scaleX - cat.width/2;
-            }, {passive: false});
+        function setupCawanTouchControls() {
+            cCanvas.addEventListener('mousedown', handleCawanTouch);
+            cCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCawanTouch(e.touches[0]); }, {passive: false});
         }
 
-        function onKucingAIResults(results) {
-            if (!isKucingPlaying || kucingMode !== 'ai') return;
+        function handleCawanTouch(e) {
+            if(!isCawanPlaying || cawanPhase !== 'guess' || cawanMode !== 'touch') return;
+            const rect = cCanvas.getBoundingClientRect();
+            const scaleX = cCanvas.width / rect.width;
+            const scaleY = cCanvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            checkCupSelection(x, y);
+        }
+
+        function onCawanAIResults(results) {
+            if (!isCawanPlaying || cawanMode !== 'ai') return;
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const indexFinger = results.multiHandLandmarks[0][8];
-                aiHandX = 1 - indexFinger.x; 
-                cat.targetX = (aiHandX * kCanvas.width) - (cat.width / 2);
+                const indexFinger = results.multiHandLandmarks[0][8]; // Index tip
+                cAiCursor.x = (1 - indexFinger.x) * cCanvas.width;
+                cAiCursor.y = indexFinger.y * cCanvas.height;
             }
         }
 
-        function resetKucingGame() {
-            kScore = 0;
-            kLives = 3;
-            items = [];
-            cat.x = kCanvas.width/2 - cat.width/2;
-            cat.targetX = cat.x;
-            isKucingPlaying = true;
-            kFrameCount = 0;
-            
-            document.getElementById('kucingScore').innerText = kScore;
-            updateKucingLivesUI();
-            
-            document.getElementById('kucingActiveGame').classList.remove('hidden');
-            document.getElementById('kucingResult').classList.add('hidden');
-            
-            if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq);
-            kucingGameLoop();
+        function updateCawanLivesUI() {
+            let hearts = ""; for(let i=0; i<cLives; i++) hearts += "❤️";
+            document.getElementById('cawanLives').innerText = hearts || "💀";
         }
 
-        function updateKucingLivesUI() {
-            let hearts = "";
-            for(let i=0; i<kLives; i++) hearts += "❤️";
-            document.getElementById('kucingLives').innerText = hearts || "💀";
+        function startCawanRound() {
+            isCawanPlaying = true;
+            cawanPhase = 'reveal';
+            document.getElementById('cawanStatusText').innerText = "Perhatikan Bola!";
+            document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-yellow-300 h-8";
+            
+            // Setup Cups
+            cups = [];
+            const gap = 120;
+            const startX = (cCanvas.width - (gap * (numCups - 1))) / 2;
+            const ballIndex = Math.floor(Math.random() * numCups);
+            
+            for(let i=0; i<numCups; i++) {
+                cups.push({
+                    x: startX + (i * gap), y: 150, // Initial raised pos
+                    targetX: startX + (i * gap), targetY: 250, // Target resting pos
+                    hasBall: (i === ballIndex)
+                });
+            }
+
+            if(cGameLoopReq) cancelAnimationFrame(cGameLoopReq);
+            cawanGameLoop();
+
+            // After 2s, move cups down to hide ball
+            setTimeout(() => {
+                cawanPhase = 'hiding';
+                setTimeout(() => {
+                    cawanPhase = 'shuffling';
+                    shuffleCount = 0;
+                    document.getElementById('cawanStatusText').innerText = "Fokus...";
+                }, 1000);
+            }, 2000);
         }
 
-        function spawnItem() {
-            const types = ['🍎', '🍌', '🍇', '💣'];
-            let isBomb = Math.random() < 0.2 + (kScore * 0.005); 
-            let emoji = isBomb ? '💣' : types[Math.floor(Math.random() * 3)];
-            let speed = 3 + Math.random() * 2 + (kScore * 0.1);
-            let size = 30;
-            let x = Math.random() * (kCanvas.width - size);
-            items.push({ x: x, y: -size, speed: speed, emoji: emoji, size: size, isBomb: isBomb });
+        function doShuffle() {
+            if(shuffleCount >= maxShuffles) {
+                cawanPhase = 'guess';
+                document.getElementById('cawanStatusText').innerText = "Di mana bola?";
+                return;
+            }
+            
+            // Pick two random cups to swap
+            let idx1 = Math.floor(Math.random() * numCups);
+            let idx2;
+            do { idx2 = Math.floor(Math.random() * numCups); } while(idx1 === idx2);
+            
+            let tempX = cups[idx1].targetX;
+            cups[idx1].targetX = cups[idx2].targetX;
+            cups[idx2].targetX = tempX;
+            
+            shuffleCount++;
         }
 
-        function kucingGameLoop() {
-            if(!isKucingPlaying) return;
+        function checkCupSelection(x, y) {
+            if(cawanPhase !== 'guess') return;
+            
+            let selectedCup = null;
+            // Cups are drawn around their center, approx 60x80 size
+            for(let cup of cups) {
+                if(Math.abs(x - cup.x) < 40 && Math.abs(y - cup.y) < 50) {
+                    selectedCup = cup; break;
+                }
+            }
 
-            kCtx.clearRect(0, 0, kCanvas.width, kCanvas.height);
-
-            if(cat.targetX < 0) cat.targetX = 0;
-            if(cat.targetX > kCanvas.width - cat.width) cat.targetX = kCanvas.width - cat.width;
-            cat.x += (cat.targetX - cat.x) * (kucingMode === 'ai' ? 0.2 : 0.4);
-
-            kCtx.font = "50px Arial";
-            kCtx.textAlign = "left";
-            kCtx.textBaseline = "top";
-            kCtx.fillText("🧺", cat.x, cat.y);
-            kCtx.font = "30px Arial";
-            kCtx.fillText("🐱", cat.x + 10, cat.y - 15);
-
-            kFrameCount++;
-            let spawnRate = Math.max(20, 60 - Math.floor(kScore/5));
-            if(kFrameCount % spawnRate === 0) spawnItem();
-
-            for(let i = items.length - 1; i >= 0; i--) {
-                let item = items[i];
-                item.y += item.speed;
-                kCtx.font = "30px Arial";
-                kCtx.fillText(item.emoji, item.x, item.y);
-
-                if (item.x < cat.x + cat.width &&
-                    item.x + item.size > cat.x &&
-                    item.y < cat.y + cat.height &&
-                    item.y + item.size > cat.y) {
+            if(selectedCup) {
+                cawanPhase = 'result';
+                // Reveal all
+                cups.forEach(c => c.targetY = 150);
+                
+                if(selectedCup.hasBall) {
+                    document.getElementById('cawanStatusText').innerText = "Tahniah! Tepat!";
+                    document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-green-400 h-8";
+                    cScore += 10;
+                    document.getElementById('cawanScore').innerText = cScore;
+                    // Increase difficulty
+                    if(cScore % 30 === 0 && maxShuffles < 12) { maxShuffles += 2; shuffleSpeed += 0.02; }
+                    setTimeout(startCawanRound, 2000);
+                } else {
+                    document.getElementById('cawanStatusText').innerText = "Salah!";
+                    document.getElementById('cawanStatusText').className = "mb-2 text-lg font-bold text-red-400 h-8";
+                    cLives--;
+                    updateCawanLivesUI();
                     
-                    if (item.isBomb) {
-                        kLives--;
-                        updateKucingLivesUI();
-                        kCtx.fillStyle = "rgba(255, 0, 0, 0.4)";
-                        kCtx.fillRect(0, 0, kCanvas.width, kCanvas.height);
+                    setTimeout(() => {
+                        if(cLives <= 0) endCawanGame();
+                        else startCawanRound();
+                    }, 2000);
+                }
+            }
+        }
+
+        function cawanGameLoop() {
+            if(!isCawanPlaying) return;
+            cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            
+            let allReached = true;
+            
+            // Draw Background elements if needed
+            cCtx.fillStyle = "rgba(0,0,0,0.2)";
+            cCtx.beginPath(); cCtx.ellipse(200, 300, 150, 40, 0, 0, 2 * Math.PI); cCtx.fill(); // Table shadow
+
+            cups.forEach((cup, i) => {
+                // Move logic
+                cup.x += (cup.targetX - cup.x) * shuffleSpeed;
+                cup.y += (cup.targetY - cup.y) * shuffleSpeed;
+                
+                if(Math.abs(cup.x - cup.targetX) > 2 || Math.abs(cup.y - cup.targetY) > 2) allReached = false;
+
+                // Draw Ball if revealing or result
+                if((cawanPhase === 'reveal' || cawanPhase === 'result') && cup.hasBall) {
+                    cCtx.font = "40px Arial"; cCtx.textAlign = "center"; cCtx.textBaseline = "middle";
+                    cCtx.fillText("🔴", cup.targetX, 280); 
+                }
+
+                // Draw Cup
+                cCtx.font = "60px Arial"; cCtx.textAlign = "center"; cCtx.textBaseline = "middle";
+                cCtx.fillText("🥤", cup.x, cup.y);
+                
+                // AI Hover Progress
+                if(cawanMode === 'ai' && cawanPhase === 'guess' && cAiHoverIndex === i) {
+                    cCtx.fillStyle = "rgba(255,255,255,0.3)"; cCtx.fillRect(cup.x - 30, cup.y - 45, 60, 5);
+                    cCtx.fillStyle = "#10b981"; cCtx.fillRect(cup.x - 30, cup.y - 45, (cAiHoverProgress/100)*60, 5);
+                }
+            });
+
+            // Trigger next shuffle if ready
+            if(cawanPhase === 'shuffling' && allReached) {
+                doShuffle();
+            }
+
+            // AI Cursor Logic
+            if(cawanMode === 'ai') {
+                // Draw cursor
+                cCtx.beginPath(); cCtx.arc(cAiCursor.x, cAiCursor.y, 10, 0, 2*Math.PI);
+                cCtx.fillStyle = "rgba(252, 211, 77, 0.8)"; cCtx.fill(); cCtx.lineWidth = 2; cCtx.strokeStyle = "#fff"; cCtx.stroke();
+                
+                // Hover Detection
+                if(cawanPhase === 'guess') {
+                    let hovering = -1;
+                    cups.forEach((cup, i) => {
+                        if(Math.abs(cAiCursor.x - cup.x) < 40 && Math.abs(cAiCursor.y - cup.y) < 50) hovering = i;
+                    });
+                    
+                    if(hovering !== -1) {
+                        if(cAiHoverIndex === hovering) {
+                            cAiHoverProgress += 2; // Speed of selection
+                            if(cAiHoverProgress >= 100) { checkCupSelection(cups[hovering].x, cups[hovering].y); cAiHoverProgress = 0; cAiHoverIndex = -1; }
+                        } else {
+                            cAiHoverIndex = hovering; cAiHoverProgress = 0;
+                        }
                     } else {
-                        kScore += 5;
-                        document.getElementById('kucingScore').innerText = kScore;
+                        cAiHoverIndex = -1; cAiHoverProgress = 0;
                     }
-                    items.splice(i, 1);
-                    continue;
-                }
-
-                if(item.y > kCanvas.height) {
-                    items.splice(i, 1);
                 }
             }
 
-            if(kLives <= 0) {
-                endKucingGame();
-            } else {
-                kGameLoopReq = requestAnimationFrame(kucingGameLoop);
-            }
+            cGameLoopReq = requestAnimationFrame(cawanGameLoop);
         }
 
-        function endKucingGame() {
-            isKucingPlaying = false;
-            document.getElementById('kucingActiveGame').classList.add('hidden');
-            document.getElementById('kucingResult').classList.remove('hidden');
-            document.getElementById('kucingFinalScore').innerText = kScore;
+        function endCawanGame() {
+            isCawanPlaying = false;
+            document.getElementById('cawanActiveGame').classList.add('hidden');
+            document.getElementById('cawanResult').classList.remove('hidden');
+            document.getElementById('cawanFinalScore').innerText = cScore;
         }
 
-        function stopKucingGame() {
-            isKucingPlaying = false;
-            if(kGameLoopReq) cancelAnimationFrame(kGameLoopReq);
-            if(kCamera) {
-                kCamera.stop();
-                if(kVideo.srcObject) kVideo.srcObject.getTracks().forEach(t => t.stop());
-            }
-            kucingMode = 'touch';
+        function resetCawanGame() {
+            document.getElementById('cawanResult').classList.add('hidden');
+            document.getElementById('cawanActiveGame').classList.remove('hidden');
+            cScore = 0; cLives = 3; numCups = 3; maxShuffles = 5; shuffleSpeed = 0.08;
+            document.getElementById('cawanScore').innerText = cScore;
+            updateCawanLivesUI();
+            startCawanRound();
         }
+
+        function stopCawanGame() {
+            isCawanPlaying = false;
+            if(cGameLoopReq) cancelAnimationFrame(cGameLoopReq);
+            if(cCamera) { cCamera.stop(); if(cVideo.srcObject) cVideo.srcObject.getTracks().forEach(t => t.stop()); }
+            cawanMode = 'touch';
+        }
+
     </script>
 </body>
 </html>

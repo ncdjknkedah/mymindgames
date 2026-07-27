@@ -343,7 +343,7 @@
                         <div class="text-5xl mb-4">✌️🤟</div>
                         <h3 class="text-lg font-bold text-blue-600 mb-2">Ketua Gerak Isyarat</h3>
                         <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded-full uppercase font-bold mb-1 block mx-auto w-max">AI Kamera</span>
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji koordinasi dengan isyarat rawak (✌️, 🤟, ✊, 🖐️) menggunakan <strong>kedua-dua</strong> belah tangan!</p>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Uji koordinasi dengan isyarat rawak menggunakan <strong>kedua-dua</strong> belah tangan!</p>
                     </div>
                     <button class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-600 text-sm w-full">Main</button>
                 </div>
@@ -463,7 +463,7 @@
         </div>
 
         <!-- ==========================================
-             GAME 2: KETUA GERAK ISYARAT (DUAL HANDS + MORE GESTURES + DYNAMIC TIME)
+             GAME 2: KETUA GERAK ISYARAT (DUAL HANDS)
         =========================================== -->
         <div id="step-game-gesture" class="hidden-section fade-in text-center">
             <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Ketua Gerak Isyarat (Dual) 🙌</h2>
@@ -627,6 +627,7 @@
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Skor: <span id="kucingScore" class="text-green-600 text-3xl font-extrabold">0</span></div>
                     <div class="font-bold text-xl text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">Nyawa: <span id="kucingLives" class="text-red-500 text-3xl font-extrabold">❤️❤️❤️</span></div>
                 </div>
+
                 <div id="kucingGameContainer" class="custom-game-container kucing-bg shadow-2xl">
                     <div id="kucingMiniCam" class="mini-cam-preview hidden"><video id="kucingVideo" autoplay playsinline></video></div>
                     <canvas id="kucingCanvas" class="game-canvas" width="400" height="450"></canvas>
@@ -700,7 +701,7 @@
 
     <!-- Javascript Logic -->
     <script>
-        // Data & Logic Induk (Menu, Quiz, Audit) kekal seperti biasa...
+        // Data & Logic Induk (Menu, Quiz, Audit)
         const quizData = [
             { id: 'fizikal', title: "Tangki Fizikal", icon: "fa-running", color: "text-orange-500", bg: "bg-orange-500 text-white", accent: "orange", questions: ["Saya mendapat tidur yang mencukupi hampir setiap hari.", "Saya bangun pagi dengan rasa segar dan bertenaga.", "Saya menjaga pemakanan dengan baik dan teratur.", "Saya melakukan aktiviti fizikal sekurang-kurangnya 2–3 kali seminggu.", "Badan saya jarang terasa lesu tanpa sebab yang jelas.", "Saya mengambil masa rehat yang mencukupi ketika bekerja.", "Pernafasan saya terasa tenang dan tidak laju sepanjang hari.", "Saya menjaga hidrasi dengan minum air secukupnya.", "Saya mampu melakukan aktiviti harian tanpa keletihan melampau.", "Kesihatan fizikal saya berada dalam keadaan baik."] },
             { id: 'mental', title: "Tangki Mental", icon: "fa-brain", color: "text-blue-500", bg: "bg-blue-500 text-white", accent: "blue", questions: ["Saya dapat fokus dengan baik pada tugasan yang sedang dilakukan.", "Fikiran saya jarang dipenuhi ruminasi atau overthinking.", "Saya mempunyai perancangan harian yang jelas.", "Saya mampu membuat keputusan tanpa rasa terlalu terbeban.", "Saya dapat mengawal pemikiran negatif dengan baik.", "Saya tahu keutamaan utama dalam hidup saya ketika ini.", "Saya berasa jelas tentang matlamat jangka pendek saya.", "Saya jarang merasa keletihan mental yang melampau.", "Saya memberi ruang untuk refleksi diri secara berkala.", "Saya mampu menenangkan fikiran apabila berasa tertekan."] },
@@ -875,6 +876,7 @@
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
 
         // ==========================================
         // GAME 1: AUDIO & MIC CLAP SEQUENCE
@@ -1162,11 +1164,20 @@
             gestureTimeLeft = 100;
             clearInterval(gestureTimerInt);
             
-            // Dynamic Time Calculation: Faster as score increases
-            // Starting at 50ms per tick (5 seconds total). 
-            // -3ms per 10 score points. Cap minimum at 12ms (1.2 seconds total).
-            let speed = 50 - (totalGestureScore * 0.3); 
-            if(speed < 12) speed = 12;
+            // Dynamic Time Calculation berdasarkan Round
+            // Round 1-5: 10s | Round 6-10: 7s | Round 11-15: 5s | Round 16-20: 3s | Round 21+: 2s
+            let speed;
+            if (gestureRound <= 5) {
+                speed = 100; // 100 ticks * 100ms = 10000ms = 10s
+            } else if (gestureRound <= 10) {
+                speed = 70;  // 100 ticks * 70ms = 7000ms = 7s
+            } else if (gestureRound <= 15) {
+                speed = 50;  // 100 ticks * 50ms = 5000ms = 5s
+            } else if (gestureRound <= 20) {
+                speed = 30;  // 100 ticks * 30ms = 3000ms = 3s
+            } else {
+                speed = 20;  // 100 ticks * 20ms = 2000ms = 2s
+            }
 
             gestureTimerInt = setInterval(() => {
                 gestureTimeLeft -= 1;

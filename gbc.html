@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventori Bahasa Cinta</title>
+    
+    <!-- Memuatkan Tailwind CSS untuk design cantik -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuatkan React dan ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Memuatkan Babel untuk memproses kod React dalam browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 text-gray-800 min-h-screen">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- IKON ---
+        const IconHeart = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        );
+        const IconGift = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.9 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+        );
+        const IconMessage = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        );
+        const IconHand = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+        );
+        const IconWrench = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        );
+        const IconChevronRight = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6"/></svg>
+        );
+        const IconRefresh = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+        );
+        const IconAward = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        );
+        const IconSparkles = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>
+        );
+
+        // --- DATA KUIZ ---
+        const QuizData = [
+            { id: 1, options: [{ type: 'C', text: "Saya suka jika mendapat e-mel atau mesej jenaka/manis dari pasangan saya." }, { type: 'D', text: "Saya inginkan pasangan saya memberi saya dakapan dengan lebih kerap." }] },
+            { id: 2, options: [{ type: 'A', text: "Saya suka bersendirian (berdua-duaan) dengan pasangan saya." }, { type: 'E', text: "Saya teringin pasangan saya sekali sekala menghantar kereta saya untuk dicuci atau melakukan khidmat lain tanpa disuruh." }] },
+            { id: 3, options: [{ type: 'B', text: "Kalaulah pasangan saya membelikan hadiah istimewa bagi saya tanpa sebarang sebab khas, tentu saya suka." }, { type: 'A', text: "Saya seronok berjalan-jalan dan bercuti panjang bersama pasangan saya." }] },
+            { id: 4, options: [{ type: 'E', text: "Saya benar-benar rasa dikasihi jika pasangan saya membasuh pakaian kotor/membantu kerja rumah." }, { type: 'D', text: "Saya suka apabila pasangan saya menyentuh saya." }] },
+            { id: 5, options: [{ type: 'D', text: "Saya suka jika pasangan saya memeluk saya apabila kami berada di tempat awam." }, { type: 'B', text: "Saya ingin pasangan saya membelikan saya hadiah apabila dia keluar bertugas luar/berjalan jauh." }] },
+            { id: 6, options: [{ type: 'A', text: "Saya ingin pasangan saya lebih bersemangat untuk keluar berjalan-jalan dengan saya." }, { type: 'D', text: "Saya suka memegang tangan pasangan saya." }] },
+            { id: 7, options: [{ type: 'B', text: "Saya rasa dicintai apabila pasangan saya memberi saya hadiah." }, { type: 'C', text: "Saya tahu pasangan saya cintakan saya, tapi saya mahu mendengarnya melafazkan cintanya kepada saya." }] },
+            { id: 8, options: [{ type: 'D', text: "Saya suka pasangan saya duduk rapat dengan saya." }, { type: 'C', text: "Saya teringin pasangan saya memberi pujian apabila saya siap bersolek/berhias." }] },
+            { id: 9, options: [{ type: 'A', text: "Menghabiskan masa lapang bersama pasangan membuat saya gembira." }, { type: 'B', text: "Saya ingin pasangan saya lebih kerap memberi saya hadiah-hadiah kecil yang bermakna." }] },
+            { id: 10, options: [{ type: 'C', text: "Saya suka mendengar pasangan saya mengatakan bahawa dia bangga dengan saya." }, { type: 'E', text: "Saya berharap sangat pasangan saya tolong membersihkan rumah tanpa disuruh." }] },
+            { id: 11, options: [{ type: 'A', text: "Tidak kisahlah apa yang kita lakukan, yang penting saya suka melakukannya bersama pasangan saya." }, { type: 'C', text: "Saya suka mendengar lebih banyak kata-kata rangsangan/semangat dari pasangan saya." }] },
+            { id: 12, options: [{ type: 'E', text: "Saya inginkan pasangan saya bukan hanya menaburkan kata-kata manis, tetapi juga melakukan sesuatu yang manis bagi saya." }, { type: 'D', text: "Saya suka mendakap pasangan saya." }] },
+            { id: 13, options: [{ type: 'C', text: "Saya berharap pasangan saya lebih kerap memuji saya." }, { type: 'B', text: "Saya berharap pasangan saya memberi saya hadiah yang lebih bererti dan peribadi (personal)." }] },
+            { id: 14, options: [{ type: 'A', text: "Hanya dengan sekadar berada di sisi pasangan, boleh membuat saya rasa gembira." }, { type: 'E', text: "Saya teringin pasangan saya mengurut saya apabila saya lenguh." }] },
+            { id: 15, options: [{ type: 'C', text: "Saya bersemangat apabila pasangan saya memberi reaksi yang positif terhadap pencapaian saya." }, { type: 'E', text: "Saya inginkan pasangan saya menolong saya dengan tugasan-tugasan yang tidak digemarinya, hanya kerana dia tahu pertolongannya itu amat bermakna bagi saya." }] },
+            { id: 16, options: [{ type: 'D', text: "Saya tak pernah jemu dengan ciuman pasangan saya." }, { type: 'C', text: "Saya mahu pasangan saya lebih mengambil berat terhadap perkara-perkara yang saya minat." }] },
+            { id: 17, options: [{ type: 'E', text: "Saya rasa dikasihi apabila pasangan saya membantu saya dengan tugasan-tugasan saya." }, { type: 'B', text: "Saya masih lagi rasa berdebar apabila membuka hadiah dari pasangan saya." }] },
+            { id: 18, options: [{ type: 'C', text: "Saya ingin pasangan saya lebih kerap memuji penampilan saya." }, { type: 'A', text: "Saya mahu pasangan saya meluangkan lebih masa mendengar idea-idea saya dan menghormatinya." }] },
+            { id: 19, options: [{ type: 'D', text: "Saya pasti akan menyentuh pasangan saya apabila dia berada hampir dengan saya." }, { type: 'E', text: "Apabila saya mempunyai banyak tugasan untuk diselesaikan, saya teringin pasangan saya menawarkan bantuan." }] },
+            { id: 20, options: [{ type: 'E', text: "Saya terasa seolah-olah ingin menghadiahkan sebuah piala buat pasangan saya jika dia membantu saya di rumah." }, { type: 'B', text: "Saya akan rasa dihargai jika hadiah yang diberikan pasangan menunjukkan tanda pertimbangan (pemikiran)." }] },
+            { id: 21, options: [{ type: 'A', text: "Saya inginkan pasangan saya memberikan saya perhatian penuh apabila saya sedang bercakap dengannya (tidak main HP)." }, { type: 'E', text: "Saya suka jika pasangan saya membersihkan rumah/kawasan persekitaran." }] },
+            { id: 22, options: [{ type: 'B', text: "Saya tak sabar menanti apa yang pasangan saya belikan untuk hadiah hari lahir saya." }, { type: 'C', text: "Saya mahu mendengar pasangan saya mengatakan berapa bermaknanya saya dalam kehidupannya." }] },
+            { id: 23, options: [{ type: 'B', text: "Saya berharap pasangan saya membelikan saya hadiah dengan lebih kerap." }, { type: 'E', text: "Saya berharap pasangan saya menolong saya tanpa diminta." }] },
+            { id: 24, options: [{ type: 'A', text: "Saya tidak suka pasangan saya memotong cakap saya apabila saya sedang berbicara." }, { type: 'B', text: "Saya tak pernah jemu menerima hadiah dari pasangan saya." }] },
+            { id: 25, options: [{ type: 'E', text: "Saya mahu pasangan saya menawarkan untuk menolong saya apabila dia tahu saya penat." }, { type: 'A', text: "Tidak kira ke mana tujuan, yang penting saya suka keluar bersama pasangan saya." }] },
+            { id: 26, options: [{ type: 'D', text: "Saya ingin pasangan saya memeluk saya lebih kerap." }, { type: 'B', text: "Saya ingin pasangan saya memberi hadiah kejutan buat saya lebih kerap." }] },
+            { id: 27, options: [{ type: 'C', text: "Kata-kata rangsangan dari pasangan saya memberi saya keyakinan diri." }, { type: 'A', text: "Saya suka menonton wayang/berhibur dengan pasangan saya." }] },
+            { id: 28, options: [{ type: 'B', text: "Saya ingin pasangan saya membelikan hadiah buat saya tanpa sebarang balasan." }, { type: 'D', text: "Saya suka jika pasangan saya menyentuh saya lebih kerap." }] },
+            { id: 29, options: [{ type: 'E', text: "Amat bermakna bagi saya, jika pasangan saya membantu saya walaupun dia juga sedang sibuk." }, { type: 'C', text: "Saya berharap pasangan saya melafazkan 'Saya menghargai awak'." }] },
+            { id: 30, options: [{ type: 'D', text: "Saya suka memeluk pasangan saya setelah kami berjauhan buat sementara." }, { type: 'C', text: "Saya mahu mendengar pasangan saya mengatakan dia merindui saya apabila saya tiada di sisinya." }] },
+        ];
+
+        const LanguageInfo = {
+            A: { name: "Masa Bersama (Quality Time)", icon: <IconHeart className="w-8 h-8 text-pink-500" />, desc: "Anda merasa paling disayangi apabila pasangan anda memberikan perhatian yang tidak berbelah bahagi. Menghabiskan masa bersama, mendengar dengan aktif, dan melakukan aktiviti bersama adalah kunci utama." },
+            B: { name: "Menerima Hadiah (Receiving Gifts)", icon: <IconGift className="w-8 h-8 text-purple-500" />, desc: "Bagi anda, hadiah adalah simbol visual cinta. Bukan nilai wang yang penting, tetapi pemikiran, usaha, dan makna di sebalik pemberian tersebut membuatkan anda rasa dihargai." },
+            C: { name: "Kata-kata Pengesahan (Words of Affirmation)", icon: <IconMessage className="w-8 h-8 text-blue-500" />, desc: "Kata-kata bermakna segalanya. Pujian, kata-kata semangat, dan ungkapan cinta lisan adalah cara terbaik untuk mengisi tangki emosi anda." },
+            D: { name: "Sentuhan Fizikal (Physical Touch)", icon: <IconHand className="w-8 h-8 text-orange-500" />, desc: "Bagi anda, sentuhan fizikal adalah penghubung emosi yang kuat. Berpegangan tangan, pelukan, dan sentuhan mesra menyampaikan rasa selamat dan cinta." },
+            E: { name: "Berkhidmat (Acts of Service)", icon: <IconWrench className="w-8 h-8 text-green-500" />, desc: "Tindakan lebih berkesan dari kata-kata. Anda rasa disayangi apabila pasangan anda membantu meringankan beban tugas anda atau melakukan sesuatu untuk keselesaan anda." }
+        };
+
+        // --- APLIKASI UTAMA ---
+        const App = () => {
+            const [currentStep, setCurrentStep] = React.useState('intro'); // intro, quiz, result
+            const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
+            const [scores, setScores] = React.useState({ A: 0, B: 0, C: 0, D: 0, E: 0 });
+            
+            const handleStart = () => {
+                setCurrentStep('quiz');
+                setCurrentQuestionIndex(0);
+                setScores({ A: 0, B: 0, C: 0, D: 0, E: 0 });
+            };
+
+            const handleAnswer = (type) => {
+                const newScores = { ...scores, [type]: scores[type] + 1 };
+                setScores(newScores);
+                
+                setTimeout(() => {
+                    if (currentQuestionIndex < QuizData.length - 1) {
+                        setCurrentQuestionIndex(currentQuestionIndex + 1);
+                    } else {
+                        setCurrentStep('result');
+                    }
+                }, 250);
+            };
+
+            const calculateWinner = () => {
+                let sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+                return sortedScores;
+            };
+
+            const sortedResults = currentStep === 'result' ? calculateWinner() : [];
+            const primaryType = sortedResults.length > 0 ? sortedResults[0][0] : 'A';
+            const progressPercentage = ((currentQuestionIndex) / QuizData.length) * 100;
+
+            return (
+                <div className="min-h-screen w-full flex flex-col items-center justify-center p-4">
+                
+                {/* SKRIN 1: PENGENALAN */}
+                {currentStep === 'intro' && (
+                    <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-12 max-w-2xl w-full text-center border-4 border-white fade-in">
+                        <div className="mb-6 flex justify-center space-x-4">
+                            <div className="p-3 bg-pink-100 rounded-full text-pink-500"><IconHeart className="w-8 h-8" /></div>
+                            <div className="p-3 bg-purple-100 rounded-full text-purple-500"><IconGift className="w-8 h-8" /></div>
+                            <div className="p-3 bg-blue-100 rounded-full text-blue-500"><IconMessage className="w-8 h-8" /></div>
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600 mb-4">
+                            Ujian Bahasa Cinta
+                        </h1>
+                        <h2 className="text-xl text-gray-700 font-semibold mb-6">Edisi Muslim Sejahtera</h2>
+                        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                            Fahami cara pasangan anda merasai kasih sayang. 
+                            Jawab <strong>30 soalan</strong> mudah ini untuk mengeratkan lagi ikatan mawaddah dan rahmah dalam rumahtangga anda.
+                        </p>
+                        <div className="flex flex-col gap-4 items-center">
+                            <button 
+                                onClick={handleStart}
+                                className="group relative inline-flex items-center justify-center px-10 py-4 text-xl font-bold text-white transition-all duration-300 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full hover:from-pink-600 hover:to-purple-600 hover:shadow-xl focus:outline-none transform hover:-translate-y-1"
+                            >
+                                <span className="mr-2">Mula Sekarang</span>
+                                <IconChevronRight className="w-6 h-6" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* SKRIN 2: KUIZ */}
+                {currentStep === 'quiz' && (
+                    <div className="w-full max-w-2xl min-h-screen flex flex-col justify-center p-4 fade-in">
+                        <div className="mb-6 flex justify-between items-center text-sm font-semibold text-purple-800 bg-white px-6 py-3 rounded-full shadow-sm border border-purple-100">
+                            <span className="flex items-center"><IconAward className="w-4 h-4 mr-2"/> Soalan {currentQuestionIndex + 1} / {QuizData.length}</span>
+                            <span>{Math.round(progressPercentage)}% Selesai</span>
+                        </div>
+                    
+                        <div className="w-full bg-white rounded-full h-4 mb-8 overflow-hidden shadow-sm border border-purple-100 p-1">
+                            <div 
+                                className="bg-gradient-to-r from-pink-400 to-purple-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_10px_rgba(236,72,153,0.5)]" 
+                                style={{ width: `${progressPercentage}%` }}
+                            ></div>
+                        </div>
+
+                        <div className="grid gap-6">
+                            {QuizData[currentQuestionIndex].options.map((option, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleAnswer(option.type)}
+                                    className="relative group bg-white hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 p-6 md:p-8 rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-pink-300 transition-all duration-300 text-left transform hover:-translate-y-1"
+                                >
+                                    <div className="flex items-start md:items-center">
+                                        <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-5 transition-colors shadow-sm ${idx === 0 ? 'bg-pink-100 text-pink-600 group-hover:bg-pink-500 group-hover:text-white' : 'bg-purple-100 text-purple-600 group-hover:bg-purple-500 group-hover:text-white'}`}>
+                                            {idx === 0 ? 'A' : 'B'}
+                                        </div>
+                                        <p className="text-lg md:text-xl text-gray-700 font-medium leading-relaxed group-hover:text-gray-900">
+                                            {option.text}
+                                        </p>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* SKRIN 3: KEPUTUSAN */}
+                {currentStep === 'result' && (
+                    <div className="w-full min-h-screen p-4 md:p-8 flex items-center justify-center fade-in">
+                        <div className="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white">
+                            
+                            {/* Kiri: Keputusan Utama */}
+                            <div className="md:w-5/12 bg-gradient-to-br from-purple-700 to-pink-600 text-white relative overflow-hidden flex flex-col">
+                                <div className="absolute inset-0 opacity-10 pointer-events-none">
+                                    <svg width="100%" height="100%"><rect width="100%" height="100%" fill="transparent"/></svg>
+                                </div>
+
+                                <div className="relative z-10 p-10 flex flex-col items-center text-center h-full justify-center">
+                                    <div className="bg-white/20 p-6 rounded-full backdrop-blur-md shadow-lg mb-6 ring-4 ring-white/10">
+                                        {React.cloneElement(LanguageInfo[primaryType].icon, { className: "w-16 h-16 text-white" })}
+                                    </div>
+                                    
+                                    <h2 className="text-xl font-medium opacity-90 mb-1">Bahasa Cinta Anda Ialah</h2>
+                                    <h1 className="text-3xl md:text-4xl font-extrabold mb-6 text-yellow-300 drop-shadow-lg leading-tight">
+                                        {LanguageInfo[primaryType].name.split('(')[0]}
+                                    </h1>
+                                    
+                                    <p className="text-sm md:text-base opacity-95 leading-relaxed bg-black/10 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                                        {LanguageInfo[primaryType].desc}
+                                    </p>
+
+                                    <div className="mt-8 pt-8 border-t border-white/20 w-full">
+                                        <button 
+                                            onClick={handleStart}
+                                            className="w-full py-3 bg-white text-purple-700 rounded-xl font-bold hover:bg-gray-50 transition-colors shadow-lg flex items-center justify-center space-x-2"
+                                        >
+                                            <IconRefresh className="w-5 h-5" />
+                                            <span>Ulang Semula</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Kanan: Statistik */}
+                            <div className="md:w-7/12 p-8 md:p-12 bg-slate-50 overflow-y-auto max-h-[90vh]">
+                                
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="text-2xl font-bold text-gray-800 flex items-center">
+                                        <IconAward className="w-7 h-7 mr-3 text-yellow-500" />
+                                        Analisis Lengkap
+                                    </h3>
+                                </div>
+
+                                <div className="space-y-6">
+                                    {sortedResults.map(([type, score], index) => (
+                                        <div key={type} className="relative group">
+                                            <div className="flex justify-between items-end mb-2">
+                                                <div className="flex items-center space-x-3">
+                                                    <span className={`flex items-center justify-center w-6 h-6 rounded text-xs font-bold ${index === 0 ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-200 text-gray-500'}`}>
+                                                        {index + 1}
+                                                    </span>
+                                                    <span className="font-semibold text-gray-700 group-hover:text-purple-700 transition-colors">{LanguageInfo[type].name}</span>
+                                                </div>
+                                                <span className="text-xl font-bold text-gray-800">{score}</span>
+                                            </div>
+                                            
+                                            <div className="w-full bg-white rounded-full h-3 overflow-hidden shadow-inner border border-gray-100">
+                                                <div 
+                                                    className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                                                        index === 0 ? 'bg-gradient-to-r from-pink-500 to-purple-500' : 
+                                                        index === 1 ? 'bg-purple-300' : 'bg-gray-300'
+                                                    }`}
+                                                    style={{ width: `${(score / 12) * 100}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-10 bg-white p-6 rounded-2xl border border-blue-100 shadow-sm flex items-start space-x-4">
+                                    <div className="bg-blue-100 p-2 rounded-lg">
+                                        <IconSparkles className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                        <p className="font-bold text-gray-800 mb-1">Tips Kebahagiaan:</p>
+                                        <p>Kongsi keputusan ini bersama pasangan anda. Cuba lakukan satu perkara yang memenuhi "tangki emosi" pasangan anda mengikut bahasa cinta utamanya setiap hari.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
